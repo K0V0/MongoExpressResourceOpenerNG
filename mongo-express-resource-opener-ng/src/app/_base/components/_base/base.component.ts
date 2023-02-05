@@ -1,11 +1,7 @@
 import { Component } from "@angular/core";
 
 @Component({
-    selector: 'component-base',
-    templateUrl: './base.component.html',
-    styleUrls: [
-        './base.component.scss'
-    ]
+    template: ''
 })
 
 export abstract class BaseComponent {

@@ -3,5 +3,6 @@
     type="text" 
     id="resourceId" 
     placeholder="Resource ID..." 
-    (change)="resourceChange($event)"
+    (keyup)="keyup()"
+    [(ngModel)]="resourceId"
 >

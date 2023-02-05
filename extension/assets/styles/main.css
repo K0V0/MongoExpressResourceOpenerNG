@@ -1,4 +1,4 @@
-body {
+main {
     font-size: 1.25em;
     background-color: white;
     color: black;
@@ -7,7 +7,6 @@ body {
     padding: 0.75em;
     outline: 0px transparent !important;
     box-sizing: border-box;
-    border: 0.25em solid #00ADEF;
 }
 
 section {
@@ -159,4 +158,13 @@ select > option {
     cursor: not-allowed !important;
     background-color: #bbb !important;
     color: #888 !important;
+}
+
+/* fixing flexbox layout - apply class on parent element of <component-xxx> */
+.componentElementFix {
+    display: flex;
+}
+.componentElementFix > * {
+    display: flex;
+    align-items: center;
 }

@@ -1,11 +1,7 @@
-section {
-    margin: 0.75em 0;
-    display: flex;
-    align-items: center;
+main {
+    border: 0.25em solid #00ADEF;
 }
 
-/* applied to angular component wrapper */
-section > * {
-    display: flex;
-    align-items: center;
+section {
+    margin: 0.75em 0;
 }

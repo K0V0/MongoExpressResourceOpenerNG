@@ -1,20 +1,22 @@
+<main>
 
-<section>
-    <h1>MongoExpressResourceOpener</h1>
-</section>
-
-<section class="centered">
-    <component-resource-id></component-resource-id>
-    <button id="submitResourceId">Otvoriť</button>
-</section>
-
-<section>
-    <component-auto-submit-resource-id></component-auto-submit-resource-id>
-</section>
-
-<section>
-    <component-select-enviroment></component-select-enviroment>
-    <button id="openOptions">Nastavenia</button>
-</section>
+    <section>
+        <h1>MongoExpressResourceOpener</h1>
+    </section>
     
+    <section class="centered">
+        <component-resource-id></component-resource-id>
+        <button (click)="submit()">Otvoriť</button>
+    </section>
+    
+    <section class="componentElementFix">
+        <component-auto-submit-resource-id></component-auto-submit-resource-id>
+    </section>
+    
+    <section class="componentElementFix">
+        <component-select-enviroment></component-select-enviroment>
+        <button (click)="openSettings()">Nastavenia</button>
+    </section>
+
+</main>
 

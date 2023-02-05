@@ -1,0 +1,38 @@
+<main>
+
+    <section>
+        <h1>Nastavenia</h1>
+    </section>
+
+    <section>
+
+        <h2>Správanie</h2>
+
+        <article class="componentElementFix">
+            <component-auto-submit-resource-id></component-auto-submit-resource-id>
+        </article>
+
+        <article>
+            <label for="enviromentId">Aktívne prostredie:</label>
+            <component-select-enviroment></component-select-enviroment>
+        </article>
+
+    </section>
+
+    <section id="dataSources">
+
+        <h2>Dátové zostavy</h2>
+        <i>Oddeľujte jednotlivé URL na dátové zostavy novým riadkom</i>
+        
+        <component-data-sets></component-data-sets>
+
+        <button class="disabled" tabindex="-1">Pridať ďalšie prostredie</button>
+
+    </section>
+
+    <section class="right">
+        <button (click)="saveAndExit()">Uložiť a zavrieť</button>
+    </section>
+
+</main>
+

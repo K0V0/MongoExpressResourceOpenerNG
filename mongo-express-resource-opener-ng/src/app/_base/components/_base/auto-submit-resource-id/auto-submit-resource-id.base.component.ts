@@ -3,18 +3,28 @@ import { Component } from "@angular/core";
 
 // custom imports
 import { BaseComponent } from "../base.component";
+import { AutoSubmitResourceIdComponentIface } from "./auto-submit-resource-id.base.component.interface";
 
 // base component [text field] for ObjectId input of wanted mongo document
 @Component({
-  selector: 'component-auto-submit-resource-id-base',
-  templateUrl: './auto-submit-resource-id.base.component.html',
-  styleUrls: [
-     './auto-submit-resource-id.base.component.scss'
-  ]
+ template: ''
 })
 
-export abstract class AutoSubmitResourceIdBaseComponent extends BaseComponent {
+export abstract class AutoSubmitResourceIdBaseComponent extends BaseComponent implements AutoSubmitResourceIdComponentIface {
 
   public static readonly DATA_ATTR : string = "submitResourceId";
+
+  // must be public because of binding using ngModel
+  public isEnabled : boolean; 
+
+  constructor() {
+    super();
+    this.isEnabled = false;
+  }
+
+  // change fires only on user interaction, compared to ngModelChange
+  public change() : void {
+    console.log(this.isEnabled);
+  };
 
 }

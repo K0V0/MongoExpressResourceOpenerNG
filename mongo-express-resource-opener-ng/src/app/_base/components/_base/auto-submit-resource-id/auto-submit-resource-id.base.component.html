@@ -1,3 +1,13 @@
-<select id="enviromentId">
-    <option selected disabled hidden id="selectEnviromentDefaultOption">Vybrať prostredie...</option>
-</select>
+
+<input  type="checkbox" 
+        id="autoSubmitResourceId" 
+        [(ngModel)]="isEnabled"
+        (change)="change()"
+>
+
+<label  for="autoSubmitResourceId" 
+        id="autoSubmitResourceIdLabel">
+        
+    Odpáliť automaticky po vložení
+    
+</label>
