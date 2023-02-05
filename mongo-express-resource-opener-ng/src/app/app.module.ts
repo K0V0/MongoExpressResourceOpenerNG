@@ -1,4 +1,3 @@
-import { PopupModule } from './popup/popup.module';
 // angular imports
 import { NgModule } from '@angular/core';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
@@ -7,6 +6,8 @@ import { BrowserModule } from '@angular/platform-browser';
 // my imports
 import { RoutingModule } from './_base/modules/routing/routing.module';
 import { AppComponent } from './app.component';
+import { OptionsModule } from './options/options.module';
+import { PopupModule } from './popup/popup.module';
 
 @NgModule({
   declarations: [
@@ -17,8 +18,9 @@ import { AppComponent } from './app.component';
     BrowserModule,
     // My other modules
     RoutingModule,
-    // Extension srcsrcpages
-    PopupModule
+    // Extension pages
+    PopupModule,
+    OptionsModule
   ],
   providers: [
     // This is needed because the manifest loads the index.html file, followed by a #,

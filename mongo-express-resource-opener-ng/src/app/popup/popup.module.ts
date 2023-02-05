@@ -1,5 +1,6 @@
 // Angular imports
 import { NgModule } from "@angular/core";
+import { FormsModule } from '@angular/forms';
 
 // My imports
 import { PopupComponent } from './popup.component';
@@ -9,6 +10,7 @@ import { AutoSubmitResourceIdComponent } from './components/auto-submit-resource
 
 @NgModule({
     imports: [
+        FormsModule
     ],
     declarations: [
         ResourceIdComponent,

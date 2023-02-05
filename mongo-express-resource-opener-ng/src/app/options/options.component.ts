@@ -1,3 +1,5 @@
+///<reference types="chrome"/>
+
 // angular imports
 import { Component } from "@angular/core";
 
@@ -13,5 +15,14 @@ import { BaseComponent } from "../_base/components/_base/base.component";
 })
 
 export class OptionsComponent extends BaseComponent {
+
+  public saveAndExit() : void {
+    // save settings
+      // TODO
+    // close tab
+    chrome.tabs.getCurrent(function(tab : any) {
+        chrome.tabs.remove(tab.id, function() { });
+    });
+  }
 
 }

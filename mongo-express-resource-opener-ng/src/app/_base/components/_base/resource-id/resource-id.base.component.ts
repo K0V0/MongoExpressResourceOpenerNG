@@ -1,39 +1,43 @@
-// angular imports
+// Angular imports
 import { Component } from "@angular/core";
 
-// custom imports
+// My imports
 import { BaseComponent } from "../base.component";
+import { ResourceIdComponentIface } from "./resource-id.base.component.interface";
 
-// base component [text field] for ObjectId input of wanted mongo document
+// base component [text field] for ObjectId attribute input of wanted mongo document
 @Component({
-  selector: 'component-resource-id-base',
-  templateUrl: './resource-id.base.component.html',
-  styleUrls: [
-     './resource-id.base.component.scss'
-  ]
+  template: ''
 })
 
-export abstract class ResourceIdBaseComponent extends BaseComponent {
+export abstract class ResourceIdBaseComponent extends BaseComponent implements ResourceIdComponentIface {
 
-  private static readonly FIRE_TRESHOLD : number = 250;
   public static readonly DATA_ATTR : string = "resourceId";
+
+  private static readonly FIRE_TRESHOLD_MILISECONDS : number = 250;
 
   //TODO type of JS timer ? 
   private timer : any;
 
+  public resourceId : string | null;
+
+  constructor() {
+    super();
+    this.resourceId = null;
+  }
+
   protected abstract onChange(value : string) : void;
 
-  //TODO add type to event
-  public resourceChange(event : any) : void {
+  public keyup() : void {
+    // eliminates too much requests if typing and "empty keystrokes" like ctrl which fires event when text field has focus
     let context = this;
     clearTimeout(this.timer);
     this.timer = setTimeout(function() {
-      let value : string = event.target.value;
-      if (value === undefined || value === null || value.trim().length == 0) {
+      if (context.resourceId === undefined || context.resourceId === null || context.resourceId.trim().length <= 0) {
         return;
       }
-      context.onChange(event.target.value.trim());
-    }, ResourceIdBaseComponent.FIRE_TRESHOLD);
+      context.onChange(context.resourceId.trim());
+    }, ResourceIdBaseComponent.FIRE_TRESHOLD_MILISECONDS);
   };
 
 }

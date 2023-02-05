@@ -6,11 +6,9 @@ import { ResourceIdBaseComponent } from "src/app/_base/components/_base/resource
 
 @Component({
   selector: 'component-resource-id',
-  //templateUrl: '/src/app/_base/components/_base/resource-id/resource-id.base.component.html',
-  templateUrl: './resource-id.component.html',
+  templateUrl: './../../../_base/components/_base/resource-id/resource-id.base.component.html',
   styleUrls: [
-    //  './resource-id.base.component.scss',
-     './resource-id.component.scss'
+     './../../../_base/components/_base/resource-id/resource-id.base.component.scss'
   ]
 })
 
