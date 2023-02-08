@@ -13,5 +13,9 @@ import { BaseComponent } from "../_base/components/_base/base.component";
 })
 
 export class BackgroundComponent extends BaseComponent {
+  
+  protected getSettings() {
+    throw new Error("Method not implemented.");
+  }
 
 }

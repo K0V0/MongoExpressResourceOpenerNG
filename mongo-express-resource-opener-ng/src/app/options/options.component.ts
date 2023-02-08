@@ -16,6 +16,10 @@ import { BaseComponent } from "../_base/components/_base/base.component";
 
 export class OptionsComponent extends BaseComponent {
 
+  protected getSettings() {
+    return {};
+  }
+
   public saveAndExit() : void {
     // save settings
       // TODO

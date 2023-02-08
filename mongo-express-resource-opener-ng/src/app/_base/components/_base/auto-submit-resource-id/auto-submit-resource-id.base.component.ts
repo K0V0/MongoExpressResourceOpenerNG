@@ -1,5 +1,5 @@
 // angular imports
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 
 // custom imports
 import { BaseComponent } from "../base.component";
@@ -10,7 +10,10 @@ import { AutoSubmitResourceIdComponentIface } from "./auto-submit-resource-id.ba
  template: ''
 })
 
-export abstract class AutoSubmitResourceIdBaseComponent extends BaseComponent implements AutoSubmitResourceIdComponentIface {
+export abstract class AutoSubmitResourceIdBaseComponent 
+  extends BaseComponent 
+  implements AutoSubmitResourceIdComponentIface, OnInit
+{
 
   public static readonly DATA_ATTR : string = "submitResourceId";
 
@@ -20,6 +23,10 @@ export abstract class AutoSubmitResourceIdBaseComponent extends BaseComponent im
   constructor() {
     super();
     this.isEnabled = false;
+  }
+
+  getSettings() : any {
+    return {};
   }
 
   // change fires only on user interaction, compared to ngModelChange

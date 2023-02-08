@@ -28,6 +28,10 @@ export abstract class ResourceIdBaseComponent extends BaseComponent implements R
 
   protected abstract onChange(value : string) : void;
 
+  getSettings() : any {
+    return {};
+  }
+
   public keyup() : void {
     // eliminates too much requests if typing and "empty keystrokes" like ctrl which fires event when text field has focus
     let context = this;

@@ -13,4 +13,8 @@ export abstract class EnviromentSelectBaseComponent extends BaseComponent {
 
   public static readonly DATA_ATTR : string = "enviromentId";
 
+  getSettings() : any {
+    return {};
+  }
+
 }
