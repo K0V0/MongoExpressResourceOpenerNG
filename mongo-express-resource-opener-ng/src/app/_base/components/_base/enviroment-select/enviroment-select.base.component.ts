@@ -1,20 +1,39 @@
 // angular imports
 import { Component } from "@angular/core";
+import { OnInit } from '@angular/core';
 
 // custom imports
 import { BaseComponent } from "../base.component";
+import { EnviromentSelectBaseHelper } from './enviroment-select.base.helper';
 
-// base component [text field] for ObjectId input of wanted mongo document
 @Component({
   template: ''
 })
 
-export abstract class EnviromentSelectBaseComponent extends BaseComponent {
+export abstract class EnviromentSelectBaseComponent 
+  extends BaseComponent 
+  implements OnInit 
+{
+  private helper : EnviromentSelectBaseHelper;
 
-  public static readonly DATA_ATTR : string = "enviromentId";
+  public currentEnviromentId : string = "enviroment_0";
+  //TODO interface type
+  public currentEnviromentsOptions : any =  [
+    { id: "enviroment_0", name: "Základné prostredie" }
+  ];
+  
+  constructor() {
+    super();
+    this.helper = new EnviromentSelectBaseHelper(this);
+  }
 
-  getSettings() : any {
-    return {};
+  propsToSyncWithStore() : any {
+    return ["currentEnviromentId"];
+  }
+
+  ngOnInit(): void {
+    super.ngOnInit();
+    this.helper.getData();
   }
 
 }

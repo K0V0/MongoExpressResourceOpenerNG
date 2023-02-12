@@ -17,8 +17,8 @@ import { BaseComponent } from "../_base/components/_base/base.component";
 
 export class PopupComponent extends BaseComponent {
 
-  protected getSettings() {
-    return {};
+  protected propsToSyncWithStore() {
+    return [];
   }
 
   public readonly SETTINGS_URL : string = "index.html#/options";

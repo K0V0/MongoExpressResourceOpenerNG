@@ -1,6 +1,5 @@
-import { SettingsService } from './../../services/settings.service';
 import { Component } from "@angular/core";
-import { inject } from '@angular/core';
+import { SettingsService } from './../../services/settings.service';
 
 @Component({
     template: ''
@@ -8,20 +7,25 @@ import { inject } from '@angular/core';
 
 export abstract class BaseComponent {
 
-    //protected storeService : StoreService;
     protected settingsService : SettingsService;
 
     constructor() {
-        //this.storeService = inject(StoreService);
-        //this.settingsService = inject(SettingsService);
         this.settingsService = new SettingsService();
     }
 
-    // todo type pre json
-    protected abstract getSettings() : any;
+    //TODO iface
+    protected abstract propsToSyncWithStore() : any;
 
+    // initialisation of fields with correct data, mainly on view (page) load
     ngOnInit(): void {
-        this.settingsService.updateNgModel(this, this.getSettings());
+        this.settingsService.init(this, this.propsToSyncWithStore());
+        this.settingsService.updateNgModel();
     }
+
+    // change fires only on user interaction, compared to ngModelChange
+    // imlement this function into templates as action that You want to run after some data manipulated
+    public change() : void {
+        this.settingsService.updateStore();
+    };
   
 }

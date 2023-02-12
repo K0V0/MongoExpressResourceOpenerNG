@@ -28,8 +28,8 @@ export abstract class ResourceIdBaseComponent extends BaseComponent implements R
 
   protected abstract onChange(value : string) : void;
 
-  getSettings() : any {
-    return {};
+  propsToSyncWithStore() : any {
+    return [];
   }
 
   public keyup() : void {

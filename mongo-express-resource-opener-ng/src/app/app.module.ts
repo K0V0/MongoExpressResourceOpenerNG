@@ -1,13 +1,14 @@
 // angular imports
+import { HashLocationStrategy, LocationStrategy, CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 
 // my imports
-import { RoutingModule } from './_base/modules/routing/routing.module';
 import { AppComponent } from './app.component';
 import { OptionsModule } from './options/options.module';
 import { PopupModule } from './popup/popup.module';
+import { BaseModule } from './_base/base.module';
+import { RoutingModule } from './_base/modules/routing/routing.module';
 
 @NgModule({
   declarations: [
@@ -15,9 +16,11 @@ import { PopupModule } from './popup/popup.module';
   ],
   imports: [
     // Angular modules
+    CommonModule,
     BrowserModule,
     // My other modules
     RoutingModule,
+    BaseModule,
     // Extension pages
     PopupModule,
     OptionsModule

@@ -14,24 +14,15 @@ export abstract class AutoSubmitResourceIdBaseComponent
   extends BaseComponent 
   implements AutoSubmitResourceIdComponentIface, OnInit
 {
-
-  public static readonly DATA_ATTR : string = "submitResourceId";
-
   // must be public because of binding using ngModel
-  public isEnabled : boolean; 
+  public isEnabled : boolean = false; 
 
   constructor() {
     super();
-    this.isEnabled = false;
   }
 
-  getSettings() : any {
-    return {};
+  propsToSyncWithStore() : string[] {
+    return ["isEnabled"];
   }
-
-  // change fires only on user interaction, compared to ngModelChange
-  public change() : void {
-    console.log(this.isEnabled);
-  };
 
 }

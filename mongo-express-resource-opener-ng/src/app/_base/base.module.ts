@@ -1,10 +1,9 @@
 // My imports
-import { Constants } from './utils/constants.util';
-import { StoreService } from './services/store.service';
-import { SettingsService } from './services/settings.service';
+import { EnviromentSelectBaseComponent } from 'src/app/_base/components/_base/enviroment-select/enviroment-select.base.component';
 
 // Angular imports
 import { NgModule } from "@angular/core";
+import { CommonModule } from '@angular/common';
 
 @NgModule({
     imports: [
@@ -12,9 +11,6 @@ import { NgModule } from "@angular/core";
     declarations: [
     ],
     exports: [
-        Constants,
-        StoreService,
-        SettingsService
     ],
     providers: [
     ]

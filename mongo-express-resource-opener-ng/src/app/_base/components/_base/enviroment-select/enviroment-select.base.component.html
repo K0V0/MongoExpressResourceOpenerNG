@@ -1,3 +1,13 @@
-<select id="enviromentId">
+<select id="enviromentId"
+        [(ngModel)]="currentEnviromentId"
+        (change)="change()"
+>
+
     <option selected disabled hidden id="selectEnviromentDefaultOption">Vybrať prostredie...</option>
+
+    <option *ngFor="let item of currentEnviromentsOptions"
+            [ngValue]="item.id">
+        {{ item.name }}
+    </option>
+
 </select>

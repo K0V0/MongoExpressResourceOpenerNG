@@ -13,5 +13,9 @@ import { BaseComponent } from "../_base/components/_base/base.component";
 })
 
 export class ContentComponent extends BaseComponent {
+  
+  protected propsToSyncWithStore(): string[] {
+    throw new Error("Method not implemented.");
+  }
 
 }
