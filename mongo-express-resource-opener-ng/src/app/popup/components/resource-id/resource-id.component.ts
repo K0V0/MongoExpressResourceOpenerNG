@@ -14,12 +14,9 @@ import { ResourceIdBaseComponent } from "src/app/_base/components/_base/resource
 
 export class ResourceIdComponent extends ResourceIdBaseComponent {
 
-  constructor() {
-    super();
-  }
-
   protected onChange(value : string) : void {
     console.log(value);
+    //TODO implementácia
   }
 
 }

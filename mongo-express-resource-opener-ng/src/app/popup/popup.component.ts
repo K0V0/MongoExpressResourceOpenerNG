@@ -14,19 +14,20 @@ import { BaseComponent } from "../_base/components/_base/base.component";
     './popup.component.scss'
   ],
 })
-
 export class PopupComponent extends BaseComponent {
 
-  public readonly POPUP_URL : string = "index.html#/";
+  public readonly SETTINGS_URL : string = "index.html#/options";
 
+  // open settings button action
   public openSettings() : void {
     if (chrome.runtime.openOptionsPage) {
         chrome.runtime.openOptionsPage();
     } else {
-        window.open(chrome.runtime.getURL(this.POPUP_URL));
+        window.open(chrome.runtime.getURL(this.SETTINGS_URL));
     }
   }
 
+  // submit resource ID button action
   public submit() : void {
     //TODO
   }

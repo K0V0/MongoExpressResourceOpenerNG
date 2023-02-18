@@ -1,3 +1,6 @@
+// My imports
+
+// Angular imports
 import { NgModule } from "@angular/core";
 
 @NgModule({
@@ -11,4 +14,6 @@ import { NgModule } from "@angular/core";
     ]
 })
 
-export class BaseModule { }
+export class BaseModule { 
+
+}

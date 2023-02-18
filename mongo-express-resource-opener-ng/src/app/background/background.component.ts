@@ -13,5 +13,5 @@ import { BaseComponent } from "../_base/components/_base/base.component";
 })
 
 export class BackgroundComponent extends BaseComponent {
-
+  
 }

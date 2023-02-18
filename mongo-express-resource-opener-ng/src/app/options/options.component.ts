@@ -16,6 +16,10 @@ import { BaseComponent } from "../_base/components/_base/base.component";
 
 export class OptionsComponent extends BaseComponent {
 
+  protected propsToSyncWithStore() : string[] {
+    return [];
+  }
+
   public saveAndExit() : void {
     // save settings
       // TODO

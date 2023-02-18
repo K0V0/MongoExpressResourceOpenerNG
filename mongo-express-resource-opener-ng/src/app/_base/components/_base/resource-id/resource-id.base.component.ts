@@ -12,19 +12,12 @@ import { ResourceIdComponentIface } from "./resource-id.base.component.interface
 
 export abstract class ResourceIdBaseComponent extends BaseComponent implements ResourceIdComponentIface {
 
-  public static readonly DATA_ATTR : string = "resourceId";
-
   private static readonly FIRE_TRESHOLD_MILISECONDS : number = 250;
 
   //TODO type of JS timer ? 
   private timer : any;
 
-  public resourceId : string | null;
-
-  constructor() {
-    super();
-    this.resourceId = null;
-  }
+  public resourceId! : string;
 
   protected abstract onChange(value : string) : void;
 
