@@ -1,28 +1,40 @@
 // angular imports
 import { Component } from "@angular/core";
+import { OnInit } from '@angular/core';
+import { Setting } from "src/app/_base/decorators/setting.decorator";
 
 // custom imports
-import { GetSetting } from "src/app/_base/decorators/get-setting.decorator";
-import { Setting } from "src/app/_base/decorators/setting.decorator";
 import { BaseComponent } from "../base.component";
-
+import { EnviromentSelectBaseHelper } from './enviroment-select.base.helper';
 
 @Component({
   template: ''
 })
-export abstract class EnviromentSelectBaseComponent extends BaseComponent {
+
+export abstract class EnviromentSelectBaseComponent 
+  extends BaseComponent 
+  implements OnInit 
+{
+  private helper : EnviromentSelectBaseHelper;
 
   @Setting({ defaultValue: "enviroment_0" })
   public currentEnviromentId! : string;
 
-  @GetSetting({ 
-    defaultValue: [{ id: "enviroment_0", name: "Základné prostredie" }],
-    storeKey: "enviroments"
-    //TODO nastavenia musia prejst adapterom
-  })
+  @Setting({ defaultValue: [{ id: "enviroment_0", name: "Základné prostredie" }] })
   public currentEnviromentsOptions! : any;
+  
+  constructor() {
+    super();
+    this.helper = new EnviromentSelectBaseHelper(this);
+  }
 
+  ngOnInit(): void {
+    this.helper.getData();
+  }
+
+  //TODO do iface
   public change() : void {
 
-  } 
+  }
+
 }
