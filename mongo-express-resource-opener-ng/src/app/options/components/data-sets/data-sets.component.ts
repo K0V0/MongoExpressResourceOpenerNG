@@ -1,10 +1,10 @@
-import { DataSetsHelper } from './data-sets.helper';
 // Angular imports
 import { Component } from "@angular/core";
 
 // My imports
 import { BaseComponent } from "src/app/_base/components/_base/base.component";
 import { Setting } from 'src/app/_base/decorators/setting.decorator';
+
 
 @Component({
     selector: 'component-data-sets',
@@ -14,10 +14,7 @@ import { Setting } from 'src/app/_base/decorators/setting.decorator';
         './../../options.component.scss'
     ]
 })
-
 export class DataSetsComponent extends BaseComponent {
-
-    private helper : DataSetsHelper;
 
     // todo vytvorit typovy interface
     @Setting({ 
@@ -27,17 +24,8 @@ export class DataSetsComponent extends BaseComponent {
             datasets: [
                 "http://example.com/data"
             ]
-        }] 
+        }],
+        storeKey: 'enviroments' 
     })
     public enviroments! : any;
-
-    constructor() {
-        super();
-        this.helper = new DataSetsHelper(this);
-    }
-
-    // protected propsToSyncWithStore() : any {
-    //    return [{ enviroments: 'enviroments' }];
-    // }
-
 }
