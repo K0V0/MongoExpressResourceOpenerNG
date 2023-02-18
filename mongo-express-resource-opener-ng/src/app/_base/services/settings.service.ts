@@ -45,6 +45,10 @@ export class SettingsService {
         return this.storeService.load(storeKey);
     }
 
+    public updateSetting(storeKey : string, setting : any) : void {
+        this.storeService.save(storeKey, setting);
+    }
+
     private iterateOverSettings(callback : Function) : void {
         if (this.settings === undefined || this.settings.length == 0) {
             return;

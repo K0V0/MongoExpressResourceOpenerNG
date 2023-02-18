@@ -1,5 +1,5 @@
 // angular imports
-import { HashLocationStrategy, LocationStrategy, CommonModule } from '@angular/common';
+import { CommonModule, HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
@@ -9,6 +9,7 @@ import { OptionsModule } from './options/options.module';
 import { PopupModule } from './popup/popup.module';
 import { BaseModule } from './_base/base.module';
 import { RoutingModule } from './_base/modules/routing/routing.module';
+
 
 @NgModule({
   declarations: [
@@ -27,11 +28,13 @@ import { RoutingModule } from './_base/modules/routing/routing.module';
   ],
   providers: [
     // This is needed because the manifest loads the index.html file, followed by a #,
-    { provide: LocationStrategy, useClass: HashLocationStrategy }
+    { provide: LocationStrategy, useClass: HashLocationStrategy },
   ],
   bootstrap: [
     AppComponent
   ]
 })
 
-export class AppModule { }
+export class AppModule {
+  
+}

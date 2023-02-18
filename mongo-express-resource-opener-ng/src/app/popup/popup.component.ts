@@ -14,15 +14,11 @@ import { BaseComponent } from "../_base/components/_base/base.component";
     './popup.component.scss'
   ],
 })
-
 export class PopupComponent extends BaseComponent {
-
-  protected propsToSyncWithStore() {
-    return [];
-  }
 
   public readonly SETTINGS_URL : string = "index.html#/options";
 
+  // open settings button action
   public openSettings() : void {
     if (chrome.runtime.openOptionsPage) {
         chrome.runtime.openOptionsPage();
@@ -31,6 +27,7 @@ export class PopupComponent extends BaseComponent {
     }
   }
 
+  // submit resource ID button action
   public submit() : void {
     //TODO
   }

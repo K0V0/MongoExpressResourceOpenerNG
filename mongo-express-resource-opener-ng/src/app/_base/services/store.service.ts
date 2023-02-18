@@ -2,10 +2,10 @@
 
 import { Injectable } from "@angular/core";
 
-@Injectable({
-    providedIn: 'root'
-})
+@Injectable()
 export class StoreService {
+
+    constructor() {}
 
     public load(key : string) : Promise<any> {
         return new Promise((resolve, reject) => {

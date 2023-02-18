@@ -1,6 +1,7 @@
 // angular imports
 import { Component } from "@angular/core";
 import { OnInit } from '@angular/core';
+import { Setting } from "src/app/_base/decorators/setting.decorator";
 
 // custom imports
 import { BaseComponent } from "../base.component";
@@ -16,24 +17,24 @@ export abstract class EnviromentSelectBaseComponent
 {
   private helper : EnviromentSelectBaseHelper;
 
-  public currentEnviromentId : string = "enviroment_0";
-  //TODO interface type
-  public currentEnviromentsOptions : any =  [
-    { id: "enviroment_0", name: "Základné prostredie" }
-  ];
+  @Setting({ defaultValue: "enviroment_0" })
+  public currentEnviromentId! : string;
+
+  @Setting({ defaultValue: [{ id: "enviroment_0", name: "Základné prostredie" }] })
+  public currentEnviromentsOptions! : any;
   
   constructor() {
     super();
     this.helper = new EnviromentSelectBaseHelper(this);
   }
 
-  propsToSyncWithStore() : any {
-    return ["currentEnviromentId"];
+  ngOnInit(): void {
+    this.helper.getData();
   }
 
-  ngOnInit(): void {
-    super.ngOnInit();
-    this.helper.getData();
+  //TODO do iface
+  public change() : void {
+
   }
 
 }
