@@ -1,8 +1,9 @@
 // angular imports
 import { Component } from "@angular/core";
+import { GetSetting } from "src/app/_base/decorators/get-setting.decorator";
+import { SetSetting } from "src/app/_base/decorators/set-setting.decorator";
 
 // custom imports
-import { Setting } from "src/app/_base/decorators/setting.decorator";
 import { BaseComponent } from "../base.component";
 
 
@@ -12,6 +13,7 @@ import { BaseComponent } from "../base.component";
 })
 export abstract class AutoSubmitResourceIdBaseComponent extends BaseComponent {
 
-  @Setting()
+  @GetSetting()
+  // @SetSetting()
   public isEnabled! : boolean; 
 }
