@@ -2,7 +2,9 @@
 
 import { Injectable } from "@angular/core";
 
-@Injectable()
+@Injectable({
+    providedIn : 'root'
+})
 export class StoreService {
 
     constructor() {}
@@ -14,6 +16,11 @@ export class StoreService {
     }
 
     public save(key : string, content : any) : void {
+        console.log('settings save');
+        console.log(content);
+        if (content === undefined) {
+            return;
+        }
         chrome.storage.sync.set({ [key]: content });
     }
 

@@ -1,7 +1,25 @@
 <article *ngFor="let enviroment of enviroments; index as i">
-    <input type="hidden" id="dataSetsEnviromentId_0">
-    <input type="text" id="dataSetsEnviroment_0" placeholder="Názov prostredia..." class="disabled" tabindex="-1">
-    <button id="removeEnviroment_0" class="disabled" tabindex="-1">Odstrániť prostredie</button>
+
+    <input 
+        type="hidden" 
+        [value]="enviroment.id">
+
+    <input 
+        type="text" 
+        placeholder="Názov prostredia..." 
+        class="disabled" 
+        tabindex="-1" 
+        [value]="enviroment.name">
+
+    <button 
+        class="disabled" 
+        tabindex="-1">Odstrániť prostredie</button>
+
     <br>
-    <textarea id="dataSets_0" cols="80" rows="5" placeholder="Dátové zdroje..."></textarea>
+
+    <textarea 
+        id="dataSets_0" 
+        cols="80" rows="5" 
+        placeholder="Dátové zdroje...">{{ enviroment.datasets }}</textarea>
+
 </article>
