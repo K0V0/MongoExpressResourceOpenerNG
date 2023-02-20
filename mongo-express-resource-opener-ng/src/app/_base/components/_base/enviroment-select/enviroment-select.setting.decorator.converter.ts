@@ -1,32 +1,20 @@
-import { SettingDecoratorConverter } from "src/app/_base/decorators/setting.decorator";
+import { SettingDecoratorConverterBase } from "src/app/_base/decorators/setting.decorator";
+import { DataSetsStoreType } from "../data-sets/data-sets.interfaces";
+import { EnviromentSelectNgModelType, EnviromentSelectStoreType } from "./enviroment-select.interfaces";
 
-interface EnviromentSelectNgModelDataFormat {
-    id : string;
-    name : string;
-}
 
-export class EnviromentSelectSettingDecoratorConverter 
-    implements SettingDecoratorConverter<EnviromentSelectNgModelDataFormat[], any> 
+export  class EnviromentSelectSettingDecoratorConverter 
+        extends SettingDecoratorConverterBase<EnviromentSelectNgModelType, EnviromentSelectStoreType> 
 {
-    storeConversion(content : any[]) : EnviromentSelectNgModelDataFormat[] {
-        console.log("in enviroment select store converter");
-
-        console.log(content);
-        
-        let result : EnviromentSelectNgModelDataFormat[] = []; 
-
-        for (let i=0; i<content.length; i++) {
-            result[i]['id'] = content[i]['id'];
-            result[i]['name'] = content[i]['name'];
-        }
-
-        console.log(result);
-
-        return result;
+    protected mapForNgModel(content: DataSetsStoreType): EnviromentSelectNgModelType {
+        return content?.map((x) => ({
+            id: x.id,
+            name: x.name
+        }));
     }
 
-    modelConversion(content : EnviromentSelectNgModelDataFormat[]) : any[] | undefined {
-        console.log("in enviroment select model converter");
-        return undefined;
+    // no data trasfer from presentation layer to data layer
+    protected mapForStore(content: EnviromentSelectNgModelType): DataSetsStoreType {
+       return undefined;
     }
 }

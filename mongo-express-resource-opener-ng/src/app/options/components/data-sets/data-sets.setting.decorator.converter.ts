@@ -1,53 +1,24 @@
-import { SettingDecoratorConverter } from 'src/app/_base/decorators/setting.decorator';
+import { DataSetsNgModelType } from 'src/app/_base/components/_base/data-sets/data-sets.interfaces';
+import { SettingDecoratorConverterBase } from 'src/app/_base/decorators/setting.decorator';
+import { DataSetsStoreType } from './../../../_base/components/_base/data-sets/data-sets.interfaces';
 
-interface DataSetsNgModelDataFormat {
-    id : string;
-    name : string;
-    datasets : string;
-}
 
-interface DataSetsStoreDataFormat {
-    id : string;
-    name : string;
-    datasets : string[];
-}
-
-export class DataSetsSettingDecoratorConverter 
-    implements SettingDecoratorConverter<DataSetsNgModelDataFormat[], DataSetsStoreDataFormat[]> 
+export  class DataSetsSettingDecoratorConverter 
+        extends SettingDecoratorConverterBase<DataSetsNgModelType, DataSetsStoreType>
 {
-    modelConversion(content : DataSetsNgModelDataFormat[]) : DataSetsStoreDataFormat[] {
-        console.log("in model converter");
-        console.log(content);
-
-        let result : DataSetsStoreDataFormat[] = [];
-
-        for (let i=0; i<content.length; i++) {
-            result[i]['id'] = content[i]['id'];
-            result[i]['name'] = content[i]['name'];
-            result[i]['datasets'] = content[i]['datasets'].trim().split('\n').map((x) => x.trim());
-        }
-
-        console.log(result);
-
-        return result;
-
+    protected mapForNgModel(content: DataSetsStoreType) : DataSetsNgModelType {
+        return content?.map((x) => ({
+            id: x.id,
+            name: x.name,
+            datasets: x.datasets.join('\n')
+        }));
     }
 
-    storeConversion(content : DataSetsStoreDataFormat[]) : DataSetsNgModelDataFormat[] {
-        console.log("in store converter");
-
-        console.log(content);
-
-        let result : DataSetsNgModelDataFormat[] = [];
-
-        for (let i=0; i<content.length; i++) {
-            result[i]['id'] = content[i]['id'];
-            result[i]['name'] = content[i]['name'];
-            result[i]['datasets'] = content[i]['datasets'].join('\n');
-        }
-
-        console.log(result);
-
-        return result;
+    protected mapForStore(content: DataSetsNgModelType) : DataSetsStoreType {
+        return content?.map((x) => ({
+            id: x.id,
+            name: x.name,
+            datasets: x.datasets.trim().split('\n').map((x) => x.trim())
+        }));
     }
 }

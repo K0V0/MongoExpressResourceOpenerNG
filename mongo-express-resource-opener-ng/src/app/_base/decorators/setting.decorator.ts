@@ -25,11 +25,31 @@ interface SettingDecoratorParameters {
 export interface SettingDecoratorConverter<TYPE_IN_NG, TYPE_IN_STORE> {
     // in implementing class, return null if You do not want conversion in some direction
     // model -> settings store
-    modelConversion : (content : TYPE_IN_NG) => TYPE_IN_STORE; 
+    modelConversion : (content : TYPE_IN_NG) => TYPE_IN_STORE | undefined; 
     // settings store -> model
-    storeConversion : (content : TYPE_IN_STORE) => TYPE_IN_NG;
+    storeConversion : (content : TYPE_IN_STORE) => TYPE_IN_NG | undefined;
 }
 
+export  abstract class SettingDecoratorConverterBase<TYPE_IN_NG, TYPE_IN_STORE> 
+        implements SettingDecoratorConverter<TYPE_IN_NG, TYPE_IN_STORE> 
+{
+    protected abstract mapForNgModel(content : TYPE_IN_STORE) : TYPE_IN_NG;
+    protected abstract mapForStore(content : TYPE_IN_NG) : TYPE_IN_STORE;
+
+    public storeConversion(content : TYPE_IN_STORE) : TYPE_IN_NG | undefined {
+        if (content === undefined) {
+            return undefined;
+        }
+        return this.mapForNgModel(content);
+    }
+
+    public modelConversion(content: TYPE_IN_NG) : TYPE_IN_STORE | undefined {
+        if (content === undefined) {
+            return undefined;
+        }
+        return this.mapForStore(content);
+    }
+}
 
 /**
  *  Loads value from Chrome settings storage, or sets default value if provided 
@@ -73,20 +93,31 @@ class SettingDecorator {
             .load(settingKey)
             .then((resolve) => {
                 // undefined should be edge case
-                return resolve[settingKey];
+                console.log("setting resolved: ");
+                console.log(resolve);
+                //return resolve[settingKey];
+                return resolve;
             })
             .catch((error) => {
                 // communication error or not found in store should be that case
+                console.log("setting resolve error: ");
+                console.log(error);
                 return undefined;
             })
             .then((result) => {
 
+                console.log("setting resolve final stage: ");
+                console.log(result);
+
                 let fieldValue : any;
                 // value was found in settings store
                 if (result !== undefined) {
-                    console.log(propertyKey);
-                    console.log(params);
-                    if (SettingDecorator.hasParam(params, 'converter') && params['converter']['storeConversion'] !== undefined) {
+                    // console.log(propertyKey);
+                    // console.log(params);
+                    if (SettingDecorator.hasParam(params, 'converter') 
+                            && params['converter']['storeConversion'] !== undefined
+                            && params['converter']['storeConversion'](result) !== undefined) {
+                        console.log("final strage conversion");
                         fieldValue = params['converter']['storeConversion'](result);
                     } else {
                         fieldValue = result;
@@ -94,10 +125,12 @@ class SettingDecorator {
                 }
                 // value was not found in settings store but default one exists
                 else if (SettingDecorator.hasParam(params, 'defaultValue')) {
+                    console.log("Setting resolve final stage: using default vals");
                     fieldValue = params['defaultValue'];
                 }
                 // no value and no default one, try to set one for most common types
                 else {
+                    console.log("Setting resolve final stage: try setting common default");
                     fieldValue = SettingDecorator.getCommonDefaultValue(target, propertyKey);
                 }
 
@@ -106,25 +139,30 @@ class SettingDecorator {
                 let currentValue : any = Object(target)[propertyKey];
                 let uploadAllowed : boolean = !(SettingDecorator.hasParam(params, 'onlyDownload') && params['onlyDownload'] === true);
 
-                console.log("uploadAllowed");
-                console.log(uploadAllowed);
+                // console.log("uploadAllowed");
+                // console.log(uploadAllowed);
                 
                 Object.defineProperty(target, propertyKey, {
                     get: function() {
+                        console.log('define property: get');
                         return currentValue === undefined ? fieldValue : currentValue;
                     },
                     set: function(value) {
+                        console.log('define property: set');
                         if (currentValue != value) {
                             currentValue = value;
                             if (uploadAllowed) {
                                 let valueToUpload : any;
-                                if (SettingDecorator.hasParam(params, 'converter') && params['converter']['modelConversion'] !== undefined) {
+                                //TODO refucktor
+                                if (SettingDecorator.hasParam(params, 'converter') 
+                                        && params['converter']['modelConversion'] !== undefined
+                                        && params['converter']['modelConversion'](value) !== undefined) {
                                     valueToUpload = params['converter']['modelConversion'](value);
                                 } else {
                                     valueToUpload = value;
                                 }
-                                console.log("value to upload");
-                                console.log(valueToUpload);
+                                // console.log("value to upload");
+                                // console.log(valueToUpload);
                                 SettingDecorator.storeService.save(settingKey, valueToUpload);
                             }
                         }
@@ -132,11 +170,14 @@ class SettingDecorator {
                     configurable: true
                 })
 
-                console.log("value finally used: ");
-                console.log(propertyKey);
-                console.log(params);
-                console.log(Object(target)[propertyKey]); // mylo by sspustit tento mock
+                // console.log("value finally used: ");
+                // console.log(propertyKey);
+                // console.log(params);
+                // console.log(Object(target)[propertyKey]); // mylo by sspustit tento mock
 
+            })
+            .catch((error) => {
+                console.log(error);
             }); 
 
     }
