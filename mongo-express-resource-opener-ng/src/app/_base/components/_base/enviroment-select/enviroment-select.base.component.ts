@@ -1,9 +1,10 @@
 // angular imports
 import { Component } from "@angular/core";
+import { Setting } from "src/app/_base/decorators/setting/setting.decorator";
 
 // custom imports
-import { Setting } from "src/app/_base/decorators/setting.decorator";
 import { BaseComponent } from "../base.component";
+import { EnviromentSelectNgModelType } from "./enviroment-select.interfaces";
 import { EnviromentSelectSettingDecoratorConverter } from "./enviroment-select.setting.decorator.converter";
 
 
@@ -11,19 +12,20 @@ import { EnviromentSelectSettingDecoratorConverter } from "./enviroment-select.s
   template: ''
 })
 
-export abstract class EnviromentSelectBaseComponent extends BaseComponent 
+export abstract class EnviromentSelectBaseComponent extends BaseComponent
 {
 
   @Setting({ defaultValue: "enviroment_0" })
   public currentEnviromentId! : string;
 
-  @Setting({ 
+  @Setting({
     defaultValue: [{ id: "enviroment_0", name: "Základné prostredie" }],
     storeKey: 'enviroments',
-    converter: new EnviromentSelectSettingDecoratorConverter()
+    converter: new EnviromentSelectSettingDecoratorConverter(),
+    onlyDownload: true
   })
-  public currentEnviromentsOptions! : any;
-  
+  public currentEnviromentsOptions! : EnviromentSelectNgModelType;
+
   //TODO do iface
   public change() : void {
 

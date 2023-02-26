@@ -1,13 +1,20 @@
-import { SettingDecoratorConverter } from "src/app/_base/decorators/setting.decorator";
+import { SettingDecoratorConverterBase } from "src/app/_base/decorators/setting/setting.decorator.converter";
+import { DataSetsStoreType } from "../data-sets/data-sets.interfaces";
+import { EnviromentSelectNgModelType, EnviromentSelectStoreType } from "./enviroment-select.interfaces";
 
-export class EnviromentSelectSettingDecoratorConverter implements SettingDecoratorConverter {
 
-    storeConversion(content : any) {
-        console.log(content)
+export  class EnviromentSelectSettingDecoratorConverter
+        extends SettingDecoratorConverterBase<EnviromentSelectNgModelType, EnviromentSelectStoreType>
+{
+    protected mapForNgModel(content: DataSetsStoreType): EnviromentSelectNgModelType {
+        return content?.map((x) => ({
+            id: x.id,
+            name: x.name
+        }));
     }
 
-    modelConversion(content : any) {
-        return undefined;
+    // no data trasfer from presentation layer to data layer
+    protected mapForStore(content: EnviromentSelectNgModelType): DataSetsStoreType {
+       return undefined;
     }
-
 }

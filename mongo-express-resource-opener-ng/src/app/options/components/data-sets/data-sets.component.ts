@@ -1,9 +1,11 @@
+import { DataSetsSettingDecoratorConverter } from './data-sets.setting.decorator.converter';
 // Angular imports
 import { Component } from "@angular/core";
 
 // My imports
 import { BaseComponent } from "src/app/_base/components/_base/base.component";
-import { Setting } from 'src/app/_base/decorators/setting.decorator';
+import { Setting } from 'src/app/_base/decorators/setting/setting.decorator';
+import { DataSetsNgModelType } from 'src/app/_base/components/_base/data-sets/data-sets.interfaces';
 
 
 @Component({
@@ -16,16 +18,14 @@ import { Setting } from 'src/app/_base/decorators/setting.decorator';
 })
 export class DataSetsComponent extends BaseComponent {
 
-    // todo vytvorit typovy interface
-    @Setting({ 
+    @Setting({
         defaultValue: [{
             id: "enviroment_0",
             name: "Základné prostredie",
-            datasets: [
-                "http://example.com/data"
-            ]
+            datasets: "http://example.com/data"
         }],
-        storeKey: 'enviroments' 
+        storeKey: 'enviroments',
+        converter: new DataSetsSettingDecoratorConverter()
     })
-    public enviroments! : any;
+    public enviroments! : DataSetsNgModelType;
 }

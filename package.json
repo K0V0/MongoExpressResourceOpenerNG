@@ -1,6 +1,11 @@
 {
   "devDependencies": {
+    "@angular/cli": "^15.1.6",
     "@types/chrome": "^0.0.212",
     "reflect-metadata": "^0.1.13"
+  },
+  "dependencies": {
+    "typescript": "^4.9.5",
+    "typescript-optional": "^3.0.0-alpha.3"
   }
 }
