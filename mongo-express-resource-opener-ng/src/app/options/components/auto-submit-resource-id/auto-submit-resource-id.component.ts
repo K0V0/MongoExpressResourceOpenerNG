@@ -14,5 +14,7 @@ import { AutoSubmitResourceIdBaseComponent } from "src/app/_base/components/_bas
 })
 
 export class AutoSubmitResourceIdComponent extends AutoSubmitResourceIdBaseComponent {
+
+
   
 }

@@ -1,4 +1,4 @@
-import { SettingDecoratorConverterBase } from "src/app/_base/decorators/setting.decorator";
+import { SettingDecoratorConverterBase } from "src/app/_base/decorators/setting/setting.decorator.converter";
 import { DataSetsStoreType } from "../data-sets/data-sets.interfaces";
 import { EnviromentSelectNgModelType, EnviromentSelectStoreType } from "./enviroment-select.interfaces";
 

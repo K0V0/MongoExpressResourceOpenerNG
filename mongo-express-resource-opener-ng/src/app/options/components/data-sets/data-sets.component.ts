@@ -4,7 +4,8 @@ import { Component } from "@angular/core";
 
 // My imports
 import { BaseComponent } from "src/app/_base/components/_base/base.component";
-import { Setting } from 'src/app/_base/decorators/setting.decorator';
+import { Setting } from 'src/app/_base/decorators/setting/setting.decorator';
+import { DataSetsNgModelType } from 'src/app/_base/components/_base/data-sets/data-sets.interfaces';
 
 
 @Component({
@@ -27,5 +28,5 @@ export class DataSetsComponent extends BaseComponent {
         storeKey: 'enviroments',
         converter: new DataSetsSettingDecoratorConverter() 
     })
-    public enviroments! : any[];
+    public enviroments! : DataSetsNgModelType;
 }

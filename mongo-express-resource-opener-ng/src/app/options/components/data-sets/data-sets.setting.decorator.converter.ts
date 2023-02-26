@@ -1,5 +1,5 @@
 import { DataSetsNgModelType } from 'src/app/_base/components/_base/data-sets/data-sets.interfaces';
-import { SettingDecoratorConverterBase } from 'src/app/_base/decorators/setting.decorator';
+import { SettingDecoratorConverterBase } from 'src/app/_base/decorators/setting/setting.decorator.converter';
 import { DataSetsStoreType } from './../../../_base/components/_base/data-sets/data-sets.interfaces';
 
 

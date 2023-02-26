@@ -1,9 +1,10 @@
 // angular imports
 import { Component } from "@angular/core";
+import { Setting } from "src/app/_base/decorators/setting/setting.decorator";
 
 // custom imports
-import { Setting } from "src/app/_base/decorators/setting.decorator";
 import { BaseComponent } from "../base.component";
+import { EnviromentSelectNgModelType } from "./enviroment-select.interfaces";
 import { EnviromentSelectSettingDecoratorConverter } from "./enviroment-select.setting.decorator.converter";
 
 
@@ -23,7 +24,7 @@ export abstract class EnviromentSelectBaseComponent extends BaseComponent
     converter: new EnviromentSelectSettingDecoratorConverter(),
     onlyDownload: true
   })
-  public currentEnviromentsOptions! : any[];
+  public currentEnviromentsOptions! : EnviromentSelectNgModelType;
   
   //TODO do iface
   public change() : void {

@@ -1,0 +1,1 @@
+{"ast":null,"code":"/**\n *  This implementation should run on localhost development session or in webpage mode\n*/\nexport class StoreServiceImplDev {\n  load(key) {}\n  save(key, content) {}\n}","map":null,"metadata":{},"sourceType":"module","externalDependencies":[]}
