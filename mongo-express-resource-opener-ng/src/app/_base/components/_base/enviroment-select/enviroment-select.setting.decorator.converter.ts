@@ -3,8 +3,8 @@ import { DataSetsStoreType } from "../data-sets/data-sets.interfaces";
 import { EnviromentSelectNgModelType, EnviromentSelectStoreType } from "./enviroment-select.interfaces";
 
 
-export  class EnviromentSelectSettingDecoratorConverter 
-        extends SettingDecoratorConverterBase<EnviromentSelectNgModelType, EnviromentSelectStoreType> 
+export  class EnviromentSelectSettingDecoratorConverter
+        extends SettingDecoratorConverterBase<EnviromentSelectNgModelType, EnviromentSelectStoreType>
 {
     protected mapForNgModel(content: DataSetsStoreType): EnviromentSelectNgModelType {
         return content?.map((x) => ({

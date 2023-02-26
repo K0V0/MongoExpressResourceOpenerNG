@@ -18,15 +18,14 @@ import { DataSetsNgModelType } from 'src/app/_base/components/_base/data-sets/da
 })
 export class DataSetsComponent extends BaseComponent {
 
-    // todo vytvorit typovy interface
-    @Setting({ 
+    @Setting({
         defaultValue: [{
             id: "enviroment_0",
             name: "Základné prostredie",
             datasets: "http://example.com/data"
         }],
         storeKey: 'enviroments',
-        converter: new DataSetsSettingDecoratorConverter() 
+        converter: new DataSetsSettingDecoratorConverter()
     })
     public enviroments! : DataSetsNgModelType;
 }
