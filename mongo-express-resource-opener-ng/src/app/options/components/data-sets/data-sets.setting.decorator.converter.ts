@@ -18,7 +18,7 @@ export  class DataSetsSettingDecoratorConverter
         return content?.map((x) => ({
             id: x.id,
             name: x.name,
-            datasets: x.datasets.trim().split('\n').map((x) => x.trim())
+            datasets: x.datasets.trim().split('\n').map((x) => x.trim()).filter((x) => x.length > 0)
         }));
     }
 }

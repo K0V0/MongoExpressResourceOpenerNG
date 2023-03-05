@@ -15,19 +15,15 @@ import { EnviromentSelectSettingDecoratorConverter } from "./enviroment-select.s
 export abstract class EnviromentSelectBaseComponent extends BaseComponent
 {
 
-  @Setting({ defaultValue: "enviroment_0" })
+  @Setting({ defaultValue: 0 })
   public currentEnviromentId! : string;
 
   @Setting({
-    defaultValue: [{ id: "enviroment_0", name: "Základné prostredie" }],
+    defaultValue: [{ id: 0, name: "Základné prostredie" }],
     storeKey: 'enviroments',
     converter: new EnviromentSelectSettingDecoratorConverter(),
     onlyDownload: true
   })
-  public currentEnviromentsOptions! : EnviromentSelectNgModelType;
+  public currentEnviromentsOptions !: EnviromentSelectNgModelType;
 
-  //TODO do iface
-  public change() : void {
-
-  }
 }

@@ -13,7 +13,7 @@ export  abstract class SettingDecoratorConverterBase<TYPE_IN_NG, TYPE_IN_STORE>
     protected abstract mapForStore(content : TYPE_IN_NG) : TYPE_IN_STORE;
 
     public storeConversion(content : TYPE_IN_STORE) : TYPE_IN_NG | undefined {
-        if (content === undefined) {
+        if (content === undefined || content === null) {
             return undefined;
         }
         return this.mapForNgModel(content);

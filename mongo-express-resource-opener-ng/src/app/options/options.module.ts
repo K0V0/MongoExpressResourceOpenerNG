@@ -9,6 +9,7 @@ import { AutoSubmitResourceIdComponent } from './components/auto-submit-resource
 import { EnviromentSelectComponent } from './components/enviroment-select/enviroment-select.component';
 import { DataSetsComponent } from './components/data-sets/data-sets.component';
 import { OptionsComponent } from './options.component';
+import { CheckOnAllEnviromentsComponent } from "./components/check-on-all-enviroments/check-on-all-enviroments.component";
 
 @NgModule({
     imports: [
@@ -19,12 +20,14 @@ import { OptionsComponent } from './options.component';
         OptionsComponent,
         AutoSubmitResourceIdComponent,
         EnviromentSelectComponent,
+        CheckOnAllEnviromentsComponent,
         DataSetsComponent
     ],
     exports: [
         OptionsComponent,
         AutoSubmitResourceIdComponent,
         EnviromentSelectComponent,
+        CheckOnAllEnviromentsComponent,
         DataSetsComponent
     ],
     providers: [

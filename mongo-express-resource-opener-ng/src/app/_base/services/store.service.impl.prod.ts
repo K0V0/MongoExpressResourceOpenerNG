@@ -26,13 +26,16 @@ export class StoreServiceImplProd implements StoreService {
         });
     }
 
-    public save(key : string, content : any) : void {
-        if (key === undefined || content === undefined) {
-            return;
-        }
-        chrome.storage.sync.set({ [key]: content });
+    public save(key : string, content : any) : Promise<any> {
+        return new Promise((resolve, reject) => {
+            if (key === undefined || content === undefined) {
+                reject('No data passed to localStorage');
+            } else {
+                chrome.storage.sync
+                    .set({ [key]: content })
+                    .then((result : any) => { resolve(result); });
+            }
+        });
     }
-
-    //TODO do not storing value as undefined => deleted value instead
 
 }
