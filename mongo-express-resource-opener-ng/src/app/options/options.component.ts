@@ -2,13 +2,12 @@
 // be aware, this weird shit must be first to work in extension mode
 
 // angular imports
-import { Component } from "@angular/core";
-import { OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from "@angular/core";
 
 // my imports
 import { BaseComponent } from "../_base/components/_base/base.component";
-import { SettingDecorator } from './../_base/decorators/setting/setting.decorator';
-
+import { EventsUtil } from './../_base/utils/events.util';
+import { DataSetsComponent } from './components/data-sets/data-sets.component';
 
 @Component({
   selector: 'app-options',
@@ -18,6 +17,9 @@ import { SettingDecorator } from './../_base/decorators/setting/setting.decorato
   ],
 })
 export class OptionsComponent extends BaseComponent implements OnInit {
+
+  @ViewChild('enviroments')
+  private dataSetsComponent !: DataSetsComponent;
 
   public exitButtonState : boolean = false; // false == can save
 
@@ -32,11 +34,14 @@ export class OptionsComponent extends BaseComponent implements OnInit {
     });
   }
 
+  public addEnviroment() : void {
+    this.dataSetsComponent.addEnvitoment();
+  }
+
 
   private handleExitButtonBehaviourDuringSaveOperations() {
-    SettingDecorator.getSaveEventEmmiter().subscribe((state : boolean) => {
+    EventsUtil.getSettingsSavedEmiter().subscribe((state : boolean) => {
       this.exitButtonState = state;
     });
   }
-
 }

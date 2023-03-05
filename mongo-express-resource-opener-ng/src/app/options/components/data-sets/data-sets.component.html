@@ -14,9 +14,10 @@
 
     <button 
         type="button"
-        class="disabled" 
-        tabindex="-1"
+        [class]="isLastEnviroment() ? 'disabled' : ''" 
         [name]="'enviromentRemove_' + i"
+        [value]="enviroment.id"
+        (click)="removeEnviroment($event);"
         >Odstrániť prostredie</button>
 
     <br>

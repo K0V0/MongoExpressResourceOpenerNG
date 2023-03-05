@@ -16,10 +16,10 @@ export class StoreServiceImplDev implements StoreService {
     public SAVING_DELAY = 5000;
     public LOADING_DELAY = 1000;
 
-    public load(key : string) : Promise<any> {
+    public load(key : string | number) : Promise<any> {
         return new Promise((resolve, reject) => {
             if (key !== undefined && key !== null) {
-                this.loadingSimulation(key)
+                this.loadingSimulation(String(key))
                     .then((result : any) => { resolve(result); })
                     .catch(() => reject("No data found in localStorage"));
             } else {
@@ -28,10 +28,10 @@ export class StoreServiceImplDev implements StoreService {
         });
     }
 
-    public save(key: string, content : any) : Promise<any> {
+    public save(key: string | number, content : any) : Promise<any> {
         return new Promise((resolve, reject) => {
             if (content !== undefined) {
-                this.saveingSimulation(key, content)
+                this.saveingSimulation(String(key), content)
                     .then((result : any) => { resolve(result); })
             } else {
                 reject("No data passed into local storage")

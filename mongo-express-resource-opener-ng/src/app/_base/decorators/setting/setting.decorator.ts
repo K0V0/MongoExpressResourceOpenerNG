@@ -1,3 +1,4 @@
+import { EventsUtil } from './../../utils/events.util';
 import { EventEmitter } from '@angular/core';
 // Angular imports
 import 'reflect-metadata';
@@ -29,11 +30,8 @@ export class SettingDecorator {
 
     private static storeService : StoreService;
 
-    private static saveEventEmmiter : EventEmitter<boolean>;
-
     private constructor(storeService : StoreService) {
         SettingDecorator.storeService = storeService;
-        SettingDecorator.saveEventEmmiter = new EventEmitter<boolean>();
     }
 
     public static getInstance() : SettingDecorator {
@@ -44,10 +42,6 @@ export class SettingDecorator {
             )
         }
         return this.instance;
-    }
-
-    public static getSaveEventEmmiter() {
-        return SettingDecorator.saveEventEmmiter;
     }
 
     public loadValue(target : Object, propertyKey : string, params : SettingDecoratorParameters) : void {
@@ -92,10 +86,11 @@ export class SettingDecorator {
                         if (currentValue != value) {
                             currentValue = value;
                             if (uploadAllowed) {
-                                SettingDecorator.saveEventEmmiter.emit(true);
+                                EventsUtil.getSettingsSavedEmiter().emit(true);
                                 SettingDecorator.storeService
                                     .save(settingKey, SettingDecorator.getOrConvertedValue(value, params, 'modelConversion'))
-                                    .then((result : any) => { SettingDecorator.saveEventEmmiter.emit(false); });
+                                    .then((result : any) => { EventsUtil.getSettingsSavedEmiter().emit(false); });
+                                    //TODO scenarions for unsucessfull settings save
                             }
                         }
                     },

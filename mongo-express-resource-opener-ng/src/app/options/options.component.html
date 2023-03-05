@@ -28,9 +28,9 @@
         <h2>Dátové zostavy</h2>
         <i>Oddeľujte jednotlivé URL na dátové zostavy novým riadkom</i>
         
-        <component-data-sets></component-data-sets>
+        <component-data-sets #enviroments></component-data-sets>
 
-        <button class="disabled" tabindex="-1">Pridať ďalšie prostredie</button>
+        <button (click)="addEnviroment()">Pridať ďalšie prostredie</button>
 
     </section>
 

@@ -1,7 +1,7 @@
 import { DataSetsStoreType } from './../data-sets/data-sets.interfaces';
 
 export interface EnviromentSelectNgModelRecordFormat {
-    id : string;
+    id : number;
     name : string;
 }
 
