@@ -37,9 +37,7 @@ export class SettingDecorator {
     public static getInstance() : SettingDecorator {
         // must be solved that shitty way, because standart dependency injection comes too late
         if (this.instance === undefined) {
-            this.instance = new SettingDecorator(
-                EnviromentUtil.runningAt() === RuntimeEnviroment.WEB ? new StoreServiceImplDev() : new StoreServiceImplProd()
-            )
+            this.instance = new SettingDecorator(EnviromentUtil.getStoreService())
         }
         return this.instance;
     }

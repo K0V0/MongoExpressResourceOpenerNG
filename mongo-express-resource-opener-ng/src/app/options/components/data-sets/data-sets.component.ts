@@ -1,3 +1,4 @@
+import { SettingsNames } from './../../../_base/utils/enviroment.util';
 // Angular imports
 import { Component } from "@angular/core";
 import { isEqual } from 'lodash';
@@ -31,14 +32,14 @@ export class DataSetsComponent extends BaseComponent {
 
     @Setting({
         defaultValue: [ DataSetsComponent.DEFAULT_VALUE ],
-        storeKey: 'enviroments',
+        storeKey: SettingsNames.ENVIROMENTS,
         converter: new DataSetsSettingDecoratorConverter()
     })
     public enviroments !: DataSetsNgModelType;
 
     @Setting({
         defaultValue: [ DataSetsComponent.DEFAULT_VALUE ],
-        storeKey: 'enviroments',
+        storeKey: SettingsNames.ENVIROMENTS,
         converter: new DataSetsSettingDecoratorConverter(),
         onlyDownload: true, // will not work either for objects
     })

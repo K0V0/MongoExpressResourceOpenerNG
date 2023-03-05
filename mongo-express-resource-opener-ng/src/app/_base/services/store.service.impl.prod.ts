@@ -26,6 +26,11 @@ export class StoreServiceImplProd implements StoreService {
         });
     }
 
+    public loadWithKey(key : string) : Promise<any> {
+        //TODO impl
+        return this.load(key);
+    }
+
     public save(key : string, content : any) : Promise<any> {
         return new Promise((resolve, reject) => {
             if (key === undefined || content === undefined) {

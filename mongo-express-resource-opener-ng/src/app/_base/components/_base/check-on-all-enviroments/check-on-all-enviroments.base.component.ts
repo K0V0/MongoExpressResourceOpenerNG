@@ -1,3 +1,4 @@
+import { SettingsNames } from './../../../utils/enviroment.util';
 // angular imports
 import { Component } from "@angular/core";
 
@@ -12,6 +13,8 @@ import { Setting } from "src/app/_base/decorators/setting/setting.decorator";
 })
 export abstract class CheckOnAllEnviromentsBaseComponent extends BaseComponent {
 
-  @Setting()
+  @Setting({
+    storeKey: SettingsNames.CHECK_ON_ALL_ENVIROMENTS
+  })
   public checkOnAllEnviroments !: boolean; 
 }
