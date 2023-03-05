@@ -1,3 +1,4 @@
+import { EventEmitter } from '@angular/core';
 // Angular imports
 import 'reflect-metadata';
 
@@ -22,14 +23,17 @@ export const Setting = (params ?: SettingDecoratorParameters) => (target: BaseCo
 }
 
 
-class SettingDecorator {
+export class SettingDecorator {
 
     private static instance : SettingDecorator;
 
     private static storeService : StoreService;
 
+    private static saveEventEmmiter : EventEmitter<boolean>;
+
     private constructor(storeService : StoreService) {
         SettingDecorator.storeService = storeService;
+        SettingDecorator.saveEventEmmiter = new EventEmitter<boolean>();
     }
 
     public static getInstance() : SettingDecorator {
@@ -40,6 +44,10 @@ class SettingDecorator {
             )
         }
         return this.instance;
+    }
+
+    public static getSaveEventEmmiter() {
+        return SettingDecorator.saveEventEmmiter;
     }
 
     public loadValue(target : Object, propertyKey : string, params : SettingDecoratorParameters) : void {
@@ -61,7 +69,7 @@ class SettingDecorator {
             .then((result : any) => {
 
                 let fieldValue : any;
-                if (result !== undefined) {
+                if (result !== undefined && result !== null) {
                     // value was found in settings store
                     fieldValue  = SettingDecorator.getOrConvertedValue(result, params, 'storeConversion');
                 } else if (SettingDecorator.hasParam(params, 'defaultValue')) {
@@ -72,26 +80,30 @@ class SettingDecorator {
                     fieldValue = SettingDecorator.getCommonDefaultValue(target, propertyKey);
                 }
 
-                // "decorate" fields, replace field value by value from settings store 
-                // or send updated value to settings store
+                //FIXME this works only for primitive types, changing a property of object does not trigger set
+                // "decorate" fields, replace field value by value from settings store or send updated value to settings store
                 let currentValue : any = Object(target)[propertyKey];
                 let uploadAllowed : boolean = !(SettingDecorator.hasParam(params, 'onlyDownload') && params['onlyDownload'] === true);
                 Object.defineProperty(target, propertyKey, {
                     get: function() {
-                        return currentValue === undefined ? fieldValue : currentValue;
+                        return (currentValue === undefined || currentValue === null) ? fieldValue : currentValue;
                     },
                     set: function(value) {
                         if (currentValue != value) {
                             currentValue = value;
                             if (uploadAllowed) {
-                                SettingDecorator.storeService.save(
-                                    settingKey, 
-                                    SettingDecorator.getOrConvertedValue(value, params, 'modelConversion'));
+                                SettingDecorator.saveEventEmmiter.emit(true);
+                                SettingDecorator.storeService
+                                    .save(settingKey, SettingDecorator.getOrConvertedValue(value, params, 'modelConversion'))
+                                    .then((result : any) => { SettingDecorator.saveEventEmmiter.emit(false); });
                             }
                         }
                     },
                     configurable: true
                 })
+
+                // callback function
+                params['afterExec']?.apply(this, (currentValue === undefined || currentValue === null) ? fieldValue : currentValue);
             })
             .catch((error : any) => {
                 console.log(error);
@@ -118,7 +130,7 @@ class SettingDecorator {
         if (converter === undefined) {
             return valueToConvert;
         }
-        return converter(valueToConvert);
+        return converter.call(converters, valueToConvert);
     }
 
     private static hasParam(params: SettingDecoratorParameters, ...paramNames : string[]) : boolean {

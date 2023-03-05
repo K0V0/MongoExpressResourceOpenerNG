@@ -14,5 +14,8 @@ export interface SettingDecoratorParameters {
     onlyDownload ?: boolean;
     // provide converter fullfiling SettingDecoratorConverter interface specification if You need your data 
     // have converted/modified when coming from/to chrome store
-    converter ?: SettingDecoratorConverter<any, any>
+    converter ?: SettingDecoratorConverter<any, any>;
+    // callback after geting settings from server and resolving all premises
+    afterDownload ?: Function;
+    afterExec ?: Function;  
 }

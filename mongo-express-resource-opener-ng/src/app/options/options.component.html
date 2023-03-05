@@ -12,6 +12,10 @@
             <component-auto-submit-resource-id></component-auto-submit-resource-id>
         </article>
 
+        <article class="componentElementFix">
+            <component-check-on-all-enviroments></component-check-on-all-enviroments>
+        </article>
+
         <article>
             <label for="enviromentId">Aktívne prostredie:</label>
             <component-select-enviroment></component-select-enviroment>
@@ -31,7 +35,10 @@
     </section>
 
     <section class="right">
-        <button (click)="saveAndExit()">Uložiť a zavrieť</button>
+        <button (click)="saveAndExit()"
+                [class]="exitButtonState ? 'disabled' : ''">
+            {{ exitButtonState ? 'Ukladám...' : 'Zavrieť' }}
+        </button>
     </section>
 
 </main>

@@ -8,6 +8,8 @@ import { PopupComponent } from './popup.component';
 import { ResourceIdComponent } from './components/resource-id/resource-id.component';
 import { EnviromentSelectComponent } from './components/enviroment-select/enviroment-select.component';
 import { AutoSubmitResourceIdComponent } from './components/auto-submit-resource-id/auto-submit-resource-id.component';
+import { CheckOnAllEnviromentsComponent } from './components/check-on-all-enviroments/check-on-all-enviroments.component';
+
 
 @NgModule({
     imports: [
@@ -18,12 +20,14 @@ import { AutoSubmitResourceIdComponent } from './components/auto-submit-resource
         ResourceIdComponent,
         EnviromentSelectComponent,
         AutoSubmitResourceIdComponent,
+        CheckOnAllEnviromentsComponent,
         PopupComponent
     ],
     exports: [
         ResourceIdComponent,
         EnviromentSelectComponent,
         AutoSubmitResourceIdComponent,
+        CheckOnAllEnviromentsComponent,
         PopupComponent
     ],
     providers: [
