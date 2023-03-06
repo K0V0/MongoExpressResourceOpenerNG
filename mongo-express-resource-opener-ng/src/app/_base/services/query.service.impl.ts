@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { EnviromentUtil, SettingsNames } from 'src/app/_base/utils/enviroment.util';
+import { EnviromentUtil, SettingsNames, DefaultValues } from 'src/app/_base/utils/enviroment.util';
 import { DataSetsStoreRecordFormat } from './../components/_base/data-sets/data-sets.interfaces';
 import { KeyValuePair, QueryService, Settings } from './query.service';
 import { StoreService } from './store.service';
@@ -97,10 +97,17 @@ export class QueryServiceImpl implements QueryService {
     }
 
     private extractSetting(settings : Settings, settingType : SettingsNames) : any {
-        return settings
+        let settingFromStore = settings
             .flatMap((setting) => setting)
-            .filter((setting : KeyValuePair) => Object.keys(setting)[0] === settingType)
-            .find((x) => x)[settingType]
+            .filter((setting : KeyValuePair) => Object.keys(setting)[0] === undefined 
+                    ? DefaultValues[settingType]
+                    : settingType)
+            .find((x) => x)[settingType];
+        console.log(settingFromStore);
+        if (settingFromStore === undefined) {
+            return DefaultValues[settingType];
+        }
+        return settingFromStore;
     }
 
 }

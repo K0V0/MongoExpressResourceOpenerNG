@@ -27,8 +27,12 @@ export class StoreServiceImplProd implements StoreService {
     }
 
     public loadWithKey(key : string) : Promise<any> {
-        //TODO impl
-        return this.load(key);
+        var context = this;
+        return new Promise((resolve, reject) => {
+            this.load(key)
+                .then((result : any) => { resolve({ [key]: result }); })
+                .catch((reason) => reject(reason));
+        });
     }
 
     public save(key : string, content : any) : Promise<any> {

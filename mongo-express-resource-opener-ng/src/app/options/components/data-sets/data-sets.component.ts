@@ -1,14 +1,15 @@
-import { SettingsNames } from './../../../_base/utils/enviroment.util';
 // Angular imports
 import { Component } from "@angular/core";
+//FIXME replace this dependency
 import { isEqual } from 'lodash';
 
 // My imports
-import { BaseUtil } from './../../../_base/utils/base.util';
-import { EventsUtil } from './../../../_base/utils/events.util';
 import { BaseComponent } from "src/app/_base/components/_base/base.component";
-import { DataSetsNgModelRecordFormat, DataSetsNgModelType } from 'src/app/_base/components/_base/data-sets/data-sets.interfaces';
+import { DataSetsNgModelRecordFormat, DataSetsNgModelType, DataSetsStoreRecordFormat, DataSetsStoreType } from 'src/app/_base/components/_base/data-sets/data-sets.interfaces';
 import { Setting } from 'src/app/_base/decorators/setting/setting.decorator';
+import { BaseUtil } from './../../../_base/utils/base.util';
+import { EnviromentUtil, SettingsNames } from './../../../_base/utils/enviroment.util';
+import { EventsUtil } from './../../../_base/utils/events.util';
 import { DataSetsSettingDecoratorConverter } from './data-sets.setting.decorator.converter';
 
 
@@ -24,21 +25,18 @@ export class DataSetsComponent extends BaseComponent {
 
     private static readonly FIRE_TRESHOLD_MILISECONDS : number = 1000;
 
-    public static readonly DEFAULT_VALUE : DataSetsNgModelRecordFormat = {
-        id: 0,
-        name: "Základné prostredie",
-        datasets: "http://example.com/data"
-    };
+    public static readonly DEFAULT_VALUE : DataSetsStoreType
+        = EnviromentUtil.getDefaultSetting(SettingsNames.ENVIROMENTS);
 
     @Setting({
-        defaultValue: [ DataSetsComponent.DEFAULT_VALUE ],
+        defaultValue: DataSetsComponent.DEFAULT_VALUE,
         storeKey: SettingsNames.ENVIROMENTS,
         converter: new DataSetsSettingDecoratorConverter()
     })
     public enviroments !: DataSetsNgModelType;
 
     @Setting({
-        defaultValue: [ DataSetsComponent.DEFAULT_VALUE ],
+        defaultValue: DataSetsComponent.DEFAULT_VALUE,
         storeKey: SettingsNames.ENVIROMENTS,
         converter: new DataSetsSettingDecoratorConverter(),
         onlyDownload: true, // will not work either for objects
@@ -81,9 +79,12 @@ export class DataSetsComponent extends BaseComponent {
         let maxId : number | undefined = this.enviroments
             ?.map((env) => env.id)
             .reduce((prev, curr) => prev > curr ? prev : curr);
-        let nextEnv = BaseUtil.deepClone(DataSetsComponent.DEFAULT_VALUE);
-        nextEnv.id = (maxId === undefined) ? 0 : maxId + 1;
-        nextEnv.name += ("_" + nextEnv.id);
+        let nextEnv : DataSetsNgModelRecordFormat = BaseUtil.deepClone(DataSetsComponent.DEFAULT_VALUE)
+            ?.map((x) => ({
+                id: (maxId === undefined) ? 0 : maxId + 1,
+                name: x.name + ("_" + nextEnv.id),
+                datasets: x.datasets.join("\n")
+            })) as unknown as DataSetsNgModelRecordFormat;
         // appends to current enviromets settings section but do not save to store yet
         this.enviroments?.push(nextEnv);
         // update options list in select current enviroment dropdown

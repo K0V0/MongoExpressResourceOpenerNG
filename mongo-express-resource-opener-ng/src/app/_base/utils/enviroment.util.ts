@@ -26,6 +26,10 @@ export class EnviromentUtil {
         return this.storeServiceInstance;
     }
 
+    public static getDefaultSetting(setting : SettingsNames) : any {
+        return DefaultValues[setting];
+    }
+
 }
 
 
@@ -43,4 +47,20 @@ export enum SettingsNames {
     AVAILABLE_ENVIROMENTS = 'availableEnviromets',
     CURRENT_ENVIROMENT = 'currentEnviroment',
     ENVIROMENTS = "enviroments",
+}
+
+
+export const DefaultValues : any = {
+    "autoSubmitResourceId" : false,
+    "checkOnAllEnviroments" : false,
+    "availableEnviromets" : [{ 
+        id: 0, 
+        name: "Základné prostredie" 
+    }],
+    "currentEnviroment" : 0,
+    "enviroments" : [{
+        id: 0,
+        name: "Základné prostredie",
+        datasets: "http://example.com/data"
+    }]
 }

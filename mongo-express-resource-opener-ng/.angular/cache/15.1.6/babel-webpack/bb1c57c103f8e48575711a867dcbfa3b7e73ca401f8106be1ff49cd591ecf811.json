@@ -1,1 +1,0 @@
-{"ast":null,"code":"export class BaseUtil {\n  static deepClone(originalObject) {\n    return JSON.parse(JSON.stringify(originalObject));\n  }\n}","map":null,"metadata":{},"sourceType":"module","externalDependencies":[]}
