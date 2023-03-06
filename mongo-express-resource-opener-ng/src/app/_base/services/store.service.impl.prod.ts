@@ -26,6 +26,15 @@ export class StoreServiceImplProd implements StoreService {
         });
     }
 
+    public loadWithKey(key : string) : Promise<any> {
+        var context = this;
+        return new Promise((resolve, reject) => {
+            this.load(key)
+                .then((result : any) => { resolve({ [key]: result }); })
+                .catch((reason) => reject(reason));
+        });
+    }
+
     public save(key : string, content : any) : Promise<any> {
         return new Promise((resolve, reject) => {
             if (key === undefined || content === undefined) {
