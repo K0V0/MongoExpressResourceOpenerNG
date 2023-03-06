@@ -1,16 +1,14 @@
-import { EventsUtil } from './../../utils/events.util';
-import { EventEmitter } from '@angular/core';
 // Angular imports
 import 'reflect-metadata';
 
 // My imports
-import { StoreService } from '../../services/store.service';
-import { StoreServiceImplDev } from '../../services/store.service.impl.dev';
-import { StoreServiceImplProd } from '../../services/store.service.impl.prod';
-import { EnviromentUtil, RuntimeEnviroment } from '../../utils/enviroment.util';
-import { SettingDecoratorParameters } from './setting.decorator.parameters';
-import { SettingDecoratorConverter } from './setting.decorator.converter';
+import { BaseUtil } from './../../utils/base.util';
+import { EventsUtil } from './../../utils/events.util';
 import { BaseComponent } from 'src/app/_base/components/_base/base.component';
+import { StoreService } from '../../services/store.service';
+import { EnviromentUtil } from '../../utils/enviroment.util';
+import { SettingDecoratorConverter } from './setting.decorator.converter';
+import { SettingDecoratorParameters } from './setting.decorator.parameters';
 
 
 /**
@@ -66,7 +64,7 @@ export class SettingDecorator {
                     fieldValue  = SettingDecorator.getOrConvertedValue(result, params, 'storeConversion');
                 } else if (SettingDecorator.hasParam(params, 'defaultValue')) {
                     // value was not found in settings store but default one exists
-                    fieldValue = params['defaultValue'];
+                    fieldValue = BaseUtil.deepClone(params['defaultValue']);
                 } else {
                     // no value and no default one, try to set one for most common types
                     fieldValue = SettingDecorator.getCommonDefaultValue(target, propertyKey);

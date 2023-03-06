@@ -1,7 +1,5 @@
 // Angular imports
 import { Component } from "@angular/core";
-//FIXME replace this dependency
-import { isEqual } from 'lodash';
 
 // My imports
 import { BaseComponent } from "src/app/_base/components/_base/base.component";
@@ -64,7 +62,7 @@ export class DataSetsComponent extends BaseComponent {
 
 
     private autosaveEnvs() : void {
-        if (!isEqual(this.enviromentsBefore, this.enviroments)) {
+        if (!BaseUtil.deepCompare(this.enviroments, this.enviromentsBefore)) {
             let context = this;
             clearTimeout(this.timer);
             this.timer = setTimeout(function() {
@@ -76,17 +74,19 @@ export class DataSetsComponent extends BaseComponent {
     }
 
     private createNewEnvArticle() : void {
-        let maxId : number | undefined = this.enviroments
+        let newId : number = (this.enviroments
             ?.map((env) => env.id)
-            .reduce((prev, curr) => prev > curr ? prev : curr);
-        let nextEnv : DataSetsNgModelRecordFormat = BaseUtil.deepClone(DataSetsComponent.DEFAULT_VALUE)
+            .reduce((prev, curr) => prev > curr ? prev : curr) ?? 0) + 1;
+        let newEnv : DataSetsNgModelRecordFormat = BaseUtil
+            .deepClone(DataSetsComponent.DEFAULT_VALUE)
             ?.map((x) => ({
-                id: (maxId === undefined) ? 0 : maxId + 1,
-                name: x.name + ("_" + nextEnv.id),
-                datasets: x.datasets.join("\n")
-            })) as unknown as DataSetsNgModelRecordFormat;
+                id: newId,
+                name: x.name + "_" + newId ,
+                datasets: x.datasets
+            }))
+            .find((x) => x) as unknown as DataSetsNgModelRecordFormat;
         // appends to current enviromets settings section but do not save to store yet
-        this.enviroments?.push(nextEnv);
+        this.enviroments?.push(newEnv);
         // update options list in select current enviroment dropdown
         EventsUtil.notifySettingsEnviromentsChanged(this.enviroments);
     }
