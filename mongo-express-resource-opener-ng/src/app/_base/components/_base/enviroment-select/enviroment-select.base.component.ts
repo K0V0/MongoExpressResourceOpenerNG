@@ -16,14 +16,14 @@ export abstract class EnviromentSelectBaseComponent extends BaseComponent
 {
 
   @Setting({ 
-    defaultValue: DefaultValues.CURRENT_ENVIROMENT,
+    defaultValue: EnviromentUtil.getDefaultSetting(SettingsNames.CURRENT_ENVIROMENT),
     storeKey: SettingsNames.CURRENT_ENVIROMENT,
    })
-  public currentEnviromentId! : string;
+  public currentEnviromentId !: number;
 
   @Setting({
-    defaultValue: DefaultValues.AVAILABLE_ENVIROMENTS,
-    storeKey: EnviromentUtil.getDefaultSetting(SettingsNames.AVAILABLE_ENVIROMENTS),
+    defaultValue: EnviromentUtil.getDefaultSetting(SettingsNames.AVAILABLE_ENVIROMENTS),
+    storeKey: SettingsNames.ENVIROMENTS,
     converter: new EnviromentSelectSettingDecoratorConverter(),
     onlyDownload: true
   })

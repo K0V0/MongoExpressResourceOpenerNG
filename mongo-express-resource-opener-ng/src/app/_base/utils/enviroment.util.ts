@@ -3,6 +3,7 @@
 import { StoreService } from "../services/store.service";
 import { StoreServiceImplDev } from "../services/store.service.impl.dev";
 import { StoreServiceImplProd } from "../services/store.service.impl.prod";
+import { BaseUtil } from "./base.util";
 
 
 export class EnviromentUtil {
@@ -61,6 +62,10 @@ export const DefaultValues : any = {
     "enviroments" : [{
         id: 0,
         name: "Základné prostredie",
-        datasets: "http://example.com/data"
+        datasets: [
+            "http://example.com/data"
+        ]
     }]
 }
+
+BaseUtil.deepFreeze(DefaultValues);
