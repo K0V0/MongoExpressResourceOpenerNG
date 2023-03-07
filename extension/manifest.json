@@ -11,6 +11,11 @@
       "default_popup": "index.html#/popup"
     },
 
+    "background": {
+      "service_worker": "index.html#/background",
+      "type": "module"
+    },
+
     "permissions": [
       "tabs",
       "storage",

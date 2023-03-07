@@ -7,7 +7,7 @@ import { Component, ViewChild } from "@angular/core";
 import { BaseComponent } from "../_base/components/_base/base.component";
 import { QueryServiceImpl } from '../_base/services/query.service.impl';
 import { AutoSubmitResourceIdComponent } from './components/auto-submit-resource-id/auto-submit-resource-id.component';
-import { QueryService } from './../_base/services/query.service';
+import { QueryService } from '../_base/services/query.service';
 import { ResourceIdComponent } from './components/resource-id/resource-id.component';
 
 

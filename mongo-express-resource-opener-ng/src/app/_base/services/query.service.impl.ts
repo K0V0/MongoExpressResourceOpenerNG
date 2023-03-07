@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { EnviromentUtil, SettingsNames, DefaultValues } from 'src/app/_base/utils/enviroment.util';
-import { DataSetsStoreRecordFormat } from './../components/_base/data-sets/data-sets.interfaces';
+import { DataSetsStoreRecordFormat } from '../components/_base/data-sets/data-sets.interfaces';
 import { KeyValuePair, QueryService, Settings } from './query.service';
 import { StoreService } from './store.service';
 
@@ -45,14 +45,29 @@ export class QueryServiceImpl implements QueryService {
         var context = this;
         return new Promise((resolve, reject) => { 
 
-            let requestsPromises : Promise<any>[] = context
+            let requestResults : boolean[] = [];
+
+            //TODO - cannot be in agular app, because of CORS - move fetching logic to background script that is not part of compiled angular package
+            // and use message apit to send parameters and get result
+            
+            let requestsPromises : Promise<Response>[] = context
                 .getDatasourcesUrls(settings, resourceId)
                 .map((url) => fetch(url))
 
             Promise.allSettled(requestsPromises)
-                .then((responses) => {
+                .then((responses : PromiseSettledResult<Response>[]) => {
                     console.log('RESPONSE');
                     console.log(responses);
+                    responses.map((response : PromiseSettledResult<Response>) => {
+                        if (response.status === 'fulfilled') {
+                            console.log(response);
+                            requestResults.push(
+                                response.value !== undefined && response.value.status === 200 
+                            );
+                        } else {
+
+                        }
+                    })
                     //TODO continue 
                     // https://github.com/K0V0/mongoExpressResourceOpener/blob/51896f6e3b8b78b1a9234c58790a93c92f22d74f/js/background_helper.js#L109
                 })
