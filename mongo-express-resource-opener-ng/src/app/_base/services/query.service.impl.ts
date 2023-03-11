@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
-import { EnviromentUtil, SettingsNames, DefaultValues } from 'src/app/_base/utils/enviroment.util';
+import { DefaultValues, EnviromentUtil, SettingsNames } from 'src/app/_base/utils/enviroment.util';
 import { DataSetsStoreRecordFormat } from '../components/_base/data-sets/data-sets.interfaces';
+import { Message, MessageIds } from './../interface/interface';
 import { KeyValuePair, QueryService, Settings } from './query.service';
 import { StoreService } from './store.service';
 
@@ -18,111 +19,120 @@ export class QueryServiceImpl implements QueryService {
     }
 
 
-    public open(resourceId : string | undefined) : Promise<boolean> {
-        var context = this;
+    public open(resourceId : string | undefined) : Promise<void> {
         return new Promise((resolve, reject) => {
             if (resourceId === undefined || resourceId === null || resourceId.trim().length < 1) {
-                reject(false);
+                reject('resourceId missing');
             } else {
-                context.check(resourceId)
+                Promise.all([
+                    this.loadAllSettings()
+                ])
+                .then((settings : Settings) => {
+                    this.fireRequests(resourceId, settings)
+                        .catch((error) => reject(error));
+                })
+                .catch((error) => reject(error));
             }
         });
     }
 
+
     /** HELPING METHODS ------------------------------------------------------------------------------------------- */
 
-    private check(resourceId : string) : Promise<any> {
-        var context = this;
-        return Promise.all([
-            context.loadAllSettings()
-        ])
-        .then((settings : Settings) => {
-            context.fireRequests(resourceId, settings)
-        });
-    }
-
-    private fireRequests(resourceId : string, settings : Settings) : Promise<any> {
-        var context = this;
+    private fireRequests(resourceId : string, settings : Settings) : Promise<void> {
         return new Promise((resolve, reject) => { 
 
+            let datasourcesUrls : string[] = this.getDatasourcesUrls(settings);
             let requestResults : boolean[] = [];
 
-            //TODO - cannot be in agular app, because of CORS - move fetching logic to background script that is not part of compiled angular package
-            // and use message apit to send parameters and get result
-            
-            let requestsPromises : Promise<Response>[] = context
-                .getDatasourcesUrls(settings, resourceId)
-                .map((url) => fetch(url))
+            // firing request directly is not possible - CORS security
+            // request must be fired through background script service and communication with this service is only possible
+            // using messaging API 
+            let requestsPromises : Promise<Response>[] = datasourcesUrls
+                .map((url : string) => url + "\"" + resourceId + "\"")
+                .map((url : string) => this.sendMessageAsync({ id: MessageIds.HTTP_REQUEST, data: url }))
 
             Promise.allSettled(requestsPromises)
                 .then((responses : PromiseSettledResult<Response>[]) => {
-                    console.log('RESPONSE');
-                    console.log(responses);
                     responses.map((response : PromiseSettledResult<Response>) => {
-                        if (response.status === 'fulfilled') {
-                            console.log(response);
-                            requestResults.push(
-                                response.value !== undefined && response.value.status === 200 
-                            );
-                        } else {
 
+                        let responseUrl : string | null = 
+                            response.status === 'fulfilled'
+                            && response.value !== undefined 
+                            && response.value.status === 200 
+                            && !datasourcesUrls.includes(response.value.url)  // mongoDB behaviour fix if no document is found
+                                ? response.value.url 
+                                : null
+
+                        if (responseUrl !== null) {
+                            requestResults.push(true);
+                            this.openNewTab(responseUrl);
+                        } else {
+                            requestResults.push(false);
                         }
                     })
-                    //TODO continue 
-                    // https://github.com/K0V0/mongoExpressResourceOpener/blob/51896f6e3b8b78b1a9234c58790a93c92f22d74f/js/background_helper.js#L109
                 })
+                .catch((error) => {
+                    //TODO
+                    reject('Error during parsing request response(s)');
+                });
+
+            //FIXME robi problemy
+            // return info back to presentation layer
+            requestResults.every((value) => value === false) ? reject('Nothing found') : resolve();
         });
     }
 
-    private getDatasourcesUrls(settings : Settings, resourceId : string) : string[] {
+    private getDatasourcesUrls(settings : Settings) : string[] {
 
         let searchEverywhere : boolean = this.extractSetting(settings, SettingsNames.CHECK_ON_ALL_ENVIROMENTS);
         let currentEnviroment : number = this.extractSetting(settings, SettingsNames.CURRENT_ENVIROMENT);
 
         return this.extractSetting(settings, SettingsNames.ENVIROMENTS)
-                .filter((enviroment : DataSetsStoreRecordFormat) => searchEverywhere ? true : enviroment.id === currentEnviroment)
-                .flatMap((enviroment : DataSetsStoreRecordFormat) => enviroment.datasets)
-                .map((datasourceUrl : string) => (datasourceUrl.lastIndexOf("/") === datasourceUrl.length) ? datasourceUrl : datasourceUrl + "/")
-                .map((datasourceUrl :string) => datasourceUrl + "\"" + resourceId + "\"");
+            .filter((enviroment : DataSetsStoreRecordFormat) => searchEverywhere ? true : enviroment.id === currentEnviroment)
+            .flatMap((enviroment : DataSetsStoreRecordFormat) => enviroment.datasets)
+            .map((datasourceUrl : string) => (datasourceUrl.lastIndexOf("/") === datasourceUrl.length) ? datasourceUrl : datasourceUrl + "/")
     }
 
     private loadAllSettings() : Promise<Settings> {
         return new Promise((resolve, reject) => {
 
-            let settingsPromises : Promise<KeyValuePair>[] = [];
-            Object.values(SettingsNames).forEach((settingName : string) => {
-                settingsPromises.push(this.storeService.loadWithKey(settingName));
-            })
+            let settingsPromises : Promise<KeyValuePair>[] = Object.values(SettingsNames)
+                .map((settingName : string) => this.storeService.loadWithKey(settingName));
 
             Promise.allSettled(settingsPromises)
-                .then((results) => {
-                    let settings : Settings = []; 
-                    results.forEach((result) => {
-                        //TODO really need to be that shitty ? ask stackoverflow why cannot have prettier one liner
-                        if (result.status === 'fulfilled') {
-                            settings.push(result.value);
-                        }
-                    });
-                    resolve(settings);
-                })
+                .then((results) => resolve(results
+                    .map((result : KeyValuePair) => result.status === 'fulfilled' ? result.value : null)
+                    .filter((result : KeyValuePair | null) => result !== null)))
                 .catch(() => {
                     reject('Error during loading settings from store - promises settling');
-                })
+                });
         });
     }
 
     private extractSetting(settings : Settings, settingType : SettingsNames) : any {
-        let settingFromStore = settings
+        return settings
             .flatMap((setting) => setting)
-            .filter((setting : KeyValuePair) => Object.keys(setting)[0] === undefined 
+            .map((setting : KeyValuePair) => Object.keys(setting)[0] === undefined 
                     ? DefaultValues[settingType]
-                    : settingType)
-            .find((x) => x)[settingType];
-        console.log(settingFromStore);
-        if (settingFromStore === undefined) {
-            return DefaultValues[settingType];
-        }
-        return settingFromStore;
+                    : setting[settingType])
+            .filter((setting) => setting !== undefined)
+            .find((x) => x) 
+            ?? DefaultValues[settingType];
+    }
+
+    private sendMessageAsync(message : Message, options = {}) : Promise<Response> {
+        return new Promise((resolve, reject) => {
+            chrome.runtime.sendMessage(message, options, (response : Response) => {
+                chrome.runtime.lastError 
+                    ? reject(chrome.runtime.lastError)
+                    : resolve(response);
+            });
+        });
+    }
+
+    private openNewTab(url : string) {
+        chrome.tabs.create({ url: url });
     }
 
 }

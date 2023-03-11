@@ -3,7 +3,7 @@ import { Setting } from 'src/app/_base/decorators/setting/setting.decorator';
 
 export interface QueryService {
 
-    open : (key : string) => Promise<boolean>;
+    open : (key : string) => Promise<void>;
 }
 
 export interface KeyValuePair {

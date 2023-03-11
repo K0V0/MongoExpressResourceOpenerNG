@@ -12,9 +12,13 @@
     },
 
     "background": {
-      "service_worker": "index.html#/background",
-      "type": "module"
+      "service_worker": "assets/src/background.js"
     },
+
+    "content_scripts": [{
+      "matches": ["<all_urls>"],
+      "js": ["assets/src/content.js"]
+    }],
 
     "permissions": [
       "tabs",

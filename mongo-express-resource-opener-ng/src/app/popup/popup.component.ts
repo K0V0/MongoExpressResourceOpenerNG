@@ -68,10 +68,10 @@ export class PopupComponent extends BaseComponent {
       resourceId !== undefined && resourceId.trim().length > 0
         ? resourceId
         : this.resourceIdComponent.resourceId
-    );
-    //TODO nezabudnut zobrazenie info pre usera ak sa nic nenaslo
-    // .then()
-    // .catch()
+    ).catch((error) => {
+      console.log(error);
+      //TODO nezabudnut zobrazenie info pre usera ak sa nic nenaslo
+    });
   }
 
 }
