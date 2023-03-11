@@ -1,3 +1,4 @@
+import { ErrorInlineComponent } from './../_base/components/shared/error-inline/error-inline.shared.component';
 ///<reference types="chrome"/>
 
 // angular imports
@@ -29,6 +30,9 @@ export class PopupComponent extends BaseComponent {
   @ViewChild('autoSubmitResourceId')
   private autoSubmitResourceComponent !: AutoSubmitResourceIdComponent;
 
+  @ViewChild('resourceError')
+  private resourceError !: ErrorInlineComponent;
+
   private queryService : QueryService;
   
   constructor(queryServiceImpl : QueryServiceImpl) {
@@ -49,9 +53,10 @@ export class PopupComponent extends BaseComponent {
 
   // paste anywhere into popup window action
   public paste(event : any) : void {
-    if (this.autoSubmitResourceComponent.isEnabled) {
-      this.findResource(event.target.value);
+    if (!this.autoSubmitResourceComponent.isEnabled) {
+      return;
     }
+    this.findResource(event.clipboardData.getData("text/plain"));
   }
 
 
@@ -64,14 +69,25 @@ export class PopupComponent extends BaseComponent {
   }
 
   private findResource(resourceId ?: string | undefined) : void {
+    this.cancelResourceIdError();
+    console.log("findResource()");
+    console.log(resourceId); 
     this.queryService.open(
       resourceId !== undefined && resourceId.trim().length > 0
         ? resourceId
         : this.resourceIdComponent.resourceId
     ).catch((error) => {
-      console.log(error);
-      //TODO nezabudnut zobrazenie info pre usera ak sa nic nenaslo
+      this.showResourceIdError(error)
     });
+  }
+
+  private showResourceIdError(message : string) : void {
+    this.resourceError.message = message;
+  }
+
+  //TODO cancel on typing
+  private cancelResourceIdError() : void {
+    this.resourceError.message = "";
   }
 
 }

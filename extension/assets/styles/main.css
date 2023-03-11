@@ -39,6 +39,14 @@ i {
     font-size: 0.75em;
 }
 
+span.error {
+    border-radius: 0.25em;
+    background-color: #aa0000;
+    padding: 0.125em 0.25em;
+    color:white;
+    font-style: italic;
+}
+
 ::placeholder {
     color: #888;
 }
@@ -158,6 +166,10 @@ select > option {
     cursor: not-allowed !important;
     background-color: #bbb !important;
     color: #888 !important;
+}
+
+.hidden {
+    display: none;
 }
 
 /* fixing flexbox layout - apply class on parent element of <component-xxx> */

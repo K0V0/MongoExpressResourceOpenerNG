@@ -22,7 +22,7 @@ export class QueryServiceImpl implements QueryService {
     public open(resourceId : string | undefined) : Promise<void> {
         return new Promise((resolve, reject) => {
             if (resourceId === undefined || resourceId === null || resourceId.trim().length < 1) {
-                reject('resourceId missing');
+                reject('chýbajúce/nezadané resourceId');
             } else {
                 Promise.all([
                     this.loadAllSettings()
@@ -60,7 +60,7 @@ export class QueryServiceImpl implements QueryService {
                             response.status === 'fulfilled'
                             && response.value !== undefined 
                             && response.value.status === 200 
-                            && !datasourcesUrls.includes(response.value.url)  // mongoDB behaviour fix if no document is found
+                            && !datasourcesUrls.includes(this.addLastForwardSlash(response.value.url))  // mongoDB behaviour fix if no document is found
                                 ? response.value.url 
                                 : null
 
@@ -73,13 +73,14 @@ export class QueryServiceImpl implements QueryService {
                     })
                 })
                 .catch((error) => {
-                    //TODO
-                    reject('Error during parsing request response(s)');
+                    console.log(error);
+                    reject('Chyba počas spracovávania odpovedí');
+                })
+                .finally(() => {
+                    requestResults.every((value) => value === false) 
+                        ? reject('Nenájdený žiaden resource vyhovujúci resourceId') 
+                        : resolve();
                 });
-
-            //FIXME robi problemy
-            // return info back to presentation layer
-            requestResults.every((value) => value === false) ? reject('Nothing found') : resolve();
         });
     }
 
@@ -105,7 +106,7 @@ export class QueryServiceImpl implements QueryService {
                     .map((result : KeyValuePair) => result.status === 'fulfilled' ? result.value : null)
                     .filter((result : KeyValuePair | null) => result !== null)))
                 .catch(() => {
-                    reject('Error during loading settings from store - promises settling');
+                    reject('Chyba pri načítaní nastavení z Chrome store');
                 });
         });
     }
@@ -133,6 +134,10 @@ export class QueryServiceImpl implements QueryService {
 
     private openNewTab(url : string) {
         chrome.tabs.create({ url: url });
+    }
+
+    private addLastForwardSlash(url : string) : string {
+        return (url.lastIndexOf('/') == url.length - 1) ? url : url + '/';
     }
 
 }
