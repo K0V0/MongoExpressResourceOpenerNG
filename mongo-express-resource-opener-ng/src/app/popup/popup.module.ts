@@ -1,3 +1,4 @@
+import { ErrorInlineComponent } from './../_base/components/shared/error-inline/error-inline.shared.component';
 // Angular imports
 import { NgModule } from "@angular/core";
 import { FormsModule } from '@angular/forms';
@@ -14,9 +15,10 @@ import { CheckOnAllEnviromentsComponent } from './components/check-on-all-enviro
 @NgModule({
     imports: [
         CommonModule,
-        FormsModule
+        FormsModule,
     ],
     declarations: [
+        ErrorInlineComponent,
         ResourceIdComponent,
         EnviromentSelectComponent,
         AutoSubmitResourceIdComponent,

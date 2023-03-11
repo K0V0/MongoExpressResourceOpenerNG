@@ -11,6 +11,15 @@
       "default_popup": "index.html#/popup"
     },
 
+    "background": {
+      "service_worker": "assets/src/background.js"
+    },
+
+    "content_scripts": [{
+      "matches": ["<all_urls>"],
+      "js": ["assets/src/content.js"]
+    }],
+
     "permissions": [
       "tabs",
       "storage",
