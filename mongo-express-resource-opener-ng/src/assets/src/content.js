@@ -67,7 +67,8 @@ Content.prototype = {
     },
 
     sendToBackgorundScript(text) {
-        chrome.storage.sync.set({ resourceId: text.replace(/[^0-9A-Fa-f]/g, "") });
+        var resourceId = text.replace(/[^0-9A-Fa-f]/g, "");
+        chrome.storage.sync.set({ resourceId: resourceId });
     }
 };
 

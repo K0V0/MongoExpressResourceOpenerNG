@@ -12,7 +12,6 @@ import { ResourceIdSettingDecoratorConverter } from "./resource-id.setting.decor
 @Component({
   template: ''
 })
-
 export abstract class ResourceIdBaseComponent extends BaseComponent implements ResourceIdComponentIface {
 
   private static readonly FIRE_TRESHOLD_MILISECONDS : number = 250;

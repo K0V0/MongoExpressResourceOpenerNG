@@ -15,7 +15,6 @@ import { DataSetsSettingDecoratorConverter } from './data-sets.setting.decorator
     selector: 'component-data-sets',
     templateUrl: './data-sets.component.html',
     styleUrls: [
-        './data-sets.component.scss',
         './../../options.component.scss'
     ]
 })

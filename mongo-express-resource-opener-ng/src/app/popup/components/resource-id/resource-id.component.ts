@@ -6,10 +6,7 @@ import { ResourceIdBaseComponent } from "src/app/_base/components/_base/resource
 
 @Component({
   selector: 'component-resource-id',
-  templateUrl: './../../../_base/components/_base/resource-id/resource-id.base.component.html',
-  styleUrls: [
-     './../../../_base/components/_base/resource-id/resource-id.base.component.scss'
-  ]
+  templateUrl: './../../../_base/components/_base/resource-id/resource-id.base.component.html'
 })
 
 export class ResourceIdComponent extends ResourceIdBaseComponent {

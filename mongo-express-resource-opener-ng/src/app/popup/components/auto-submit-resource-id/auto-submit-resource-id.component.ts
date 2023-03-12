@@ -6,10 +6,7 @@ import { AutoSubmitResourceIdBaseComponent } from "src/app/_base/components/_bas
 
 @Component({
   selector: 'component-auto-submit-resource-id',
-  templateUrl: './../../../_base/components/_base/auto-submit-resource-id/auto-submit-resource-id.base.component.html',
-  styleUrls: [
-     './../../../_base/components/_base/auto-submit-resource-id/auto-submit-resource-id.base.component.scss'
-  ]
+  templateUrl: './../../../_base/components/_base/auto-submit-resource-id/auto-submit-resource-id.base.component.html'
 })
 
 export class AutoSubmitResourceIdComponent extends AutoSubmitResourceIdBaseComponent {
