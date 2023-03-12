@@ -6,10 +6,7 @@ import { EnviromentSelectBaseComponent } from "src/app/_base/components/_base/en
 
 @Component({
   selector: 'component-select-enviroment',
-  templateUrl: './../../../_base/components/_base/enviroment-select/enviroment-select.base.component.html',
-  styleUrls: [
-     './../../../_base/components/_base//enviroment-select/enviroment-select.base.component.scss'
-  ]
+  templateUrl: './../../../_base/components/_base/enviroment-select/enviroment-select.base.component.html'
 })
 
 export class EnviromentSelectComponent extends EnviromentSelectBaseComponent {
