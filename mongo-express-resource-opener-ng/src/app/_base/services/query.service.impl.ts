@@ -25,6 +25,8 @@ export class QueryServiceImpl implements QueryService {
                 reject('chýbajúce/nezadané resourceId');
             } else {
                 Promise.all([
+                    //TODO do not load settings if did not change, develop mechanism to save requests to chrome sync store
+                    // - maybe during any setting update calculate hash for settings and use that
                     this.loadAllSettings()
                 ])
                 .then((settings : Settings) => {
