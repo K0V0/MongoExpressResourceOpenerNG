@@ -24,7 +24,8 @@ Content.prototype = {
             var classList = event.target.classList;
             if (classList !== undefined && classList !== null 
                 && classList.contains('cm-string') && classList.contains('reference')) {
-                    context.clickAction(event.target.innerHTML);
+                    //context.copyToClipboard(event.target.innerHTML);
+                    context.sendToBackgorundScript(event.target.innerHTML);
             }
         });
     },
@@ -56,10 +57,17 @@ Content.prototype = {
         link.classList.add('reference');
     },
 
-    clickAction: function(resourceId) {
-        //TODO implement
-        console.log('click');
-        console.log(resourceId);
+    copyToClipboard: function(text) {
+        const tempElement = document.createElement("textarea");
+        tempElement.value = text;
+        document.body.appendChild(tempElement);
+        tempElement.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempElement);
+    },
+
+    sendToBackgorundScript(text) {
+        chrome.storage.sync.set({ resourceId: text.replace(/[^0-9A-Fa-f]/g, "") });
     }
 };
 

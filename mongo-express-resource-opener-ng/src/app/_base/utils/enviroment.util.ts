@@ -47,7 +47,8 @@ export enum SettingsNames {
     CHECK_ON_ALL_ENVIROMENTS = 'checkOnAllEnviroments',
     AVAILABLE_ENVIROMENTS = 'availableEnviromets',
     CURRENT_ENVIROMENT = 'currentEnviroment',
-    ENVIROMENTS = "enviroments",
+    ENVIROMENTS = 'enviroments',
+    RESOURCE_ID = 'resourceId'
 }
 
 
@@ -65,7 +66,8 @@ export const DefaultValues : any = {
         datasets: [
             "http://example.com/data"
         ]
-    }]
+    }],
+    "resourceId" : ""
 }
 
 BaseUtil.deepFreeze(DefaultValues);
