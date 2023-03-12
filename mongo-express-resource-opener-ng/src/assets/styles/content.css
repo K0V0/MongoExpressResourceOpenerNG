@@ -1,0 +1,7 @@
+.cm-string.reference {
+    cursor: pointer;
+}
+
+.cm-string.reference:hover {
+    text-decoration: underline;
+}
