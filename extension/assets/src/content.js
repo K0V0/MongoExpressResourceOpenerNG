@@ -1,5 +1,11 @@
 
-function Content() {}
+function Content() {
+    this.objectId = 'ObjectId';
+    this.otherReferenceAttrs = [
+        'resource', 'resourceId', 'formId', 'submissionId', 'createFormId',
+        'updateFormId', 'rowDetailFormId', 'defaultViewId'
+    ];
+}
 
 Content.prototype = {
     constructor: Content,
@@ -13,8 +19,9 @@ Content.prototype = {
     },
 
     getElements: function() {
+        var context = this;
         Array.from(document.querySelectorAll('span[role="presentation"]'))
-            .filter(this.isRefElement)
+            .filter(function(elem) { return context.isRefElement(elem, context); })
             .forEach(this.makeLink);
     },
 
@@ -24,8 +31,7 @@ Content.prototype = {
             var classList = event.target.classList;
             if (classList !== undefined && classList !== null 
                 && classList.contains('cm-string') && classList.contains('reference')) {
-                    //context.copyToClipboard(event.target.innerHTML);
-                    context.sendToBackgorundScript(event.target.innerHTML);
+                    context.sendToSyncStorage(event.target.innerHTML);
             }
         });
     },
@@ -38,11 +44,35 @@ Content.prototype = {
             && titleContainer[0].innerHTML === 'Mongo Express'
     },
 
-    isRefElement: function(element) {
-        var propertyChild = element.querySelector('span.cm-variable');
-        return propertyChild !== undefined && propertyChild !== null
-            && propertyChild.innerHTML !== undefined && propertyChild.innerHTML !== null
-            && propertyChild.innerHTML === 'ObjectId';
+    isRefElement: function(element, context) {
+
+        var objectIdElem = element.querySelector('span.cm-variable');
+        var isObjectId = objectIdElem !== undefined && objectIdElem !== null
+            && objectIdElem.innerHTML !== undefined && objectIdElem.innerHTML !== null
+            && objectIdElem.innerHTML === context.objectId;
+
+        if (isObjectId) {
+            return true;
+        }
+
+        var otherReferenceElem = element.querySelector('span.cm-property');
+        var isOtherReference = false;
+        if (otherReferenceElem !== undefined && otherReferenceElem !== null 
+            && otherReferenceElem.innerHTML !== undefined && otherReferenceElem.innerHTML !== null) {
+                if (!context.otherReferenceAttrs.includes(otherReferenceElem.innerHTML)) {
+                    return false;
+                }
+                var otherReferenceElemContent = element.querySelector('span.cm-string');
+                return otherReferenceElemContent !== undefined && otherReferenceElemContent !== null 
+                    && otherReferenceElemContent.innerHTML !== undefined && otherReferenceElemContent !== null 
+                    && /'(?:[0-9a-fA-F])+'/g.test(otherReferenceElemContent.innerHTML);
+        }
+
+        return false;
+    },
+
+    isReferenceNotInjectedReferencedContent: function(referenceContent) {
+
     },
 
     makeLink: function(element) {
@@ -57,16 +87,16 @@ Content.prototype = {
         link.classList.add('reference');
     },
 
-    copyToClipboard: function(text) {
-        const tempElement = document.createElement("textarea");
-        tempElement.value = text;
-        document.body.appendChild(tempElement);
-        tempElement.select();
-        document.execCommand("copy");
-        document.body.removeChild(tempElement);
-    },
+    // copyToClipboard: function(text) {
+    //     const tempElement = document.createElement("textarea");
+    //     tempElement.value = text;
+    //     document.body.appendChild(tempElement);
+    //     tempElement.select();
+    //     document.execCommand("copy");
+    //     document.body.removeChild(tempElement);
+    // },
 
-    sendToBackgorundScript(text) {
+    sendToSyncStorage(text) {
         var resourceId = text.replace(/[^0-9A-Fa-f]/g, "");
         chrome.storage.sync.set({ resourceId: resourceId });
     }
