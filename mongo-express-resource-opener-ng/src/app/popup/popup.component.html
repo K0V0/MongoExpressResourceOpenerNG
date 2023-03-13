@@ -15,14 +15,10 @@
     </section>
     
     <section class="componentElementFix">
-        <component-auto-submit-resource-id #autoSubmitResourceId></component-auto-submit-resource-id>
-    </section>
-
-    <section class="componentElementFix">
-        <component-check-on-all-enviroments></component-check-on-all-enviroments>
+        <component-check-on-all-enviroments #checkOnAllEnviroments></component-check-on-all-enviroments>
     </section>
     
-    <section class="componentElementFix">
+    <section [class]="'componentElementFix ' + (isEnviromentSeletEnabled ? '' : 'disabled')">
         <label for="enviromentId">Prostredie:</label>
         <component-select-enviroment></component-select-enviroment>
     </section>

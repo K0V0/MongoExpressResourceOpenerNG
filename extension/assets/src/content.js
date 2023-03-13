@@ -1,5 +1,6 @@
 
 function Content() {
+    //TODO rethink how in future this can be added using settings (after moving all services into background scripts)
     this.objectId = 'ObjectId';
     this.otherReferenceAttrs = [
         'resource', 'resourceId', 'formId', 'submissionId', 'createFormId',
@@ -56,7 +57,6 @@ Content.prototype = {
         }
 
         var otherReferenceElem = element.querySelector('span.cm-property');
-        var isOtherReference = false;
         if (otherReferenceElem !== undefined && otherReferenceElem !== null 
             && otherReferenceElem.innerHTML !== undefined && otherReferenceElem.innerHTML !== null) {
                 if (!context.otherReferenceAttrs.includes(otherReferenceElem.innerHTML)) {

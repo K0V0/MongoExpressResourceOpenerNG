@@ -1,3 +1,4 @@
+import { EventsUtil } from 'src/app/_base/utils/events.util';
 // angular imports
 import { Component } from "@angular/core";
 
@@ -12,8 +13,7 @@ import { ResourceIdBaseComponent } from "src/app/_base/components/_base/resource
 export class ResourceIdComponent extends ResourceIdBaseComponent {
 
   protected onChange(value : string) : void {
-    console.log(value);
-    //TODO implementácia
+    EventsUtil.notifyResourceIdFieldChanged();
   }
 
 }

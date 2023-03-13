@@ -7,16 +7,34 @@ export class EventsUtil {
 
     private static readonly SETTINGS_SAVED_EMMITER = new EventEmitter<boolean>();
     private static readonly SETTINGS_ENVIROMENTS_CHANGED = new EventEmitter<EnviromentSelectNgModelType>();
+    private static readonly SETTINGS_SEARCH_ON_ALL_ENVIROMENTS_EMMITER = new EventEmitter<boolean>();
+    private static readonly RESOURCE_ID_EMMITER = new EventEmitter<void>();
 
 
     public static notifySettingsSaved(result : boolean) : void {
         this.SETTINGS_SAVED_EMMITER.emit(result);
     }
 
+    public static notifySearchOnAllEnviromentsChanged(result : boolean) : void {
+        this.SETTINGS_SEARCH_ON_ALL_ENVIROMENTS_EMMITER.emit(result);
+    }
+
+    public static notifyResourceIdFieldChanged() {
+        this.RESOURCE_ID_EMMITER.emit();
+    }
+
     public static getSettingsSavedEmiter() : EventEmitter<boolean> {
         // true emitted - settings saving sequence start
         // false emitted - settings saved
         return this.SETTINGS_SAVED_EMMITER;
+    }
+
+    public static getSearchOnAllEnviromentsEmmiter() {
+        return this.SETTINGS_SEARCH_ON_ALL_ENVIROMENTS_EMMITER;
+    }
+
+    public static getResourceIdChangedEmmiter() {
+        return this.RESOURCE_ID_EMMITER;
     }
 
     public static notifySettingsEnviromentsChanged(result : DataSetsNgModelType) : void {

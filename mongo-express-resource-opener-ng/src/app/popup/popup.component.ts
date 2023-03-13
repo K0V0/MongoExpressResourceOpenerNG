@@ -1,14 +1,17 @@
-import { ErrorInlineComponent } from './../_base/components/shared/error-inline/error-inline.shared.component';
 ///<reference types="chrome"/>
 
 // angular imports
-import { Component, ViewChild } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 
 // my imports
+import { EventsUtil } from 'src/app/_base/utils/events.util';
 import { BaseComponent } from "../_base/components/_base/base.component";
-import { QueryServiceImpl } from '../_base/services/query.service.impl';
-import { AutoSubmitResourceIdComponent } from './components/auto-submit-resource-id/auto-submit-resource-id.component';
+import { Setting } from '../_base/decorators/setting/setting.decorator';
 import { QueryService } from '../_base/services/query.service';
+import { QueryServiceImpl } from '../_base/services/query.service.impl';
+import { EnviromentUtil, SettingsNames } from '../_base/utils/enviroment.util';
+import { ErrorInlineComponent } from './../_base/components/shared/error-inline/error-inline.shared.component';
+import { EnviromentSelectComponent } from './components/enviroment-select/enviroment-select.component';
 import { ResourceIdComponent } from './components/resource-id/resource-id.component';
 
 
@@ -20,24 +23,40 @@ import { ResourceIdComponent } from './components/resource-id/resource-id.compon
     './popup.component.scss'
   ],
 })
-export class PopupComponent extends BaseComponent {
+export class PopupComponent extends BaseComponent implements OnInit {
 
   private readonly SETTINGS_URL : string = "index.html#/options";
 
+  @Setting({
+    storeKey: SettingsNames.AUTO_SUBMIT_RESOURCE_ID,
+    defaultValue: EnviromentUtil.getDefaultSetting(SettingsNames.AUTO_SUBMIT_RESOURCE_ID)
+  })
+  public autoSubmitEnabled !: boolean;
+
+  @Setting({
+    storeKey: SettingsNames.ERASE_AFTER_FIRED_SUCESSFULLY,
+    defaultValue: EnviromentUtil.getDefaultSetting(SettingsNames.ERASE_AFTER_FIRED_SUCESSFULLY)
+  })
+  public clearAfterFired !: boolean;
+
   @ViewChild('resourceId')
   private resourceIdComponent !: ResourceIdComponent; 
-
-  @ViewChild('autoSubmitResourceId')
-  private autoSubmitResourceComponent !: AutoSubmitResourceIdComponent;
 
   @ViewChild('resourceError')
   private resourceError !: ErrorInlineComponent;
 
   private queryService : QueryService;
-  
+
+  public isEnviromentSeletEnabled !: boolean;
+
   constructor(queryServiceImpl : QueryServiceImpl) {
     super();
     this.queryService = queryServiceImpl;
+  }
+
+  ngOnInit(): void {
+    this.trackSelectEnviromentAvailability();
+    this.trackResourceIdFieldChanges();
   }
 
 
@@ -58,7 +77,7 @@ export class PopupComponent extends BaseComponent {
 
   // paste anywhere into popup window action
   public paste(event : any) : void {
-    if (!this.autoSubmitResourceComponent.isEnabled) {
+    if (!this.autoSubmitEnabled) {
       return;
     }
     this.findResource(event.clipboardData.getData("text/plain"));
@@ -75,13 +94,15 @@ export class PopupComponent extends BaseComponent {
 
   private findResource(resourceId ?: string | undefined) : void {
     this.cancelResourceIdError();
-    console.log("findResource()");
-    console.log(resourceId); 
     this.queryService.open(
       resourceId !== undefined && resourceId.trim().length > 0
         ? resourceId
         : this.resourceIdComponent.resourceId
-    ).catch((error) => {
+    )
+    .then(() => {
+      // ?? cannot find out if this happens because of new tab opened and popup closed
+    })
+    .catch((error) => {
       this.showResourceIdError(error)
     });
   }
@@ -90,9 +111,20 @@ export class PopupComponent extends BaseComponent {
     this.resourceError.message = message;
   }
 
-  //TODO cancel on typing / paste
   private cancelResourceIdError() : void {
     this.resourceError.message = "";
+  }
+
+  private trackSelectEnviromentAvailability() : void {
+    EventsUtil.getSearchOnAllEnviromentsEmmiter().subscribe((result : boolean) => {
+      this.isEnviromentSeletEnabled = !result;
+    });
+  }
+
+  private trackResourceIdFieldChanges() : void {
+    EventsUtil.getResourceIdChangedEmmiter().subscribe(() => {
+      this.cancelResourceIdError();
+    });
   }
 
 }
