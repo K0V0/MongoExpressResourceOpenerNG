@@ -18,7 +18,7 @@
         <component-check-on-all-enviroments #checkOnAllEnviroments></component-check-on-all-enviroments>
     </section>
     
-    <section [class]="'componentElementFix ' + (isEnviromentSeletEnabled ? '' : 'disabled')">
+    <section [class]="'componentElementFix ' + (isEnviromentSeletDisabled ? 'disabled' : '')">
         <label for="enviromentId">Prostredie:</label>
         <component-select-enviroment></component-select-enviroment>
     </section>

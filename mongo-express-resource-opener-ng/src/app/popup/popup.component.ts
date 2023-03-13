@@ -11,7 +11,6 @@ import { QueryService } from '../_base/services/query.service';
 import { QueryServiceImpl } from '../_base/services/query.service.impl';
 import { EnviromentUtil, SettingsNames } from '../_base/utils/enviroment.util';
 import { ErrorInlineComponent } from './../_base/components/shared/error-inline/error-inline.shared.component';
-import { EnviromentSelectComponent } from './components/enviroment-select/enviroment-select.component';
 import { ResourceIdComponent } from './components/resource-id/resource-id.component';
 
 
@@ -39,6 +38,12 @@ export class PopupComponent extends BaseComponent implements OnInit {
   })
   public clearAfterFired !: boolean;
 
+  @Setting({
+    storeKey: SettingsNames.CHECK_ON_ALL_ENVIROMENTS,
+    defaultValue: EnviromentUtil.getDefaultSetting(SettingsNames.CHECK_ON_ALL_ENVIROMENTS)
+  })
+  public isEnviromentSeletDisabled !: boolean;
+
   @ViewChild('resourceId')
   private resourceIdComponent !: ResourceIdComponent; 
 
@@ -47,8 +52,6 @@ export class PopupComponent extends BaseComponent implements OnInit {
 
   private queryService : QueryService;
 
-  public isEnviromentSeletEnabled !: boolean;
-
   constructor(queryServiceImpl : QueryServiceImpl) {
     super();
     this.queryService = queryServiceImpl;
@@ -56,7 +59,7 @@ export class PopupComponent extends BaseComponent implements OnInit {
 
   ngOnInit(): void {
     this.trackSelectEnviromentAvailability();
-    this.trackResourceIdFieldChanges();
+    //this.trackResourceIdFieldChanges();
   }
 
 
@@ -73,6 +76,7 @@ export class PopupComponent extends BaseComponent implements OnInit {
   // erase input field
   public erase() : void {
     this.resourceIdComponent.resourceId = "";
+    this.cancelResourceIdError();
   }
 
   // paste anywhere into popup window action
@@ -80,7 +84,9 @@ export class PopupComponent extends BaseComponent implements OnInit {
     if (!this.autoSubmitEnabled) {
       return;
     }
-    this.findResource(event.clipboardData.getData("text/plain"));
+    let data : string = event.clipboardData.getData("text/plain");
+    this.resourceIdComponent.resourceId = data;
+    this.findResource(data);
   }
 
 
@@ -100,7 +106,10 @@ export class PopupComponent extends BaseComponent implements OnInit {
         : this.resourceIdComponent.resourceId
     )
     .then(() => {
-      // ?? cannot find out if this happens because of new tab opened and popup closed
+      this.cancelResourceIdError();
+      if (this.clearAfterFired) {
+        this.erase();
+      }
     })
     .catch((error) => {
       this.showResourceIdError(error)
@@ -117,14 +126,15 @@ export class PopupComponent extends BaseComponent implements OnInit {
 
   private trackSelectEnviromentAvailability() : void {
     EventsUtil.getSearchOnAllEnviromentsEmmiter().subscribe((result : boolean) => {
-      this.isEnviromentSeletEnabled = !result;
+      this.isEnviromentSeletDisabled = result;
     });
   }
 
-  private trackResourceIdFieldChanges() : void {
-    EventsUtil.getResourceIdChangedEmmiter().subscribe(() => {
-      this.cancelResourceIdError();
-    });
-  }
+  //FIXME
+  // private trackResourceIdFieldChanges() : void {
+  //   EventsUtil.getResourceIdChangedEmmiter().subscribe(() => {
+  //     this.cancelResourceIdError();
+  //   });
+  // }
 
 }
