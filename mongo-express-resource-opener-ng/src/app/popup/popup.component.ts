@@ -51,6 +51,11 @@ export class PopupComponent extends BaseComponent {
     this.findResource();
   }
 
+  // erase input field
+  public erase() : void {
+    this.resourceIdComponent.resourceId = "";
+  }
+
   // paste anywhere into popup window action
   public paste(event : any) : void {
     if (!this.autoSubmitResourceComponent.isEnabled) {
@@ -85,7 +90,7 @@ export class PopupComponent extends BaseComponent {
     this.resourceError.message = message;
   }
 
-  //TODO cancel on typing
+  //TODO cancel on typing / paste
   private cancelResourceIdError() : void {
     this.resourceError.message = "";
   }

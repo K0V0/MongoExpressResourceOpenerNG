@@ -1,3 +1,7 @@
+* {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
 main {
     font-size: 1.25em;
     background-color: white;
@@ -138,6 +142,7 @@ select {
     background: url("data:image/svg+xml,<svg height='16px' width='16px' viewBox='0 0 16 16' fill='%2300ADEF' xmlns='http://www.w3.org/2000/svg'><path d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/></svg>") no-repeat;
     background-position: calc(100% - 0.25rem) center !important;
     padding-right: 1.5rem !important;
+    background-color: #eee; /* must be repeated */
 }
 
 select > option {
@@ -151,6 +156,14 @@ select > option {
 
 .right {
     text-align: right;
+}
+
+.danger {
+    background-color: #bb0000;
+}
+
+.danger:hover {
+    background-color: #ee0000;
 }
 
 .disabled {
