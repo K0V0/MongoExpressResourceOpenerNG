@@ -1,5 +1,6 @@
 <select id="enviromentId"
-        [(ngModel)]="currentEnviromentId">
+        [(ngModel)]="currentEnviromentId"
+        [class]="isEnabled ? '' : 'disabled'">
 
     <option selected disabled hidden id="selectEnviromentDefaultOption">Vybrať prostredie...</option>
 

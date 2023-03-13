@@ -1,3 +1,4 @@
+import { EventsUtil } from 'src/app/_base/utils/events.util';
 // angular imports
 import { Component } from "@angular/core";
 
@@ -18,4 +19,8 @@ export abstract class CheckOnAllEnviromentsBaseComponent extends BaseComponent {
     defaultValue: EnviromentUtil.getDefaultSetting(SettingsNames.CHECK_ON_ALL_ENVIROMENTS)
   })
   public checkOnAllEnviroments !: boolean; 
+
+  change() : void {
+    EventsUtil.notifySearchOnAllEnviromentsChanged(this.checkOnAllEnviroments);
+  }
 }

@@ -45,6 +45,7 @@ export enum RuntimeEnviroment {
 export enum SettingsNames {
     AUTO_SUBMIT_RESOURCE_ID = 'autoSubmitResourceId',
     CHECK_ON_ALL_ENVIROMENTS = 'checkOnAllEnviroments',
+    ERASE_AFTER_FIRED_SUCESSFULLY = 'erasedAfterFiredSucessfully',
     AVAILABLE_ENVIROMENTS = 'availableEnviromets',
     CURRENT_ENVIROMENT = 'currentEnviroment',
     ENVIROMENTS = 'enviroments',
@@ -67,7 +68,8 @@ export const DefaultValues : any = {
             "http://example.com/data"
         ]
     }],
-    "resourceId" : ""
+    "resourceId" : "",
+    "erasedAfterFiredSucessfully" : false
 }
 
 BaseUtil.deepFreeze(DefaultValues);

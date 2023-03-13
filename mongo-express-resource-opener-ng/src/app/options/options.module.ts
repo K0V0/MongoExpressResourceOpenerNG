@@ -1,3 +1,4 @@
+import { ClearAfterFiredComponent } from './components/clear-after-fired/clear-after-fired.component';
 // Angular imports
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
@@ -19,6 +20,7 @@ import { CheckOnAllEnviromentsComponent } from "./components/check-on-all-enviro
     declarations: [
         OptionsComponent,
         AutoSubmitResourceIdComponent,
+        ClearAfterFiredComponent,
         EnviromentSelectComponent,
         CheckOnAllEnviromentsComponent,
         DataSetsComponent
@@ -26,6 +28,7 @@ import { CheckOnAllEnviromentsComponent } from "./components/check-on-all-enviro
     exports: [
         OptionsComponent,
         AutoSubmitResourceIdComponent,
+        ClearAfterFiredComponent,
         EnviromentSelectComponent,
         CheckOnAllEnviromentsComponent,
         DataSetsComponent

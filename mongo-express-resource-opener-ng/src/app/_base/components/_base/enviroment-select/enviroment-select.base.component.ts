@@ -29,4 +29,5 @@ export abstract class EnviromentSelectBaseComponent extends BaseComponent
   })
   public currentEnviromentsOptions !: EnviromentSelectNgModelType;
 
+  public isEnabled : boolean = true;
 }
