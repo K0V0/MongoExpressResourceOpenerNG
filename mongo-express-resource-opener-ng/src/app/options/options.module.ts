@@ -11,6 +11,7 @@ import { EnviromentSelectComponent } from './components/enviroment-select/enviro
 import { DataSetsComponent } from './components/data-sets/data-sets.component';
 import { OptionsComponent } from './options.component';
 import { CheckOnAllEnviromentsComponent } from "./components/check-on-all-enviroments/check-on-all-enviroments.component";
+import {SecureKeyComponent} from "./components/secure-key/secure-key.component";
 
 @NgModule({
     imports: [
@@ -23,7 +24,8 @@ import { CheckOnAllEnviromentsComponent } from "./components/check-on-all-enviro
         ClearAfterFiredComponent,
         EnviromentSelectComponent,
         CheckOnAllEnviromentsComponent,
-        DataSetsComponent
+        DataSetsComponent,
+        SecureKeyComponent
     ],
     exports: [
         OptionsComponent,
@@ -31,7 +33,8 @@ import { CheckOnAllEnviromentsComponent } from "./components/check-on-all-enviro
         ClearAfterFiredComponent,
         EnviromentSelectComponent,
         CheckOnAllEnviromentsComponent,
-        DataSetsComponent
+        DataSetsComponent,
+        SecureKeyComponent
     ],
     providers: [
     ]

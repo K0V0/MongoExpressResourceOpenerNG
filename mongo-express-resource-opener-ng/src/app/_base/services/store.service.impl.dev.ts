@@ -4,7 +4,7 @@ import { Injectable } from "@angular/core";
 // my imports
 import { StoreService } from "./store.service";
 
-/** 
+/**
  *  This implementation should run on localhost development session or in webpage mode
 */
 
@@ -24,12 +24,11 @@ export class StoreServiceImplDev implements StoreService {
                     .catch(() => reject("No data found in localStorage"));
             } else {
                 reject("No key for data defined");
-            } 
+            }
         });
     }
 
     public loadWithKey(key : string) : Promise<any> {
-        var context = this;
         return new Promise((resolve, reject) => {
             this.load(key)
                 .then((result : any) => { resolve({ [key]: result }); })
@@ -55,7 +54,7 @@ export class StoreServiceImplDev implements StoreService {
 
     private loadingSimulation(key : string) : Promise<any> {
         var context = this;
-        return new Promise((resolve, reject) => { 
+        return new Promise((resolve, reject) => {
             setTimeout(() => {
                 let resultString = context.handleJsonNull(key);
                 resultString !== "{}" ? resolve(JSON.parse(resultString)) : reject("No data in localStorage");
@@ -65,7 +64,7 @@ export class StoreServiceImplDev implements StoreService {
 
     private saveingSimulation(key : string, value : any) : Promise<any> {
         var context = this;
-        return new Promise((resolve, reject) => { 
+        return new Promise((resolve, reject) => {
             setTimeout(() => {
                 localStorage.setItem(key, JSON.stringify(value));
                 resolve("dummy");

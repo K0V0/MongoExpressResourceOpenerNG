@@ -20,8 +20,8 @@ export class EnviromentUtil {
 
     public static getStoreService() : StoreService {
         if (this.storeServiceInstance === undefined) {
-            this.storeServiceInstance = EnviromentUtil.runningAt() === RuntimeEnviroment.WEB 
-                ? new StoreServiceImplDev() 
+            this.storeServiceInstance = EnviromentUtil.runningAt() === RuntimeEnviroment.WEB
+                ? new StoreServiceImplDev()
                 : new StoreServiceImplProd()
         }
         return this.storeServiceInstance;
@@ -49,16 +49,17 @@ export enum SettingsNames {
     AVAILABLE_ENVIROMENTS = 'availableEnviromets',
     CURRENT_ENVIROMENT = 'currentEnviroment',
     ENVIROMENTS = 'enviroments',
-    RESOURCE_ID = 'resourceId'
+    RESOURCE_ID = 'resourceId',
+    SECURE_KEY = 'secureKey'
 }
 
 
 export const DefaultValues : any = {
     "autoSubmitResourceId" : false,
     "checkOnAllEnviroments" : false,
-    "availableEnviromets" : [{ 
-        id: 0, 
-        name: "Základné prostredie" 
+    "availableEnviromets" : [{
+        id: 0,
+        name: "Základné prostredie"
     }],
     "currentEnviroment" : 0,
     "enviroments" : [{
