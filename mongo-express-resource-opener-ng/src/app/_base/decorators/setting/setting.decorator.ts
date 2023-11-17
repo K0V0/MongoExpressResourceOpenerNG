@@ -102,7 +102,14 @@ export class SettingDecorator {
                 })
 
                 // callback function
-                params['afterExec']?.apply(this, (currentValue === undefined || currentValue === null) ? fieldValue : currentValue);
+                if (params['afterExec']) {
+                  let args : any = (currentValue === undefined || currentValue === null) ? fieldValue : currentValue;
+                  if (!Array.isArray(args)) {
+                    args = [args];
+                  }
+                  params['afterExec']?.apply(this, args);
+                }
+
             })
             .catch((error : any) => {
                 console.log(error);

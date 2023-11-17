@@ -78,7 +78,10 @@ export const DefaultValues: any = {
   [SettingsNames.CHECK_ON_ALL_ENVIROMENTS]: false,
   [SettingsNames.AVAILABLE_ENVIROMENTS]: [{
     id: 0,
-    name: "Základné prostredie"
+    name: "Základné prostredie",
+    useLogin: false,
+    usernameHash: null,
+    passHash: null
   }],
   [SettingsNames.CURRENT_ENVIROMENT]: 0,
   [SettingsNames.ENVIROMENTS]: [{
