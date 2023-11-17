@@ -12,7 +12,7 @@ import { StoreService } from './store.service';
 export class QueryServiceImpl implements QueryService {
 
     private storeService : StoreService;
-    
+
     constructor() {
         //FIXME dependency injection on various enviroments
         this.storeService = EnviromentUtil.getStoreService();
@@ -42,14 +42,14 @@ export class QueryServiceImpl implements QueryService {
     /** HELPING METHODS ------------------------------------------------------------------------------------------- */
 
     private fireRequests(resourceId : string, settings : Settings) : Promise<void> {
-        return new Promise((resolve, reject) => { 
+        return new Promise((resolve, reject) => {
 
             let datasourcesUrls : string[] = this.getDatasourcesUrls(settings);
             let requestResults : boolean[] = [];
 
             // firing request directly is not possible - CORS security
             // request must be fired through background script service and communication with this service is only possible
-            // using messaging API 
+            // using messaging API
             let requestsPromises : Promise<Response>[] = datasourcesUrls
                 .map((url : string) => url + "\"" + resourceId + "\"")
                 .map((url : string) => this.sendMessageAsync({ id: MessageIds.HTTP_REQUEST, data: url }))
@@ -58,12 +58,12 @@ export class QueryServiceImpl implements QueryService {
                 .then((responses : PromiseSettledResult<Response>[]) => {
                     responses.map((response : PromiseSettledResult<Response>) => {
 
-                        let responseUrl : string | null = 
+                        let responseUrl : string | null =
                             response.status === 'fulfilled'
-                            && response.value !== undefined 
-                            && response.value.status === 200 
+                            && response.value !== undefined
+                            && response.value.status === 200
                             && !datasourcesUrls.includes(this.addLastForwardSlash(response.value.url))  // mongoDB behaviour fix if no document is found
-                                ? response.value.url 
+                                ? response.value.url
                                 : null
 
                         if (responseUrl !== null) {
@@ -79,8 +79,8 @@ export class QueryServiceImpl implements QueryService {
                     reject('Chyba počas spracovávania odpovedí');
                 })
                 .finally(() => {
-                    requestResults.every((value) => value === false) 
-                        ? reject('Nenájdený žiaden resource vyhovujúci resourceId') 
+                    requestResults.every((value) => value === false)
+                        ? reject('Nenájdený žiaden resource vyhovujúci resourceId')
                         : resolve();
                 });
         });
@@ -108,7 +108,7 @@ export class QueryServiceImpl implements QueryService {
                     .map((result : KeyValuePair) => result.status === 'fulfilled' ? result.value : null)
                     .filter((result : KeyValuePair | null) => result !== null)))
                 .catch(() => {
-                    reject('Chyba pri načítaní nastavení z Chrome store');
+                    reject('Chyba pri načítaní nastavení zo store');
                 });
         });
     }
@@ -116,18 +116,18 @@ export class QueryServiceImpl implements QueryService {
     private extractSetting(settings : Settings, settingType : SettingsNames) : any {
         return settings
             .flatMap((setting) => setting)
-            .map((setting : KeyValuePair) => Object.keys(setting)[0] === undefined 
+            .map((setting : KeyValuePair) => Object.keys(setting)[0] === undefined
                     ? DefaultValues[settingType]
                     : setting[settingType])
             .filter((setting) => setting !== undefined)
-            .find((x) => x) 
+            .find((x) => x)
             ?? DefaultValues[settingType];
     }
 
     private sendMessageAsync(message : Message, options = {}) : Promise<Response> {
         return new Promise((resolve, reject) => {
             chrome.runtime.sendMessage(message, options, (response : Response) => {
-                chrome.runtime.lastError 
+                chrome.runtime.lastError
                     ? reject(chrome.runtime.lastError)
                     : resolve(response);
             });

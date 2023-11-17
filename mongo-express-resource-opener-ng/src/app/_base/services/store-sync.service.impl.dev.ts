@@ -2,7 +2,7 @@
 import { Injectable } from "@angular/core";
 
 // my imports
-import { StoreService } from "./store.service";
+import {StoreSyncService} from "./store-sync.service";
 
 /**
  *  This implementation should run on localhost development session or in webpage mode
@@ -11,7 +11,7 @@ import { StoreService } from "./store.service";
 @Injectable({
     providedIn : 'root'
 })
-export class StoreServiceImplDev implements StoreService {
+export class StoreSyncServiceImplDev implements StoreSyncService {
 
     public SAVING_DELAY = 5000;
     public LOADING_DELAY = 1000;

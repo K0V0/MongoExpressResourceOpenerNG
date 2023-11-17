@@ -1,16 +1,16 @@
 ///<reference types="chrome"/>
 
-import { Injectable } from "@angular/core";
-import { StoreService } from "./store.service";
+import {Injectable} from "@angular/core";
+import {StoreSyncService} from "./store-sync.service";
 
-/** 
+/**
  *  This implementation runs when extension is built and packed
 */
 
 @Injectable({
     providedIn : 'root'
 })
-export class StoreServiceImplProd implements StoreService {
+export class StoreSyncServiceImplProd implements StoreSyncService {
 
     constructor() {}
 

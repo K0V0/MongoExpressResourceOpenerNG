@@ -3,9 +3,10 @@ import { SettingDecoratorConverter } from "./setting.decorator.converter";
 export interface SettingDecoratorParameters {
     // default value to use if no value in chrome store is found 
     defaultValue ?: any;
+    // if enabled, do not use chrome sync storage to store value, store value locally only
+    localOnly ?: boolean;
     // allow passing "undefined" as default value (which is default value of unitialized property by default)
     allowUndefined ?: boolean;
-    // TODO
     // define own key under which is value stored in google chrome storage
     // by default mechanism uses containing class and property name combination as key
     storeKey ?: string;

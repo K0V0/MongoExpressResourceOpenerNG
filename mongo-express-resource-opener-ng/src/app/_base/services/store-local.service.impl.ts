@@ -10,7 +10,12 @@ export class StoreLocalServiceImpl implements StoreLocalService {
     //return Promise.resolve(undefined);
     return new Promise((resolve, reject) => {
       if (key !== undefined && key !== null) {
-        //todo
+        let result : string | null = localStorage.getItem(key);
+        if (result !== null) {
+          resolve(JSON.parse(result));
+        } else {
+          resolve(null);
+        }
       } else {
         reject("No key for data defined");
       }
@@ -28,9 +33,9 @@ export class StoreLocalServiceImpl implements StoreLocalService {
   save(key: string, content: any): Promise<any> {
     return new Promise((resolve, reject) => {
       if (content !== undefined) {
-        //todo
+        resolve(localStorage.setItem(key, JSON.stringify(content)));
       } else {
-        reject("No data passed into local storage")
+        reject("No data passed into local storage");
       }
     });
   }
