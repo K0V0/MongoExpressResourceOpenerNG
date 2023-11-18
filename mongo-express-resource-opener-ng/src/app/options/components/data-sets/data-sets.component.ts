@@ -4,9 +4,9 @@ import {Component} from "@angular/core";
 // My imports
 import {BaseComponent} from "src/app/_base/components/_base/base.component";
 import {
-  DataSetsNgModelRecordFormat,
-  DataSetsNgModelType,
-  DataSetsStoreType
+    DataSetsNgModelRecordFormat,
+    DataSetsNgModelType,
+    DataSetsStoreType
 } from 'src/app/_base/components/_base/data-sets/data-sets.interfaces';
 import {Setting} from 'src/app/_base/decorators/setting/setting.decorator';
 import {BaseUtil} from './../../../_base/utils/base.util';
@@ -32,20 +32,26 @@ export class DataSetsComponent extends BaseComponent /*implements AfterViewInit*
     private static readonly CONVERTER = new DataSetsSettingDecoratorConverter();
 
     @Setting({
-      storeKey: SettingsNames.SECURE_KEY,
-      onlyDownload: true,
-      afterExec: (result : string) => {
-        //FIXME ugly hack that sets secure key into converter for encrypting and decrypting sensitive informations
-        // it looks like that it will always run before enviroments parameters are first time queried
-        DataSetsComponent.CONVERTER.setSecureKey(result);
-      }
+        defaultValue: EnviromentUtil.getDefaultSetting(SettingsNames.SECURE_KEY),
+        storeKey: SettingsNames.SECURE_KEY,
+        onlyDownload: true,
+        afterExec: (result : string) => {
+            //FIXME ugly hack that sets secure key into converter for encrypting and decrypting sensitive informations
+            // it looks like that it will always run before enviroments parameters are first time queried
+            DataSetsComponent.CONVERTER.setSecureKey(result);
+            console.log(result);
+            console.log("setting secure key hack")
+        }
     })
     public secureKey !: string;
 
     @Setting({
         defaultValue: DataSetsComponent.DEFAULT_VALUE,
         storeKey: SettingsNames.ENVIROMENTS,
-        converter: DataSetsComponent.CONVERTER
+        converter: DataSetsComponent.CONVERTER,
+        afterExec: (result : string) => {
+            console.log("envs 1")
+        }
     })
     public enviroments !: DataSetsNgModelType;
 
@@ -53,7 +59,10 @@ export class DataSetsComponent extends BaseComponent /*implements AfterViewInit*
         defaultValue: DataSetsComponent.DEFAULT_VALUE,
         storeKey: SettingsNames.ENVIROMENTS,
         converter: DataSetsComponent.CONVERTER,
-        onlyDownload: true // will not work either for objects
+        onlyDownload: true, // will not work either for objects
+      afterExec: (result : string) => {
+        console.log("envs 2")
+      }
     })
     private enviromentsBefore !: DataSetsNgModelType;
 

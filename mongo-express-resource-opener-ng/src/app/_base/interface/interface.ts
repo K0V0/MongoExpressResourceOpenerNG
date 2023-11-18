@@ -1,9 +1,11 @@
+import {QueryMessage} from "../services/query.service";
+
 export interface Message {
     id : number;
-    data : string;
+    data : QueryMessage;
 }
 
 export enum MessageIds {
-    UNKNOWN, 
+    UNKNOWN,
     HTTP_REQUEST
 }

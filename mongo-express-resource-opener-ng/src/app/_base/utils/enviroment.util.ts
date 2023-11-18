@@ -93,7 +93,7 @@ export const DefaultValues: any = {
   }],
   [SettingsNames.RESOURCE_ID]: "",
   [SettingsNames.ERASE_AFTER_FIRED_SUCESSFULLY]: false,
-  [SettingsNames.SECURE_KEY]: null,
+  [SettingsNames.SECURE_KEY]: "MaIFi20NKLhfrRpI",
   [SettingsNames.STORE_MONGO_LOGIN_CREDENTIALS]: false
 };
 

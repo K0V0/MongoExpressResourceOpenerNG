@@ -12,12 +12,17 @@ export class CryptogrUtil {
     return result;
   }
 
-  public static encrypt(text: string, secret: string): string {
-    console.log(text);
+  public static encrypt(text: string | null, secret: string): string | null {
+    if (!text || !secret) {
+      return null;
+    }
     return CryptoJS.AES.encrypt(text, secret).toString();
   }
 
-  public static decrypt(encryptedText: string, secret: string): string {
+  public static decrypt(encryptedText: string | null, secret: string): string | null {
+    if (!encryptedText || !secret) {
+      return null;
+    }
     return CryptoJS.AES.decrypt(encryptedText, secret).toString(CryptoJS.enc.Utf8);
   }
 

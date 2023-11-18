@@ -11,3 +11,8 @@ export interface KeyValuePair {
 }
 
 export type Settings = KeyValuePair[];
+
+export interface QueryMessage {
+  url : string;
+  authHeader : string | null;
+}
