@@ -2,6 +2,6 @@
 
 import {StoreService} from "./store.service";
 
-export interface StoreSyncService extends StoreService {
+export interface StoreAllService extends StoreService {
 
 }

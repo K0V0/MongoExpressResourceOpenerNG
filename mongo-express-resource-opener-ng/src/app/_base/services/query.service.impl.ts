@@ -1,10 +1,11 @@
 import {Injectable} from "@angular/core";
 import {DefaultValues, EnviromentUtil, SettingsNames} from 'src/app/_base/utils/enviroment.util';
 import {DataSetsStoreRecordFormat} from '../components/_base/data-sets/data-sets.interfaces';
-import {Message, MessageIds} from './../interface/interface';
-import {KeyValuePair, QueryMessage, QueryService, Settings} from './query.service';
-import {StoreService} from './store.service';
+import {HttpRequestQuery, MessageIds} from '../interfaces/messaging.interface';
+import {KeyValuePair, QueryService, Settings} from './query.service';
+import {StoreAllService} from './store-all.service';
 import {CryptogrUtil} from "../utils/cryptogr.util";
+import {BaseUtil} from "../utils/base.util";
 
 
 @Injectable({
@@ -12,7 +13,7 @@ import {CryptogrUtil} from "../utils/cryptogr.util";
 })
 export class QueryServiceImpl implements QueryService {
 
-    private storeService : StoreService;
+    private storeService : StoreAllService;
 
     constructor() {
         //FIXME dependency injection on various enviroments
@@ -45,17 +46,17 @@ export class QueryServiceImpl implements QueryService {
     private fireRequests(resourceId : string, settings : Settings) : Promise<void> {
         return new Promise((resolve, reject) => {
 
-            let queryMessages : QueryMessage[] = this.buildQueryMessages(settings);
-            let datasourcesUrls : string[] = queryMessages.map((queryMessage : QueryMessage) => queryMessage.url);
+            let queryMessages : HttpRequestQuery[] = this.buildQueryMessages(settings);
+            let datasourcesUrls : string[] = queryMessages.map((queryMessage : HttpRequestQuery) => queryMessage.url);
             let requestResults : boolean[] = [];
 
             // firing request directly is not possible - CORS security
             // request must be fired through background script service and communication with this service is only possible
             // using messaging API
             let requestsPromises : Promise<Response>[] = queryMessages
-                .map((queryMessage : QueryMessage) => {
+                .map((queryMessage : HttpRequestQuery) => {
                   queryMessage.url = queryMessage.url + "\"" + resourceId + "\"";
-                  return this.sendMessageAsync({ id: MessageIds.HTTP_REQUEST, data: queryMessage })
+                  return BaseUtil.sendMessage({ id: MessageIds.HTTP_REQUEST, data: queryMessage })
                 });
 
             Promise.allSettled(requestsPromises)
@@ -92,7 +93,7 @@ export class QueryServiceImpl implements QueryService {
         });
     }
 
-    private buildQueryMessages(settings : Settings) : QueryMessage[] {
+    private buildQueryMessages(settings : Settings) : HttpRequestQuery[] {
 
       let searchEverywhere : boolean = this.extractSetting(settings, SettingsNames.CHECK_ON_ALL_ENVIROMENTS);
       let currentEnviroment : number = this.extractSetting(settings, SettingsNames.CURRENT_ENVIROMENT);
@@ -106,9 +107,9 @@ export class QueryServiceImpl implements QueryService {
           let authHeader : string | null = (enviroment.useLogin && appUsesLogins)
             ? this.createBaseAuth64Header(enviroment.usernameHash, enviroment.passHash, secretKey)
             : null;
-          let result : QueryMessage[] = enviroment.datasets
+          let result : HttpRequestQuery[] = enviroment.datasets
             .map((url : string) => {
-              return new class implements QueryMessage {
+              return new class implements HttpRequestQuery {
                 authHeader: string | null = authHeader;
                 url: string = (url.lastIndexOf("/") === url.length) ? url : url + "/";
               }
@@ -142,16 +143,6 @@ export class QueryServiceImpl implements QueryService {
             .filter((setting) => setting !== undefined)
             .find((x) => x)
             ?? DefaultValues[settingType];
-    }
-
-    private sendMessageAsync(message : Message, options = {}) : Promise<Response> {
-        return new Promise((resolve, reject) => {
-            chrome.runtime.sendMessage(message, options, (response : Response) => {
-                chrome.runtime.lastError
-                    ? reject(chrome.runtime.lastError)
-                    : resolve(response);
-            });
-        });
     }
 
     private openNewTab(url : string) {

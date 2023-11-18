@@ -5,12 +5,13 @@ import 'reflect-metadata';
 import { BaseUtil } from './../../utils/base.util';
 import { EventsUtil } from './../../utils/events.util';
 import { BaseComponent } from 'src/app/_base/components/_base/base.component';
-import { StoreService } from '../../services/store.service';
+import { StoreAllService } from '../../services/store-all.service';
 import { EnviromentUtil } from '../../utils/enviroment.util';
 import { SettingDecoratorConverter } from './setting.decorator.converter';
 import { SettingDecoratorParameters } from './setting.decorator.parameters';
 import { StoreSyncService } from "../../services/store-sync.service";
 import { StoreLocalService } from "../../services/store-local.service";
+import {StoreService} from "../../services/store.service";
 
 
 /**
@@ -117,7 +118,7 @@ export class SettingDecorator {
 
     }
 
-    private getStoreService(params : SettingDecoratorParameters) : StoreService {
+    private getStoreService(params : SettingDecoratorParameters) : StoreAllService {
         return params.localOnly ? SettingDecorator.localStoreService : SettingDecorator.syncStoreService;
     }
 

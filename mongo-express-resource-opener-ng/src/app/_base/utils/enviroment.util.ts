@@ -1,11 +1,12 @@
 ///<reference types="chrome"/>
 
-import { StoreService } from "../services/store.service";
-import { StoreSyncServiceImplDev } from "../services/store-sync.service.impl.dev";
-import { StoreSyncServiceImplProd } from "../services/store-sync.service.impl.prod";
-import { BaseUtil } from "./base.util";
+import {StoreAllService} from "../services/store-all.service";
+import {StoreSyncServiceImplDev} from "../services/store-sync.service.impl.dev";
+import {StoreSyncServiceImplProd} from "../services/store-sync.service.impl.prod";
+import {BaseUtil} from "./base.util";
 import {StoreLocalServiceImpl} from "../services/store-local.service.impl";
-import {StoreServiceImpl} from "../services/store.service.impl";
+import {StoreAllServiceImpl} from "../services/store-all.service.impl";
+import {StoreService} from "../services/store.service";
 
 
 export class EnviromentUtil {
@@ -22,7 +23,7 @@ export class EnviromentUtil {
         return chrome?.runtime?.onMessage ? RuntimeEnviroment.CONTENT : RuntimeEnviroment.WEB;
     }
 
-    public static getStoreSyncService() : StoreService {
+    public static getStoreSyncService() : StoreAllService {
         if (this.storeSyncServiceInstance === undefined) {
             this.storeSyncServiceInstance = EnviromentUtil.runningAt() === RuntimeEnviroment.WEB
                 ? new StoreSyncServiceImplDev()
@@ -31,16 +32,16 @@ export class EnviromentUtil {
         return this.storeSyncServiceInstance;
     }
 
-    public static getStoreLocalService() : StoreService {
+    public static getStoreLocalService() : StoreAllService {
       if (this.storeLocalServiceInstance === undefined) {
         this.storeLocalServiceInstance = new StoreLocalServiceImpl();
       }
       return this.storeLocalServiceInstance;
     }
 
-    public static getStoreService() : StoreService {
+    public static getStoreService() : StoreAllService {
       if (this.storeServiceInstance === undefined) {
-        this.storeServiceInstance = new StoreServiceImpl(this.getStoreLocalService(), this.getStoreSyncService());
+        this.storeServiceInstance = new StoreAllServiceImpl(this.getStoreLocalService(), this.getStoreSyncService());
       }
       return this.storeServiceInstance;
     }
