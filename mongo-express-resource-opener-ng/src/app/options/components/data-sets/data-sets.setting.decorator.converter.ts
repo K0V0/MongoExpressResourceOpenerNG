@@ -21,7 +21,7 @@ export  class DataSetsSettingDecoratorConverter
         return content?.map((x) => ({
             id: x.id,
             name: x.name,
-            datasets: x.datasets.join('\n'),
+            datasets: x.datasets?.join('\n'),
             useLogin: x.useLogin,
             username: CryptogrUtil.decrypt(x.usernameHash, this.secureKey),
             pass: CryptogrUtil.decrypt(x.passHash, this.secureKey)
@@ -35,7 +35,7 @@ export  class DataSetsSettingDecoratorConverter
         return content?.map((x) => ({
             id: x.id,
             name: x.name,
-            datasets: x.datasets.trim().split('\n').map((x) => x.trim()).filter((x) => x.length > 0),
+            datasets: x.datasets?.trim().split('\n').map((x) => x.trim()).filter((x) => x.length > 0),
             useLogin: x.useLogin,
             usernameHash: CryptogrUtil.encrypt(x.username, this.secureKey),
             passHash: CryptogrUtil.encrypt(x.pass, this.secureKey)
