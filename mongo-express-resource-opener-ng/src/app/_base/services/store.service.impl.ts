@@ -25,4 +25,15 @@ export abstract class StoreServiceImpl implements StoreService {
         }
     }
 
+    protected createPutRequest(operationType : number, key : string, value : any) {
+        let query : StoreRequestQuery = new class implements StoreRequestQuery {
+            key : string = key;
+            value : any = value;
+        }
+        return new class implements StoreRequestMessage {
+            data : StoreRequestQuery = query;
+            id: number = operationType;
+        }
+    }
+
 }

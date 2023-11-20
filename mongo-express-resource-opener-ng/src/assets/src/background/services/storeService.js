@@ -22,10 +22,14 @@ StoreService.prototype._putToSyncStore = function(query, responseCallback) {
 
 StoreService.prototype._getFromStore = function(storageType, query, responseCallback, withKey=false) {
     const key = query.key;
-    storageType.get(key, data =>
-        Object.keys(data).length === 0 && data.constructor === Object
-            ? console.log("No data for " + key + " in storage found")
-            : withKey ? responseCallback( {[key]: data[key]} ) : responseCallback( data[key] ));
+    storageType.get(key, data => {
+        if (Object.keys(data).length === 0 && data.constructor === Object) {
+            console.log("No data for " + key + " in storage found");
+            responseCallback(null);
+        } else {
+            withKey ? responseCallback( {[key]: data[key]} ) : responseCallback( data[key] );
+        }
+    });
 }
 
 StoreService.prototype._putToStore = function(storageType, query, responseCallback) {

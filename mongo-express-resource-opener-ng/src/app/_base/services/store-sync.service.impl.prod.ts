@@ -37,15 +37,16 @@ export class StoreSyncServiceImplProd extends StoreServiceImpl implements StoreS
     }
 
     public save(key : string, content : any) : Promise<any> {
-        return new Promise((resolve, reject) => {
-            if (key === undefined || content === undefined) {
-                reject('No data passed to localStorage');
-            } else {
-                chrome.storage.sync
-                    .set({ [key]: content })
-                    .then((result : any) => { resolve(result); });
-            }
-        });
+        return BaseUtil.sendMessage(super.createPutRequest(MessageIds.PUT_DATA_TO_SYNC_STORE, key, content));
+        // return new Promise((resolve, reject) => {
+        //     if (key === undefined || content === undefined) {
+        //         reject('No data passed to localStorage');
+        //     } else {
+        //         chrome.storage.sync
+        //             .set({ [key]: content })
+        //             .then((result : any) => { resolve(result); });
+        //     }
+        // });
     }
 
 }

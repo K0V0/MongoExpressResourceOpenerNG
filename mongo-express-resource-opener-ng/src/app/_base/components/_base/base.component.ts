@@ -1,9 +1,9 @@
 // Angular imports
-import { Component } from "@angular/core";
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from "@angular/core";
 
 
 @Component({
-    template: ''
+    template: '',
 })
 export abstract class BaseComponent {
 

@@ -47,7 +47,7 @@ export class SettingDecorator {
         return this.instance;
     }
 
-    public loadValue(target : Object, propertyKey : string, params : SettingDecoratorParameters) : void {
+    public loadValue(target : BaseComponent, propertyKey : string, params : SettingDecoratorParameters) : void {
 
         let settingsDecoratorContext : SettingDecorator = this;
 

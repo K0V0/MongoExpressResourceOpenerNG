@@ -1,7 +1,7 @@
-import { SettingDecoratorConverter } from "./setting.decorator.converter";
+import {SettingDecoratorConverter} from "./setting.decorator.converter";
 
 export interface SettingDecoratorParameters {
-    // default value to use if no value in chrome store is found 
+    // default value to use if no value in chrome store is found
     defaultValue ?: any;
     // if enabled, do not use chrome sync storage to store value, store value locally only
     localOnly ?: boolean;
@@ -13,10 +13,10 @@ export interface SettingDecoratorParameters {
     // switch into uni-directional relationship with chrome store, value will be transfered from chrome store
     // and set to property, but no other way round. By default, binding is bi-directional
     onlyDownload ?: boolean;
-    // provide converter fullfiling SettingDecoratorConverter interface specification if You need your data 
+    // provide converter fullfiling SettingDecoratorConverter interface specification if You need your data
     // have converted/modified when coming from/to chrome store
     converter ?: SettingDecoratorConverter<any, any>;
     // callback after geting settings from server and resolving all premises
     afterDownload ?: Function;
-    afterExec ?: Function;  
+    afterExec ?: Function;
 }

@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { BaseComponent } from 'src/app/_base/components/_base/base.component';
+import {Component} from '@angular/core';
+import {BaseComponent} from 'src/app/_base/components/_base/base.component';
 
 @Component({
     selector: 'component-error-inline',
