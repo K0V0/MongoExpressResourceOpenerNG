@@ -1,20 +1,41 @@
 <article *ngFor="let enviroment of enviroments; index as i;">
 
-    <input 
+    <input
         type="hidden"
         [name]="'enviromentId_' + i"
         [value]="enviroment.id">
 
-    <input 
-        type="text" 
-        placeholder="Názov prostredia..." 
+    <input
+      type="hidden"
+      [name]="'enviromentSecureKey_' + i"
+      [(ngModel)]="secureKey">
+
+    <input
+        type="text"
+        placeholder="Názov prostredia..."
         [name]="'enviromentName_' + i"
         [(ngModel)]="enviroment.name"
         (ngModelChange)="change()">
 
-    <button 
+    <input
+        type="checkbox"
+        [name]="'enviromentUseLogin_' + i"
+        [id]="'enviromentUseLogin_' + i"
+        [(ngModel)]="enviroment.useLogin"
+        (ngModelChange)="change()"
+        (change)="changeUseLoginByHand(i)"
+        [class]="loginIsDisabledByOverride(i) ? 'disabled temporary' : ''">
+
+    <label
+      for="enviromentUseLogin_{{i}}"
+      [class]="loginIsDisabledByOverride(i) ? 'disabled temporary' : ''"
+    >
+      použiť Login
+    </label>
+
+    <button
         type="button"
-        [class]="isLastEnviroment() ? 'disabled' : ''" 
+        [class]="isLastEnviroment() ? 'disabled' : ''"
         [name]="'enviromentRemove_' + i"
         [value]="enviroment.id"
         (click)="removeEnviroment($event);"
@@ -22,9 +43,38 @@
 
     <br>
 
-    <textarea 
-        cols="80" rows="5" 
-        placeholder="Dátové zdroje..." 
+    <div class="collapsible"
+         [ngClass]="enviroment.useLogin ? '' : 'hidden'">
+
+      <label for="enviromentLoginName_{{i}}">
+        Username:
+      </label>
+
+      <input
+        type="text"
+        placeholder="Zadajte username..."
+        [name]="'enviromentLoginName_' + i"
+        [id]="'enviromentLoginName_' + i"
+        [(ngModel)]="enviroment.username"
+        (ngModelChange)="change()">
+
+      <label for="enviromentLoginPass_{{i}}">
+        Password:
+      </label>
+
+      <input
+        type="text"
+        placeholder="Zadajte heslo..."
+        [name]="'enviromentLoginPass_' + i"
+        [id]="'enviromentLoginPass_' + i"
+        [(ngModel)]="enviroment.pass"
+        (ngModelChange)="change()">
+
+    </div>
+
+    <textarea
+        cols="80" rows="5"
+        placeholder="Dátové zdroje..."
         [name]="'enviromentDatasets_' + i"
         [(ngModel)]="enviroment.datasets"
         (ngModelChange)="change()"></textarea>

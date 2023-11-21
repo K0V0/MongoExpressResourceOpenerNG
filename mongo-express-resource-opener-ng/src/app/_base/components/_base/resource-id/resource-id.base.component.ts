@@ -1,12 +1,12 @@
 // Angular imports
-import { Component } from "@angular/core";
+import {Component} from "@angular/core";
 
 // My imports
-import { BaseComponent } from "../base.component";
-import { ResourceIdComponentIface } from "./resource-id.base.component.interface";
-import { Setting } from "src/app/_base/decorators/setting/setting.decorator";
-import { EnviromentUtil, SettingsNames } from "src/app/_base/utils/enviroment.util";
-import { ResourceIdSettingDecoratorConverter } from "./resource-id.setting.decorator.converter";
+import {BaseComponent} from "../base.component";
+import {ResourceIdComponentIface} from "./resource-id.base.component.interface";
+import {Setting} from "src/app/_base/decorators/setting/setting.decorator";
+import {EnviromentUtil, SettingsNames} from "src/app/_base/utils/enviroment.util";
+import {ResourceIdSettingDecoratorConverter} from "./resource-id.setting.decorator.converter";
 
 // base component [text field] for ObjectId attribute input of wanted mongo document
 @Component({
@@ -16,7 +16,7 @@ export abstract class ResourceIdBaseComponent extends BaseComponent implements R
 
   private static readonly FIRE_TRESHOLD_MILISECONDS : number = 250;
 
-  //TODO type of JS timer ? 
+  //TODO type of JS timer ?
   private timer : any;
 
   @Setting({

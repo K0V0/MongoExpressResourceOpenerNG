@@ -1,9 +1,9 @@
-import { EventsUtil } from 'src/app/_base/utils/events.util';
+import {EventsUtil} from 'src/app/_base/utils/events.util';
 // angular imports
-import { Component } from "@angular/core";
+import {Component} from "@angular/core";
 
 // my imports
-import { ResourceIdBaseComponent } from "src/app/_base/components/_base/resource-id/resource-id.base.component";
+import {ResourceIdBaseComponent} from "src/app/_base/components/_base/resource-id/resource-id.base.component";
 
 @Component({
   selector: 'component-resource-id',

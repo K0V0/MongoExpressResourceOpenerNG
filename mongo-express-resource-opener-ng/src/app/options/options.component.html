@@ -1,5 +1,7 @@
 <main>
 
+    <component-firstrun-fix></component-firstrun-fix>
+
     <section>
         <h1>Nastavenia</h1>
     </section>
@@ -27,11 +29,19 @@
 
     </section>
 
+    <section>
+
+        <h2>Bezpečnosť</h2>
+
+        <component-secure-key></component-secure-key>
+
+    </section>
+
     <section id="dataSources">
 
         <h2>Dátové zostavy</h2>
         <i>Oddeľujte jednotlivé URL na dátové zostavy novým riadkom</i>
-        
+
         <component-data-sets #enviroments></component-data-sets>
 
         <button (click)="addEnviroment()">Pridať ďalšie prostredie</button>

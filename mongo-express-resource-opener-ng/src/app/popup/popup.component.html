@@ -1,9 +1,11 @@
-<main (paste)="paste($event)">
+<main (paste)="paste($event)" id="popup">
+
+    <component-firstrun-fix></component-firstrun-fix>
 
     <section>
         <h1>MongoExpressResourceOpener</h1>
     </section>
-    
+
     <section class="centered">
         <component-resource-id #resourceId></component-resource-id>
         <button (click)="erase()" class="danger" id="erase">X</button>
@@ -13,11 +15,11 @@
     <section class="error">
         <component-error-inline #resourceError></component-error-inline>
     </section>
-    
+
     <section class="componentElementFix">
         <component-check-on-all-enviroments #checkOnAllEnviroments></component-check-on-all-enviroments>
     </section>
-    
+
     <section [class]="'componentElementFix ' + (isEnviromentSeletDisabled ? 'disabled' : '')">
         <label for="enviromentId">Prostredie:</label>
         <component-select-enviroment></component-select-enviroment>

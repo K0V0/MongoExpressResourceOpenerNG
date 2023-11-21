@@ -1,0 +1,44 @@
+
+<article class="componentElementFix">
+
+  <input  type="checkbox"
+          id="useLoginCredentialsStorage"
+          [(ngModel)]="useLoginCredentialsStorage"
+          (ngModelChange)="credentialsUseEnabledChange()"
+  >
+
+  <label for="useLoginCredentialsStorage">
+      Používať / ukladať prihlasovacie údaje
+  </label>
+
+</article>
+
+
+<article class="componentElementFix">
+
+  <label  for="secureKey"
+  >
+      Bezpečnostný kľúč
+  </label>
+
+  <input  type="text"
+          id="secureKey"
+          [(ngModel)] = "secureKey"
+          (ngModelChange)="onUpdateSecureKey()"
+          [class]="useLoginCredentialsStorage ? '' : 'disabled'"
+  >
+
+  <button (click)="generateSecureKey()"
+          [class]="(useLoginCredentialsStorage && !secureKey) ? '' : 'disabled'"
+  >
+    Vygenerovať
+  </button>
+
+  <button (click)="copySecureKeyToClipboard()"
+          [class]="useLoginCredentialsStorage ? '' : 'disabled'"
+  >
+    Skopírovať
+  </button>
+
+</article>
+

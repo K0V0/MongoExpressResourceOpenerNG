@@ -1,17 +1,17 @@
 ///<reference types="chrome"/>
 
 // angular imports
-import { Component, OnInit, ViewChild } from "@angular/core";
+import {ChangeDetectorRef, Component, OnInit, ViewChild} from "@angular/core";
 
 // my imports
-import { EventsUtil } from 'src/app/_base/utils/events.util';
-import { BaseComponent } from "../_base/components/_base/base.component";
-import { Setting } from '../_base/decorators/setting/setting.decorator';
-import { QueryService } from '../_base/services/query.service';
-import { QueryServiceImpl } from '../_base/services/query.service.impl';
-import { EnviromentUtil, SettingsNames } from '../_base/utils/enviroment.util';
-import { ErrorInlineComponent } from './../_base/components/shared/error-inline/error-inline.shared.component';
-import { ResourceIdComponent } from './components/resource-id/resource-id.component';
+import {EventsUtil} from 'src/app/_base/utils/events.util';
+import {BaseComponent} from "../_base/components/_base/base.component";
+import {Setting} from '../_base/decorators/setting/setting.decorator';
+import {QueryService} from '../_base/services/query.service';
+import {QueryServiceImpl} from '../_base/services/query.service.impl';
+import {EnviromentUtil, SettingsNames} from '../_base/utils/enviroment.util';
+import {ErrorInlineComponent} from './../_base/components/shared/error-inline/error-inline.shared.component';
+import {ResourceIdComponent} from './components/resource-id/resource-id.component';
 
 
 // component of extension popup
@@ -45,14 +45,14 @@ export class PopupComponent extends BaseComponent implements OnInit {
   public isEnviromentSeletDisabled !: boolean;
 
   @ViewChild('resourceId')
-  private resourceIdComponent !: ResourceIdComponent; 
+  private resourceIdComponent !: ResourceIdComponent;
 
   @ViewChild('resourceError')
   private resourceError !: ErrorInlineComponent;
 
   private queryService : QueryService;
 
-  constructor(queryServiceImpl : QueryServiceImpl) {
+  constructor(queryServiceImpl : QueryServiceImpl, changeDetectorRef: ChangeDetectorRef) {
     super();
     this.queryService = queryServiceImpl;
   }
