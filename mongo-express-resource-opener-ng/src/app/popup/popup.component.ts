@@ -80,13 +80,19 @@ export class PopupComponent extends BaseComponent implements OnInit {
   }
 
   // paste anywhere into popup window action
-  public paste(event : any) : void {
+  public paste(event : ClipboardEvent) : void {
     if (!this.autoSubmitEnabled) {
       return;
     }
-    let data : string = event.clipboardData.getData("text/plain");
-    this.resourceIdComponent.resourceId = data;
-    this.findResource(data);
+    let data : string | null | undefined = event.clipboardData?.getData("text/plain");
+    if (data) {
+      const eventTarget : HTMLElement = event.target as HTMLElement;
+      // because otherwise resource id is doubled when pasted directly to the input field
+      if (eventTarget.id !== "resourceId") {
+        this.resourceIdComponent.resourceId = data;
+      }
+      this.findResource(data);
+    }
   }
 
 
