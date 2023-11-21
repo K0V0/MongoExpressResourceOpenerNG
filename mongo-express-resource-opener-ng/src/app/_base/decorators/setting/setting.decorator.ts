@@ -5,14 +5,17 @@ import 'reflect-metadata';
 import { BaseUtil } from './../../utils/base.util';
 import { EventsUtil } from './../../utils/events.util';
 import { BaseComponent } from 'src/app/_base/components/_base/base.component';
-import { StoreService } from '../../services/store.service';
+import { StoreAllService } from '../../services/store-all.service';
 import { EnviromentUtil } from '../../utils/enviroment.util';
 import { SettingDecoratorConverter } from './setting.decorator.converter';
 import { SettingDecoratorParameters } from './setting.decorator.parameters';
+import { StoreSyncService } from "../../services/store-sync.service";
+import { StoreLocalService } from "../../services/store-local.service";
+import {StoreService} from "../../services/store.service";
 
 
 /**
- *  Loads value from Chrome settings storage, or sets default value if provided 
+ *  Loads value from Chrome settings storage, or sets default value if provided
  *  or common backup scenario  for given type.
  *  Sends value into Chrome settings storage if value is changed.
 */
@@ -26,27 +29,33 @@ export class SettingDecorator {
 
     private static instance : SettingDecorator;
 
-    private static storeService : StoreService;
+    private static syncStoreService : StoreService;
 
-    private constructor(storeService : StoreService) {
-        SettingDecorator.storeService = storeService;
+    private static localStoreService : StoreService;
+
+    private constructor(syncStoreService : StoreSyncService, localStoreService : StoreLocalService) {
+        SettingDecorator.syncStoreService = syncStoreService;
+        SettingDecorator.localStoreService = localStoreService;
     }
 
     public static getInstance() : SettingDecorator {
         // must be solved that shitty way, because standart dependency injection comes too late
         if (this.instance === undefined) {
-            this.instance = new SettingDecorator(EnviromentUtil.getStoreService())
+            this.instance = new SettingDecorator(
+              EnviromentUtil.getStoreSyncService(), EnviromentUtil.getStoreLocalService());
         }
         return this.instance;
     }
 
-    public loadValue(target : Object, propertyKey : string, params : SettingDecoratorParameters) : void {
+    public loadValue(target : BaseComponent, propertyKey : string, params : SettingDecoratorParameters) : void {
+
+        let settingsDecoratorContext : SettingDecorator = this;
 
         let settingKey : string = params['storeKey'] === undefined
-            ? target.constructor.name + "-" + propertyKey 
+            ? target.constructor.name + "-" + propertyKey
             : params['storeKey']
 
-        SettingDecorator.storeService
+      settingsDecoratorContext.getStoreService(params)
             .load(settingKey)
             .then((resolve : any) => {
                 // undefined should be edge case
@@ -83,7 +92,7 @@ export class SettingDecorator {
                             currentValue = value;
                             if (uploadAllowed) {
                                 EventsUtil.getSettingsSavedEmiter().emit(true);
-                                SettingDecorator.storeService
+                                settingsDecoratorContext.getStoreService(params)
                                     .save(settingKey, SettingDecorator.getOrConvertedValue(value, params, 'modelConversion'))
                                     .then((result : any) => { EventsUtil.getSettingsSavedEmiter().emit(false); });
                                     //TODO scenarions for unsucessfull settings save
@@ -94,12 +103,23 @@ export class SettingDecorator {
                 })
 
                 // callback function
-                params['afterExec']?.apply(this, (currentValue === undefined || currentValue === null) ? fieldValue : currentValue);
+                if (params['afterExec']) {
+                  let args : any = (currentValue === undefined || currentValue === null) ? fieldValue : currentValue;
+                  if (!Array.isArray(args)) {
+                    args = [args];
+                  }
+                  params['afterExec']?.apply(this, args);
+                }
+
             })
             .catch((error : any) => {
                 console.log(error);
-            }); 
+            });
 
+    }
+
+    private getStoreService(params : SettingDecoratorParameters) : StoreAllService {
+        return params.localOnly ? SettingDecorator.localStoreService : SettingDecorator.syncStoreService;
     }
 
     private static getCommonDefaultValue(target : Object, propertyKey : string) : any {
@@ -108,7 +128,7 @@ export class SettingDecorator {
             case 'Boolean':
                 return false;
             default:
-                return null; 
+                return null;
         }
     }
 
@@ -130,9 +150,9 @@ export class SettingDecorator {
             tmp = tmp[paramNames[i]];
             if (tmp === undefined) {
                 return false;
-            } 
+            }
         }
         return true;
     }
-    
+
 }

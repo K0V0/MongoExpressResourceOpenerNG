@@ -80,17 +80,17 @@ label:hover {
     text-decoration: underline;
 }
 
-input[type=text], input[type=checkbox], select, textarea { 
+input[type=text], input[type=checkbox], select, textarea {
     border: 0.125em solid #00ADEF;
     background-color: #eee;
     transition: background-color 0.25s ease-in-out;
 }
 
-input[type=text]:hover, input[type=checkbox]:hover, select:hover, textarea:hover { 
+input[type=text]:hover, input[type=checkbox]:hover, select:hover, textarea:hover {
     background-color: #f6f6f6;
 }
 
-input[type=checkbox], select, button, label { 
+input[type=checkbox], select, button, label {
     cursor: pointer;
 }
 
@@ -172,6 +172,21 @@ select > option {
     cursor: not-allowed !important;
     background-color: #bbb !important;
     color: #888 !important;
+}
+
+.collapsible {
+  height: auto;
+  transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.collapsible.hidden {
+  max-height: 0em;
+  opacity: 0;
+}
+
+.collapsible.visible {
+  max-height: 16em;
+  opacity: 1;
 }
 
 .hidden {
