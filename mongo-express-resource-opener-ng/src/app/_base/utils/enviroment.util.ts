@@ -73,7 +73,7 @@ export enum SettingsNames {
     STORE_MONGO_LOGIN_CREDENTIALS = 'storeMongoLoginCredentials'
 }
 
-
+//TODO unite with interfaces
 export const DefaultValues: any = {
   [SettingsNames.AUTO_SUBMIT_RESOURCE_ID]: false,
   [SettingsNames.CHECK_ON_ALL_ENVIROMENTS]: false,
@@ -82,7 +82,8 @@ export const DefaultValues: any = {
     name: "Základné prostredie",
     useLogin: false,
     usernameHash: null,
-    passHash: null
+    passHash: null,
+    useLoginDefault: false
   }],
   [SettingsNames.CURRENT_ENVIROMENT]: 0,
   [SettingsNames.ENVIROMENTS]: [{

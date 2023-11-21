@@ -22,9 +22,14 @@
         [name]="'enviromentUseLogin_' + i"
         [id]="'enviromentUseLogin_' + i"
         [(ngModel)]="enviroment.useLogin"
-        (ngModelChange)="change()">
+        (ngModelChange)="change()"
+        (change)="changeUseLoginByHand(i)"
+        [class]="loginIsDisabledByOverride(i) ? 'disabled temporary' : ''">
 
-    <label for="enviromentUseLogin_{{i}}">
+    <label
+      for="enviromentUseLogin_{{i}}"
+      [class]="loginIsDisabledByOverride(i) ? 'disabled temporary' : ''"
+    >
       použiť Login
     </label>
 

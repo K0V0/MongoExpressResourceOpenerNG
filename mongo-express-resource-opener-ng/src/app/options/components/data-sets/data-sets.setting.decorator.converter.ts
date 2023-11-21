@@ -15,28 +15,24 @@ export  class DataSetsSettingDecoratorConverter
     }
 
     protected mapForNgModel(content: DataSetsStoreType) : DataSetsNgModelType {
-
-      console.log(this.secureKey);
-
         return content?.map((x) => ({
             id: x.id,
             name: x.name,
             datasets: x.datasets?.join('\n'),
             useLogin: x.useLogin,
+            useLoginDefault: x.useLoginDefault,
             username: CryptogrUtil.decrypt(x.usernameHash, this.secureKey),
             pass: CryptogrUtil.decrypt(x.passHash, this.secureKey)
         }));
     }
 
     protected mapForStore(content: DataSetsNgModelType) : DataSetsStoreType {
-
-      console.log(this.secureKey);
-
         return content?.map((x) => ({
             id: x.id,
             name: x.name,
             datasets: x.datasets?.trim().split('\n').map((x) => x.trim()).filter((x) => x.length > 0),
             useLogin: x.useLogin,
+            useLoginDefault: x.useLoginDefault,
             usernameHash: CryptogrUtil.encrypt(x.username, this.secureKey),
             passHash: CryptogrUtil.encrypt(x.pass, this.secureKey)
         }));

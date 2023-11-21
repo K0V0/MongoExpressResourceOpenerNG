@@ -4,6 +4,7 @@ export interface DataSetsNgModelRecordFormat {
     name : string;
     datasets : string;
     useLogin : boolean;
+    useLoginDefault : boolean;
     username : string | null;
     pass : string | null;
 }
@@ -16,6 +17,7 @@ export interface DataSetsStoreRecordFormat {
     name : string;
     datasets : string[];
     useLogin : boolean;
+    useLoginDefault : boolean;
     usernameHash : string | null;
     passHash : string | null;
 }

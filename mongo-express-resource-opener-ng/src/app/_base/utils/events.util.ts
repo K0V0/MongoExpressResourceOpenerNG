@@ -10,6 +10,7 @@ export class EventsUtil {
     private static readonly SETTINGS_SEARCH_ON_ALL_ENVIROMENTS_EMMITER = new EventEmitter<boolean>();
     private static readonly RESOURCE_ID_EMMITER = new EventEmitter<void>();
     private static readonly SETTINGS_LOADED_EMMITER = new EventEmitter<void>();
+    private static readonly SETTINGS_USE_LOGINS_EMMITER = new EventEmitter<boolean>();
 
 
     public static notifySettingsSaved(result : boolean) : void {
@@ -52,6 +53,14 @@ export class EventsUtil {
 
     public static getSetingsLoadedEmmiter() {
         return this.SETTINGS_LOADED_EMMITER;
+    }
+
+    public static notifySettingsUseLoginsChanged(enabled : boolean) {
+      this.SETTINGS_USE_LOGINS_EMMITER.emit(enabled);
+    }
+
+    public static getSettingsUseLoginsEmitter() {
+      return this.SETTINGS_USE_LOGINS_EMMITER;
     }
 
 
