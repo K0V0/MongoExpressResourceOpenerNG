@@ -46,6 +46,8 @@ export class QueryServiceImpl implements QueryService {
     private fireRequests(resourceId : string, settings : Settings) : Promise<void> {
         return new Promise((resolve, reject) => {
 
+            console.log(settings);
+
             let queryMessages : HttpRequestQuery[] = this.buildQueryMessages(settings);
             let datasourcesUrls : string[] = queryMessages.map((queryMessage : HttpRequestQuery) => queryMessage.url);
             let requestResults : boolean[] = [];

@@ -1,4 +1,6 @@
 
+//TODO unite somehow with angular and JS part of app
+
 export interface Message {
     id : number;
     data : any;

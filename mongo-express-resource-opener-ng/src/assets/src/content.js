@@ -1,11 +1,7 @@
-
 function Content() {
-    //TODO rethink how in future this can be added using settings (after moving all services into background scripts)
-    this.objectId = 'ObjectId';
-    this.otherReferenceAttrs = [
-        'resource', 'resourceId', 'formId', 'submissionId', 'createFormId',
-        'updateFormId', 'rowDetailFormId', 'defaultViewId'
-    ];
+    this.ATTR_OBJECT_ID = 'ObjectId';
+    this.SERVICE = new ContentService();
+    this.SETTINGS = {};
 }
 
 Content.prototype = {
@@ -15,8 +11,16 @@ Content.prototype = {
         if (!this.isMongo()) {
             return;
         }
-        this.getElements();
-        this.registerListeners();
+        this.SERVICE.getSetting([
+          SETTINGS_NAMES.DOCUMENT_ID_OBJECTS,
+          SETTINGS_NAMES.OPEN_REFERENCES_ONECLICK
+        ]).then(settings => {
+          this.SETTINGS = settings;
+          this.getElements();
+          this.registerListeners();
+        }).catch(error => {
+          console.error(error);
+        });
     },
 
     getElements: function() {
@@ -30,7 +34,7 @@ Content.prototype = {
         var context = this;
         document.addEventListener('click', function(event) {
             var classList = event.target.classList;
-            if (classList !== undefined && classList !== null 
+            if (classList !== undefined && classList !== null
                 && classList.contains('cm-string') && classList.contains('reference')) {
                     context.sendToSyncStorage(event.target.innerHTML);
             }
@@ -40,8 +44,8 @@ Content.prototype = {
     isMongo: function() {
         var titleContainer = document.getElementsByClassName('navbar-brand');
         return titleContainer !== undefined
-            && titleContainer[0] !== undefined 
-            && titleContainer[0].innerHTML !== undefined 
+            && titleContainer[0] !== undefined
+            && titleContainer[0].innerHTML !== undefined
             && titleContainer[0].innerHTML === 'Mongo Express'
     },
 
@@ -50,21 +54,21 @@ Content.prototype = {
         var objectIdElem = element.querySelector('span.cm-variable');
         var isObjectId = objectIdElem !== undefined && objectIdElem !== null
             && objectIdElem.innerHTML !== undefined && objectIdElem.innerHTML !== null
-            && objectIdElem.innerHTML === context.objectId;
+            && objectIdElem.innerHTML === context.ATTR_OBJECT_ID;
 
         if (isObjectId) {
             return true;
         }
 
         var otherReferenceElem = element.querySelector('span.cm-property');
-        if (otherReferenceElem !== undefined && otherReferenceElem !== null 
+        if (otherReferenceElem !== undefined && otherReferenceElem !== null
             && otherReferenceElem.innerHTML !== undefined && otherReferenceElem.innerHTML !== null) {
-                if (!context.otherReferenceAttrs.includes(otherReferenceElem.innerHTML)) {
+                if (!context.SETTINGS[SETTINGS_NAMES.DOCUMENT_ID_OBJECTS].includes(otherReferenceElem.innerHTML)) {
                     return false;
                 }
                 var otherReferenceElemContent = element.querySelector('span.cm-string');
-                return otherReferenceElemContent !== undefined && otherReferenceElemContent !== null 
-                    && otherReferenceElemContent.innerHTML !== undefined && otherReferenceElemContent !== null 
+                return otherReferenceElemContent !== undefined && otherReferenceElemContent !== null
+                    && otherReferenceElemContent.innerHTML !== undefined && otherReferenceElemContent !== null
                     && /'(?:[0-9a-fA-F])+'/g.test(otherReferenceElemContent.innerHTML);
         }
 

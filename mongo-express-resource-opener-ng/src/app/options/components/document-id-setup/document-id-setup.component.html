@@ -1,0 +1,15 @@
+
+<label for="documentIdSetup">
+  Atribúty, ktoré sú referenciou na mongo dokument:
+  <br>
+  <i>Atribúty oddeľujte čiarkou</i>
+</label>
+
+<textarea
+  cols="80" rows="5"
+  placeholder="Dátové zdroje..."
+  name="documentIdSetup"
+  id="documentIdSetup"
+  [(ngModel)]="idProperties"
+  (ngModelChange)="change()"></textarea>
+

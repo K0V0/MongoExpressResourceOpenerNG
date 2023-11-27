@@ -1,5 +1,6 @@
 import {Message} from "../interfaces/messaging.interface";
 
+//TODO make comehow visible for both angular and JS part of app
 export class BaseUtil {
 
     public static deepClone<TYP>(originalObject : TYP) : TYP {

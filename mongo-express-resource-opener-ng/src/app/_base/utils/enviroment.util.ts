@@ -41,7 +41,8 @@ export class EnviromentUtil {
 
     public static getStoreService() : StoreAllService {
       if (this.storeServiceInstance === undefined) {
-        this.storeServiceInstance = new StoreAllServiceImpl(this.getStoreLocalService(), this.getStoreSyncService());
+       // this.storeServiceInstance = new StoreAllServiceImpl(this.getStoreLocalService(), this.getStoreSyncService());
+        this.storeServiceInstance = new StoreAllServiceImpl();
       }
       return this.storeServiceInstance;
     }
@@ -61,6 +62,7 @@ export enum RuntimeEnviroment {
 }
 
 
+//TODO make somehow visible for both angular and JS part of app
 export enum SettingsNames {
     AUTO_SUBMIT_RESOURCE_ID = 'autoSubmitResourceId',
     CHECK_ON_ALL_ENVIROMENTS = 'checkOnAllEnviroments',
@@ -70,9 +72,12 @@ export enum SettingsNames {
     ENVIROMENTS = 'enviroments',
     RESOURCE_ID = 'resourceId',
     SECURE_KEY = 'secureKey',
-    STORE_MONGO_LOGIN_CREDENTIALS = 'storeMongoLoginCredentials'
+    STORE_MONGO_LOGIN_CREDENTIALS = 'storeMongoLoginCredentials',
+    DOCUMENT_ID_OBJECTS = "documentIdObjects",
+    OPEN_REFERENCES_ONECLICK = "openReferencesOneclick"
 }
 
+//TODO make somehow visible for both angular and JS part of app
 //TODO unite with interfaces
 export const DefaultValues: any = {
   [SettingsNames.AUTO_SUBMIT_RESOURCE_ID]: false,
@@ -96,7 +101,12 @@ export const DefaultValues: any = {
   [SettingsNames.RESOURCE_ID]: "",
   [SettingsNames.ERASE_AFTER_FIRED_SUCESSFULLY]: false,
   [SettingsNames.SECURE_KEY]: "MaIFi20NKLhfrRpI",
-  [SettingsNames.STORE_MONGO_LOGIN_CREDENTIALS]: false
+  [SettingsNames.STORE_MONGO_LOGIN_CREDENTIALS]: false,
+  [SettingsNames.DOCUMENT_ID_OBJECTS]: [
+    'resource', 'resourceId', 'formId', 'submissionId', 'createFormId',
+    'updateFormId', 'rowDetailFormId', 'defaultViewId'
+  ],
+  [SettingsNames.OPEN_REFERENCES_ONECLICK]: true
 };
 
 BaseUtil.deepFreeze(DefaultValues);

@@ -23,7 +23,7 @@ import {DataSetsSettingDecoratorConverter} from './data-sets.setting.decorator.c
         './../../options.component.scss'
     ]
 })
-export class DataSetsComponent extends BaseComponent implements OnInit{
+export class DataSetsComponent extends BaseComponent implements OnInit {
 
   private static readonly FIRE_TRESHOLD_MILISECONDS : number = 1000;
 

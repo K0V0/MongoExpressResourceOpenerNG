@@ -13,11 +13,15 @@ const REQUESTS_TABLE = {
   1: HTTP_CONTROLLER.fetchHttpRequest,
   2: HTTP_CONTROLLER.openDocumentInNewTab,
   3: STORE_CONTROLLER.getDataFromStores,
+  31: STORE_CONTROLLER.getDataFromStoresWithDefaults,
   4: STORE_CONTROLLER.getDataFromLocalStore,
+  41: STORE_CONTROLLER.getDataFromLocalStoreWithDefault,
   5: STORE_CONTROLLER.getDataFromSyncStore,
+  51: STORE_CONTROLLER.getDataFromSyncStoreWithDefault,
   6: STORE_CONTROLLER.putDataToLocalStore,
   7: STORE_CONTROLLER.putDataToSyncStore,
   8: STORE_CONTROLLER.getDataFromStoresInEnvelopeWithKey,
+  81: STORE_CONTROLLER.getDataFromStoresInEnvelopeWithKeyWithDefaults,
   9: STORE_CONTROLLER.getDataFromLocalStoreInEnvelopeWithKey,
   10: STORE_CONTROLLER.getDataFromSyncStoreInEnvelopeWithKey
 }

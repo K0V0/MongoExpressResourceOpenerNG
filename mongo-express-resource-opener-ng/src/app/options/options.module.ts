@@ -13,6 +13,10 @@ import {CheckOnAllEnviromentsComponent} from "./components/check-on-all-envirome
 import {SecureKeyComponent} from "./components/secure-key/secure-key.component";
 import {SharedModule} from "../_base/components/shared/shared.module";
 import {ClearAfterFiredComponent} from './components/clear-after-fired/clear-after-fired.component';
+import {DocumentIdSetupComponent} from "./components/document-id-setup/document-id-setup.component";
+import {
+  OpenReferencesOneclickComponent
+} from "./components/open-references-oneclick/open-references-oneclick.component";
 
 @NgModule({
     imports: [
@@ -27,7 +31,9 @@ import {ClearAfterFiredComponent} from './components/clear-after-fired/clear-aft
         EnviromentSelectComponent,
         CheckOnAllEnviromentsComponent,
         DataSetsComponent,
-        SecureKeyComponent
+        SecureKeyComponent,
+        DocumentIdSetupComponent,
+        OpenReferencesOneclickComponent
     ],
     exports: [
         OptionsComponent,
@@ -36,7 +42,9 @@ import {ClearAfterFiredComponent} from './components/clear-after-fired/clear-aft
         EnviromentSelectComponent,
         CheckOnAllEnviromentsComponent,
         DataSetsComponent,
-        SecureKeyComponent
+        SecureKeyComponent,
+        DocumentIdSetupComponent,
+        OpenReferencesOneclickComponent
     ],
     providers: [
     ]
