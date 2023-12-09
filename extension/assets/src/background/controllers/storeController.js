@@ -11,20 +11,20 @@ const STORE_SERVICE = new StoreService();
 
 
 /**
- *  - get data from Sync store
- *  - if not, try to get from local store
+    - try to get data from stores, data from local store have precednce
+    - do not use defaults
  */
 StoreController.prototype.getDataFromStores = function(data, responseCallback) {
-  STORE_SERVICE._getFromStores(data, responseCallback);
+  STORE_SERVICE._getFromAllStores(data, responseCallback);
 }
 
 /**
- *  - get data from Sync store
- *  - if not, try to get from local store
- *  - if not even there, use default
+ *  - get available data from local store and prioritize them
+ *  - then try use synchronized store
+ *  - iv everything fails, try to set defaults
  */
 StoreController.prototype.getDataFromStoresWithDefaults = function(data, responseCallback) {
-  STORE_SERVICE._getFromStores(data, responseCallback, false, true);
+  STORE_SERVICE._getFromAllStores(data,false, true, responseCallback);
 }
 
 
@@ -56,11 +56,11 @@ StoreController.prototype.putDataToSyncStore = function(data, responseCallback) 
 
 
 StoreController.prototype.getDataFromStoresInEnvelopeWithKey = function(data, responseCallback) {
-  STORE_SERVICE._getFromStores(data, responseCallback, true);
+  STORE_SERVICE._getFromAllStores(data, responseCallback, true);
 }
 
 StoreController.prototype.getDataFromStoresInEnvelopeWithKeyWithDefaults = function(data, responseCallback) {
-  STORE_SERVICE._getFromStores(data, responseCallback, true, true);
+  STORE_SERVICE._getFromAllStores(data, responseCallback, true, true);
 }
 
 

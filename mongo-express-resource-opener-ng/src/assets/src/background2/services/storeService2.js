@@ -1,8 +1,3 @@
-// importScripts(
-//   './utils/baseUtil.js',
-//   './utils/values.js'
-// );
-
 function StoreService2() {
 
 }
@@ -42,20 +37,13 @@ StoreService2.prototype._getFromStore = function(
     }
     storageType
       .get(attributesToQuery)
-      .then(items => resolve(
-        Object.keys(items)
-          .map(key => {
-            let result = items[key];
-            if (result === undefined && withDefault) {
-              result = this._getDefault(key);
-            }
-            if (withKey) {
-              result = { [key]: result }
-            }
-            return result;
-          })
-        )
-      )
+      .then(items => {
+        const result = {};
+        attributesToQuery.forEach(attr => {
+          result[attr] = this._getValue(items, attr, withKey, withDefault)
+        });
+        resolve(result)
+      })
       .catch(error => reject(error));
   });
 }
@@ -65,29 +53,20 @@ StoreService2.prototype._getFromStores = function(query, withKey = false, withDe
   return new Promise((resolve, reject) => {
     // local items have highest priority
     // set withDefault to false because it can occupy place for value that can be available in store
+    let result = {};
     this._getFromStore(chrome.storage.local, query, withKey, false)
       .then(localItems => {
-        let result = localItems;
-        console.log(localItems);
-        const localItemsKeys = Object.keys(localItems);
-        this._getFromStore(chrome.storage.sync, query, withKey, withDefault)
-          .then(syncItems => {
-            Object.keys(syncItems)
-              .filter(key => !localItemsKeys.includes(key))
-              .forEach(key => {
-                let tmpResult = syncItems[key];
-                if (tmpResult === undefined && withDefault) {
-                  tmpResult = this._getDefault(key);
-                }
-                if (withKey) {
-                  tmpResult = { [key]: tmpResult }
-                }
-                result[key] = tmpResult;
-                console.log(tmpResult);
-              })
-            resolve(result);
+        result = localItems;
+        return this._getFromStore(chrome.storage.sync, query, withKey, withDefault);
+      })
+      .then(syncItems => {
+        const localItemsKeys = Object.keys(result);
+        Object.keys(syncItems)
+          .filter(key => !localItemsKeys.includes(key) || result[key] === undefined)
+          .forEach(key => {
+            result[key] = this._getValue(syncItems, key, withKey, withDefault);
           })
-          .catch(error => reject(error));
+        resolve(result);
       })
       .catch(error => reject(error));
   });
@@ -105,14 +84,22 @@ StoreService2.prototype._putToStore = function(storageType, query, responseCallb
     }
 }
 
-StoreService2.prototype._getDefault = function(key) {
+
+
+StoreService2.prototype._getDefaultValue = function(key) {
   if (!Object.values(SETTINGS_NAMES).includes(key)) {
-    console.log("No default value for: " + key);
     return undefined;
   }
   return DEFAULTS[key];
 }
 
-StoreService2.prototype._isSomethingInStore = function(result) {
-  return result !== undefined && result !== null && Object.keys(result).length > 0 && result.constructor === Object;
+StoreService2.prototype._getValue = function(items, key, withKey, withDefault) {
+  let result = items[key];
+  if (result === undefined && withDefault) {
+    result = this._getDefaultValue(key);
+  }
+  if (withKey) {
+    result = { [key]: result }
+  }
+  return result;
 }

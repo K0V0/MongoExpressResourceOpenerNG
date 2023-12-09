@@ -13,18 +13,18 @@ const STORE_CONTROLLER = new StoreController();
 const REQUESTS_TABLE = {
   [REQUEST_IDS.HTTP_REQUEST]: HTTP_CONTROLLER.fetchHttpRequest,
   //[REQUEST_IDS.DOCUMENT_FIND]: DOCUMENT_FIND_CONTROLLER.find,
-  3: STORE_CONTROLLER.getDataFromStores,
+  [REQUEST_IDS.STORE_GET_DATA_FROM_ALL]: STORE_CONTROLLER.getDataFromStores,
   [REQUEST_IDS.STORE_GET_DATA_FROM_ALL_OR_DEFAULTS]: STORE_CONTROLLER.getDataFromStoresWithDefaults,
-  4: STORE_CONTROLLER.getDataFromLocalStore,
-  41: STORE_CONTROLLER.getDataFromLocalStoreWithDefault,
-  5: STORE_CONTROLLER.getDataFromSyncStore,
-  51: STORE_CONTROLLER.getDataFromSyncStoreWithDefault,
-  6: STORE_CONTROLLER.putDataToLocalStore,
-  7: STORE_CONTROLLER.putDataToSyncStore,
-  8: STORE_CONTROLLER.getDataFromStoresInEnvelopeWithKey,
-  [REQUEST_IDS.STORE_GET_DATA_FROM_ALL_WITH_KEYS_OR_DEFAULTS]: STORE_CONTROLLER.getDataFromStoresInEnvelopeWithKeyWithDefaults,
-  9: STORE_CONTROLLER.getDataFromLocalStoreInEnvelopeWithKey,
-  10: STORE_CONTROLLER.getDataFromSyncStoreInEnvelopeWithKey
+  // 4: STORE_CONTROLLER.getDataFromLocalStore,
+  // 41: STORE_CONTROLLER.getDataFromLocalStoreWithDefault,
+  // 5: STORE_CONTROLLER.getDataFromSyncStore,
+  // 51: STORE_CONTROLLER.getDataFromSyncStoreWithDefault,
+  // 6: STORE_CONTROLLER.putDataToLocalStore,
+  // 7: STORE_CONTROLLER.putDataToSyncStore,
+  // 8: STORE_CONTROLLER.getDataFromStoresInEnvelopeWithKey,
+  // [REQUEST_IDS.STORE_GET_DATA_FROM_ALL_WITH_KEYS_OR_DEFAULTS]: STORE_CONTROLLER.getDataFromStoresInEnvelopeWithKeyWithDefaults,
+  // 9: STORE_CONTROLLER.getDataFromLocalStoreInEnvelopeWithKey,
+  // 10: STORE_CONTROLLER.getDataFromSyncStoreInEnvelopeWithKey
 }
 
 chrome.runtime.onMessage.addListener(function (message, sender, responseCallback) {
@@ -33,8 +33,3 @@ chrome.runtime.onMessage.addListener(function (message, sender, responseCallback
   // true = asynchronous request
   return true;
 });
-
-getResults();
-
-
-
