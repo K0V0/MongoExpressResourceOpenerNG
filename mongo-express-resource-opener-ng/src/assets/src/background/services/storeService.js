@@ -47,14 +47,11 @@ StoreService.prototype._getFromStore = function(
       this._merge(attributesToQuery, Object.values(SETTINGS_NAMES))
     } else if (Array.isArray(attribute)) {
       // multiple values queried
-      console.log("array queried");
       this._merge(attributesToQuery, attribute);
     } else {
       // single value queried
-      console.log("signe elem queried");
       attributesToQuery.push(attribute);
     }
-    console.log(attributesToQuery);
     storageType
       .get(attributesToQuery)
       .then(items => {

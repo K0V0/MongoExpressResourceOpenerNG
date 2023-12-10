@@ -12,6 +12,14 @@ function sendMessage(message, options = {}) {
   });
 }
 
+function getMessageResponseObject(status, data) {
+  const state = status ? "OK" : "FAIL";
+  return {
+    status: state,
+    data: data
+  };
+}
+
 function deepFreeze(obj) {
   Object.freeze(obj);
   Object.getOwnPropertyNames(obj).forEach((prop) => {

@@ -22,6 +22,14 @@ export class QueryServiceImpl implements QueryService {
 
 
     public open(resourceId : string | undefined) : Promise<void> {
+
+      const message = {
+        id: 2,
+        data: "chijaa"
+      }
+
+      BaseUtil.sendMessage(message);
+
         return new Promise((resolve, reject) => {
             if (resourceId === undefined || resourceId === null || resourceId.trim().length < 1) {
                 reject('chýbajúce/nezadané resourceId');

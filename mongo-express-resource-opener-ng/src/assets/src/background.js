@@ -29,6 +29,9 @@ const REQUESTS_TABLE = {
 }
 
 chrome.runtime.onMessage.addListener(function (message, sender, responseCallback) {
+  console.log(message.id);
+  console.log(message.data);
+
   REQUESTS_TABLE[message.id](message.data, responseCallback);
   // true = asynchronous request
   return true;

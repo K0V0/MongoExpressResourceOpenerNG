@@ -25,6 +25,16 @@ HttpService.prototype._fetch = function (query, responseCallback) {
         });
 }
 
+HttpService.prototype._fetchWithPromise = function (query) {
+
+  const headers = new Headers();
+  if (query.authHeader) {
+    headers.append('Authorization', 'Basic ' + query.authHeader);
+  }
+
+  return fetch(query.url, { method: 'GET', headers: headers });
+}
+
 
 HttpService.prototype._openDocument = function(query, responseCallback) {
 
