@@ -3,29 +3,27 @@ importScripts(
     './background/services/storeService.js'
 );
 
-function StoreController() {
+function StoreController() {}
 
-}
+StoreController.prototype.constructor = StoreController;
 
-const STORE_SERVICE = new StoreService();
-
-
-/**
- *  - get data from Sync store
- *  - if not, try to get from local store
- */
-StoreController.prototype.getDataFromStores = function(data, responseCallback) {
-  STORE_SERVICE._getFromAllStores(data, false, false, responseCallback);
-}
+StoreController.prototype.STORE_SERVICE = new StoreService();
 
 /**
- *  - get data from Sync store
- *  - if not, try to get from local store
- *  - if not even there, use default
+ *  - try to get data from stores, data from local store have precednce
+ *  - do not use defaults
  */
-StoreController.prototype.getDataFromStoresWithDefaults = function(data, responseCallback) {
-  STORE_SERVICE._getFromAllStores(data, false, true, responseCallback);
-}
+StoreController.prototype.getDataFromStores = (data, responseCallback) =>
+  StoreController.prototype.STORE_SERVICE._getFromAllStores(data, false, false, responseCallback);
+
+/**
+ *  - get available data from local store and prioritize them
+ *  - then try use synchronized store
+ *  - iv everything fails, try to set defaults
+ */
+StoreController.prototype.getDataFromStoresWithDefaults = (data, responseCallback) =>
+  StoreController.prototype.STORE_SERVICE._getFromAllStores(data, false, true, responseCallback);
+
 
 
 // StoreController.prototype.getDataFromLocalStore = function(data, responseCallback) {

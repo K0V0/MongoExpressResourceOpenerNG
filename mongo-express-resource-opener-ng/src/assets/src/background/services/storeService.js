@@ -44,14 +44,17 @@ StoreService.prototype._getFromStore = function(
     const attributesToQuery = [];
     if (attribute === undefined || attribute === null || attribute.key === null || attribute.key === undefined) {
       // return all possible results
-      attributesToQuery.push(...Object.values(SETTINGS_NAMES));
+      this._merge(attributesToQuery, Object.values(SETTINGS_NAMES))
     } else if (Array.isArray(attribute)) {
       // multiple values queried
-      attributesToQuery.push(...attribute);
+      console.log("array queried");
+      this._merge(attributesToQuery, attribute);
     } else {
       // single value queried
+      console.log("signe elem queried");
       attributesToQuery.push(attribute);
     }
+    console.log(attributesToQuery);
     storageType
       .get(attributesToQuery)
       .then(items => {
@@ -65,8 +68,9 @@ StoreService.prototype._getFromStore = function(
   });
 }
 
-StoreService.prototype._getFromStores = function(query, withKey = false, withDefault = false) {
-
+StoreService.prototype._getFromStores = function(
+  query, withKey = false, withDefault = false
+) {
   return new Promise((resolve, reject) => {
     // local items have highest priority
     // set withDefault to false because it can occupy place for value that can be available in store
@@ -121,4 +125,10 @@ StoreService.prototype._getValue = function(items, key, withKey, withDefault) {
     result = { [key]: result }
   }
   return result;
+}
+
+StoreService.prototype._merge = function(destinationArr, sourceArr) {
+  console.log(destinationArr);
+  console.log(sourceArr);
+  sourceArr.forEach(item => destinationArr.push(item));
 }

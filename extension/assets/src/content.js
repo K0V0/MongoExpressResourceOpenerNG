@@ -15,6 +15,7 @@ Content.prototype = {
           SETTINGS_NAMES.DOCUMENT_ID_OBJECTS,
           SETTINGS_NAMES.OPEN_REFERENCES_ONECLICK
         ]).then(settings => {
+          console.log(settings);
           this.SETTINGS = settings;
           this.getElements();
           this.registerListeners();
@@ -36,7 +37,12 @@ Content.prototype = {
             var classList = event.target.classList;
             if (classList !== undefined && classList !== null
                 && classList.contains('cm-string') && classList.contains('reference')) {
-                    context.sendToSyncStorage(event.target.innerHTML);
+                    const resourceId = event.target.innerHTML.replace(/[^0-9A-Fa-f]/g, "");
+                    context.sendToSyncStorage(resourceId);
+                    if (context.SETTINGS[SETTINGS_NAMES.OPEN_REFERENCES_ONECLICK]) {
+                      console.log("onclick");
+                      context.openDocumentInNewTab(resourceId);
+                    }
             }
         });
     },
@@ -100,10 +106,20 @@ Content.prototype = {
     //     document.body.removeChild(tempElement);
     // },
 
-    sendToSyncStorage(text) {
-        var resourceId = text.replace(/[^0-9A-Fa-f]/g, "");
+    sendToSyncStorage(resourceId) {
         chrome.storage.sync.set({ resourceId: resourceId });
-    }
+    },
+
+  openDocumentInNewTab(resourceId) {
+    // get the current enviroment from which I am opening this link
+
+    // resolve url to open
+    sendMessage({ id: REQUEST_IDS.DOCUMENT_FIND, data: { resourceId: resourceId } })
+      .then((resolve) => console.log(resolve))
+      .catch((error) => console.log(error));
+
+    // trigger new card opening
+  }
 };
 
 var content = new Content();

@@ -1,3 +1,8 @@
+// importScripts(
+//   './utils/baseUtil.js',
+//   './utils/values.js'
+// );
+
 function ContentService() {
 
 }
@@ -7,16 +12,14 @@ ContentService.prototype = {
 
   getSettings: function() {
     return sendMessage({
-      id: 31
+      id: REQUEST_IDS.STORE_GET_DATA_FROM_ALL_OR_DEFAULTS
     });
   },
 
-  getSetting: function(key) {
+  getSetting: function(data) {
     return sendMessage({
-      id: 31,
-      data: {
-        key: key
-      }
+      id: REQUEST_IDS.STORE_GET_DATA_FROM_ALL_OR_DEFAULTS,
+      data: data
     });
   }
 }
