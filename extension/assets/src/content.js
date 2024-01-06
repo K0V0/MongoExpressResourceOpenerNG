@@ -41,7 +41,7 @@ Content.prototype = {
                     context.sendToSyncStorage(resourceId);
                     if (context.SETTINGS[SETTINGS_NAMES.OPEN_REFERENCES_ONECLICK]) {
                       console.log("onclick");
-                      context.openDocumentInNewTab(resourceId);
+                      context.SERVICE.openInNewTab(resourceId);
                     }
             }
         });
@@ -108,18 +108,8 @@ Content.prototype = {
 
     sendToSyncStorage(resourceId) {
         chrome.storage.sync.set({ resourceId: resourceId });
-    },
+    }
 
-  openDocumentInNewTab(resourceId) {
-    // get the current enviroment from which I am opening this link
-
-    // resolve url to open
-    sendMessage({ id: REQUEST_IDS.DOCUMENT_FIND, data: { resourceId: resourceId } })
-      .then((resolve) => console.log(resolve))
-      .catch((error) => console.log(error));
-
-    // trigger new card opening
-  }
 };
 
 var content = new Content();

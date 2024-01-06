@@ -37,5 +37,5 @@ HttpService.prototype._fetchWithPromise = function (query) {
 
 
 HttpService.prototype._openDocument = function(query, responseCallback) {
-
+  query.forEach(url => chrome.tabs.create({ url: url }));
 }

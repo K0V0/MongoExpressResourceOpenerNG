@@ -20,13 +20,21 @@ const HTTP_SERVICE = new HttpService();
  *                              url: string,
  *                              authHeader: string | null
  *                            }
- *  @param responseHandler  - callback that is used to pass the data back to service layer
+ *  @param responseCallback - callback that is used to pass the data back to service layer
  */
 HttpController.prototype.fetchHttpRequest = function (query, responseCallback) {
     HTTP_SERVICE._fetch(query, responseCallback);
 }
 
-
+/**
+ *  Used to open given URL in new tab
+ *
+ *  @param query            - object witl array of URLs to open in new tab(s)
+ *                            {
+ *                              url: string[]
+ *                            }
+ *  @param responseCallback - not applied yet
+ */
 HttpController.prototype.openDocumentInNewTab = function(query, responseCallback) {
     HTTP_SERVICE._openDocument(query, responseCallback);
 }
