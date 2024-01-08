@@ -81,10 +81,11 @@ export class BaseUtil {
         return obj;
     }
 
-    public static sendMessage<TYP>(message : MessagingAbstract<TYP>, options = {}) : Promise<Response> {
+    //TODO typova bezpecnost
+    public static sendMessage<TYP>(message : MessagingAbstract<TYP>, options = {}) : Promise<any> {
         return new Promise((resolve, reject) => {
           console.log(message.getMessage());
-            chrome.runtime.sendMessage(message.getMessage(), options, (response : Response) => {
+            chrome.runtime.sendMessage(message.getMessage(), options, (response : any) => {
                 if (chrome.runtime.lastError) {
                     console.error("Error after sedning message to message API: " + chrome.runtime.lastError);
                     reject(chrome.runtime.lastError);

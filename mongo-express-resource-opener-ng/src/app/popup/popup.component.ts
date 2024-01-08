@@ -12,6 +12,8 @@ import {ErrorInlineComponent} from './../_base/components/shared/error-inline/er
 import {ResourceIdComponent} from './components/resource-id/resource-id.component';
 import {BaseUtil} from "../_base/utils/base.util";
 import {OpenInNewTabQuery} from "../_base/interfaces/messaging/open-in-new-tab.query";
+import {FindDocumentQuery} from "../_base/interfaces/messaging/find-document.query";
+import {FindDocumentMessage} from "../_base/interfaces/messaging.interface";
 
 
 // component of extension popup
@@ -103,13 +105,19 @@ export class PopupComponent extends BaseComponent implements OnInit {
       return;
     }
     this.cancelResourceIdError();
+    //TODO operácie s messaging API presunúť do services
+    const message : FindDocumentMessage = new class implements FindDocumentMessage {
+      resourceId = resourceId as string;
+    }
     BaseUtil
-      .sendMessage(new OpenInNewTabQuery([resourceId]))
-      .then(() => {
+      .sendMessage(new FindDocumentQuery(message))
+      .then(resolve => {
+        console.log(resolve);
         this.cancelResourceIdError();
         if (this.clearAfterFired) {
           this.erase();
         }
+        BaseUtil.sendMessage(new OpenInNewTabQuery(resolve.data));
       })
       .catch((error) => {
         this.showResourceIdError(error)

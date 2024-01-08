@@ -3,6 +3,6 @@ export interface PutSettingsMessage {
   value: any
 }
 
-// export interface GetSettingsMessage {
-//   key: string
-// }
+export interface FindDocumentMessage {
+  resourceId: string
+}

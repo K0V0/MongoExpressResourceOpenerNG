@@ -25,10 +25,9 @@ export class EnviromentUtil {
 
     public static getStoreSyncService() : StoreAllService {
         if (this.storeSyncServiceInstance === undefined) {
-            // this.storeSyncServiceInstance = EnviromentUtil.runningAt() === RuntimeEnviroment.WEB
-            //     ? new StoreSyncServiceImplDev()
-            //     : new StoreSyncServiceImplProd()
-          this.storeSyncServiceInstance = new StoreSyncServiceImplProd();
+            this.storeSyncServiceInstance = EnviromentUtil.runningAt() === RuntimeEnviroment.WEB
+                ? new StoreSyncServiceImplDev()
+                : new StoreSyncServiceImplProd()
         }
         return this.storeSyncServiceInstance;
     }

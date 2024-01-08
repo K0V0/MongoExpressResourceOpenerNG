@@ -8,14 +8,7 @@ export abstract class StoreServiceImpl implements StoreService {
     value: null
   };
 
-  // protected getMessage : GetSettingsMessage = {
-  //   key: ""
-  // }
-
   load(key: string): Promise<any> {
-    // this.getMessage = new class implements GetSettingsMessage {
-    //   key = key;
-    // }
     return Promise.resolve(undefined);
   }
 

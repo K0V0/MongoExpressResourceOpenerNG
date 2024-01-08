@@ -14,9 +14,11 @@ DocumentsFindService.prototype._find = function (resourceId, responseCallback) {
   DocumentsFindService.prototype.STORE_SERVICE._getFromStores(null, false, true)
     .then(resolve => {
       // loaded ALL settings and pass to next stage
+      console.log(resourceId);
       return this._fireRequests(resourceId, resolve)
     })
     .then(resolve => {
+      console.log(resolve);
       responseCallback(resolve);
     })
     .catch(reject => {
