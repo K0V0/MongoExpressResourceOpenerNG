@@ -89,17 +89,11 @@ DocumentsFindService.prototype._fireRequests = function(resourceId, settings) {
  */
 DocumentsFindService.prototype._buildDataSetsToQuery = function(settings) {
 
-  console.log(settings);
-
   // extract required settings
   let searchEverywhere = this.extractSetting(settings, SETTINGS_NAMES.CHECK_ON_ALL_ENVIROMENTS);
   let currentEnviroment = this.extractSetting(settings, SETTINGS_NAMES.CURRENT_ENVIROMENT);
   let secretKey = this.extractSetting(settings, SETTINGS_NAMES.SECURE_KEY);
   let appUsesLogins = this.extractSetting(settings, SETTINGS_NAMES.STORE_MONGO_LOGIN_CREDENTIALS);
-
-  //TODO CHECK_ME
-  // after adding this console.log everything seem sot be working BLYAT
-  console.log(SETTINGS_NAMES);
 
   // filter relevant enviroments and its data sets to extract relevant urls to data sets
   // attach auth header if given enviroment uses login and login feature is enabled in app

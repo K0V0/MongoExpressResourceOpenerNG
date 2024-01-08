@@ -1,39 +1,30 @@
 import {StoreService} from "./store.service";
-import {StoreRequestMessage, StoreRequestQuery} from "../interfaces/messaging.interface";
+import {PutSettingsMessage} from "../interfaces/messaging.interface";
 
 export abstract class StoreServiceImpl implements StoreService {
-    load(key: string): Promise<any> {
-        return Promise.resolve(undefined);
-    }
 
-    loadWithKey(key: string): Promise<any> {
-        return Promise.resolve(undefined);
-    }
+  protected putMessage : PutSettingsMessage = {
+    key: "",
+    value: null
+  };
 
-    save(key: string, content: any): Promise<any> {
-        return Promise.resolve(undefined);
-    }
+  // protected getMessage : GetSettingsMessage = {
+  //   key: ""
+  // }
 
-    protected createGetRequest(operationType : number, key : string) : StoreRequestMessage {
-        let query : StoreRequestQuery = new class implements StoreRequestQuery {
-            key : string = key;
-            value : any = null;
-        }
-        return new class implements StoreRequestMessage {
-            data : StoreRequestQuery = query;
-            id: number = operationType;
-        }
-    }
+  load(key: string): Promise<any> {
+    // this.getMessage = new class implements GetSettingsMessage {
+    //   key = key;
+    // }
+    return Promise.resolve(undefined);
+  }
 
-    protected createPutRequest(operationType : number, key : string, value : any) {
-        let query : StoreRequestQuery = new class implements StoreRequestQuery {
-            key : string = key;
-            value : any = value;
-        }
-        return new class implements StoreRequestMessage {
-            data : StoreRequestQuery = query;
-            id: number = operationType;
-        }
+  save(key: string, content: any): Promise<any> {
+    this.putMessage = new class implements PutSettingsMessage {
+      key = key;
+      value = content;
     }
+    return Promise.resolve(undefined);
+  }
 
 }

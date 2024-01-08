@@ -1,4 +1,4 @@
-import {Message} from "../interfaces/messaging.interface";
+import {MessagingAbstract} from "../interfaces/messaging.abstract";
 
 //TODO make comehow visible for both angular and JS part of app
 export class BaseUtil {
@@ -81,9 +81,10 @@ export class BaseUtil {
         return obj;
     }
 
-    public static sendMessage(message : Message, options = {}) : Promise<Response> {
+    public static sendMessage<TYP>(message : MessagingAbstract<TYP>, options = {}) : Promise<Response> {
         return new Promise((resolve, reject) => {
-            chrome.runtime.sendMessage(message, options, (response : Response) => {
+          console.log(message.getMessage());
+            chrome.runtime.sendMessage(message.getMessage(), options, (response : Response) => {
                 if (chrome.runtime.lastError) {
                     console.error("Error after sedning message to message API: " + chrome.runtime.lastError);
                     reject(chrome.runtime.lastError);

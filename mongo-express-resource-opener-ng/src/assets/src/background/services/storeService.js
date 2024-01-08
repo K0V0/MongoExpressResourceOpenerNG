@@ -10,11 +10,15 @@ function StoreService() {
 StoreService.prototype.constructor = StoreService;
 
 StoreService.prototype._getFromSyncStore = function(query, responseCallback, withKey, withDefault) {
-    this._getFromStore(chrome.storage.sync, query, responseCallback, withKey, withDefault);
+  this._passCallbackToPromise(
+    this._getFromStore(chrome.storage.sync, query, withKey, withDefault), responseCallback
+  );
 }
 
 StoreService.prototype._getFromLocalStore = function(query, responseCallback, withKey, withDefault) {
-    this._getFromStore(chrome.storage.local, query, responseCallback, withKey, withDefault);
+  this._passCallbackToPromise(
+    this._getFromStore(chrome.storage.local, query, withKey, withDefault), responseCallback
+  );
 }
 
 StoreService.prototype._putToLocalStore = function(query, responseCallback) {
@@ -28,9 +32,9 @@ StoreService.prototype._putToSyncStore = function(query, responseCallback) {
 StoreService.prototype._getFromAllStores = function(
   query, withKey = false, withDefault = false, responseCallback
 ) {
-  this._getFromStores(query, withKey, withDefault)
-    .then(resolve => responseCallback(resolve))
-    .catch(error => console.log(error));
+  this._passCallbackToPromise(
+    this._getFromStores(query, withKey, withDefault), responseCallback
+  );
 }
 
 /**
@@ -42,7 +46,7 @@ StoreService.prototype._getFromStore = function(
 ) {
   return new Promise((resolve, reject) => {
     const attributesToQuery = [];
-    if (attribute === undefined || attribute === null || attribute.key === null || attribute.key === undefined) {
+    if (attribute === undefined || attribute === null) {
       // return all possible results
       this._merge(attributesToQuery, Object.values(SETTINGS_NAMES))
     } else if (Array.isArray(attribute)) {
@@ -125,7 +129,11 @@ StoreService.prototype._getValue = function(items, key, withKey, withDefault) {
 }
 
 StoreService.prototype._merge = function(destinationArr, sourceArr) {
-  console.log(destinationArr);
-  console.log(sourceArr);
   sourceArr.forEach(item => destinationArr.push(item));
+}
+
+StoreService.prototype._passCallbackToPromise = function(promise, responseCallback) {
+  promise
+    .then(resolve => responseCallback(resolve))
+    .catch(reject => console.log(reject));
 }

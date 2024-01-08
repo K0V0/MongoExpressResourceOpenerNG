@@ -1,27 +1,26 @@
 # MongoExpressResourceOpenerNg
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 12.2.11.
+## Development
 
-## Development server
+- This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 12.2.11.
+- actual code to work on is situated in `/mongo-express-resource-opener-ng` subfolder
+- Angular (and TypeScript) is only used for "popup" part of this extension (`/src/app`)
+- content scripts and background worker(s) are located in `/src/assets` folder and are written in pure JS and not transpiled. 
+  However there are (maybe) plans to rewrite this part of application into TypeScript too 
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+## Development run
 
-## Code scaffolding
+*For development purposes, it is possible to run extension (at least "popup" part) like normal angular 
+frontend app* 
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+- Run `devel_run_script.sh` to run extension as Angular app.
+- navigate to `http://localhost:4200`, You should be able to see what is normally extension main popup 
+  (popup window which appears when clicked on extension icon).
+- it is possible to navigate to *"extension pages"* like *"settings"* by modifying last URL part, currently in use:
+  - extension settings page: `index.html#/options`
+  - extension main popup: `index.html#/popup`
 
 ## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+- Run `build_script.sh`
+- Extension in unpacked format is situated inside `/extension` subfolder

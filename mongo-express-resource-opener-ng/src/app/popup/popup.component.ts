@@ -7,11 +7,11 @@ import {ChangeDetectorRef, Component, OnInit, ViewChild} from "@angular/core";
 import {EventsUtil} from 'src/app/_base/utils/events.util';
 import {BaseComponent} from "../_base/components/_base/base.component";
 import {Setting} from '../_base/decorators/setting/setting.decorator';
-import {QueryService} from '../_base/services/query.service';
-import {QueryServiceImpl} from '../_base/services/query.service.impl';
 import {EnviromentUtil, SettingsNames} from '../_base/utils/enviroment.util';
 import {ErrorInlineComponent} from './../_base/components/shared/error-inline/error-inline.shared.component';
 import {ResourceIdComponent} from './components/resource-id/resource-id.component';
+import {BaseUtil} from "../_base/utils/base.util";
+import {OpenInNewTabQuery} from "../_base/interfaces/messaging/open-in-new-tab.query";
 
 
 // component of extension popup
@@ -50,11 +50,8 @@ export class PopupComponent extends BaseComponent implements OnInit {
   @ViewChild('resourceError')
   private resourceError !: ErrorInlineComponent;
 
-  private queryService : QueryService;
-
-  constructor(queryServiceImpl : QueryServiceImpl, changeDetectorRef: ChangeDetectorRef) {
+  constructor(changeDetectorRef: ChangeDetectorRef) {
     super();
-    this.queryService = queryServiceImpl;
   }
 
   ngOnInit(): void {
@@ -99,21 +96,38 @@ export class PopupComponent extends BaseComponent implements OnInit {
   }
 
   private findResource(resourceId ?: string | undefined) : void {
+    if (resourceId === undefined) {
+      resourceId = this.resourceIdComponent.resourceId;
+    }
+    if (resourceId === undefined) {
+      return;
+    }
     this.cancelResourceIdError();
-    this.queryService.open(
-      resourceId !== undefined && resourceId.trim().length > 0
-        ? resourceId
-        : this.resourceIdComponent.resourceId
-    )
-    .then(() => {
-      this.cancelResourceIdError();
-      if (this.clearAfterFired) {
-        this.erase();
-      }
-    })
-    .catch((error) => {
-      this.showResourceIdError(error)
-    });
+    BaseUtil
+      .sendMessage(new OpenInNewTabQuery([resourceId]))
+      .then(() => {
+        this.cancelResourceIdError();
+        if (this.clearAfterFired) {
+          this.erase();
+        }
+      })
+      .catch((error) => {
+        this.showResourceIdError(error)
+      });
+    // this.queryService.open(
+    //   resourceId !== undefined && resourceId.trim().length > 0
+    //     ? resourceId
+    //     : this.resourceIdComponent.resourceId
+    // )
+    // .then(() => {
+    //   this.cancelResourceIdError();
+    //   if (this.clearAfterFired) {
+    //     this.erase();
+    //   }
+    // })
+    // .catch((error) => {
+    //   this.showResourceIdError(error)
+    // });
   }
 
   private showResourceIdError(message : string) : void {
