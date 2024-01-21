@@ -9,6 +9,7 @@ import {EnviromentSelectComponent} from './components/enviroment-select/envirome
 import {ResourceIdComponent} from './components/resource-id/resource-id.component';
 import {PopupComponent} from './popup.component';
 import {SharedModule} from "../_base/components/shared/shared.module";
+import {ResourceServiceImpl} from "../_base/services/resource.service.impl";
 
 
 @NgModule({
@@ -30,6 +31,7 @@ import {SharedModule} from "../_base/components/shared/shared.module";
         PopupComponent
     ],
     providers: [
+      ResourceServiceImpl
     ]
 })
 

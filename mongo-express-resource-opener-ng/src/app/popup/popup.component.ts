@@ -12,8 +12,8 @@ import {ErrorInlineComponent} from './../_base/components/shared/error-inline/er
 import {ResourceIdComponent} from './components/resource-id/resource-id.component';
 import {BaseUtil} from "../_base/utils/base.util";
 import {OpenInNewTabQuery} from "../_base/interfaces/messaging/open-in-new-tab.query";
-import {FindDocumentQuery} from "../_base/interfaces/messaging/find-document.query";
-import {FindDocumentMessage} from "../_base/interfaces/messaging.interface";
+import {ResourceService} from "../_base/services/resource.service";
+import {ResourceServiceImpl} from "../_base/services/resource.service.impl";
 
 
 // component of extension popup
@@ -52,8 +52,11 @@ export class PopupComponent extends BaseComponent implements OnInit {
   @ViewChild('resourceError')
   private resourceError !: ErrorInlineComponent;
 
-  constructor(changeDetectorRef: ChangeDetectorRef) {
+  private resourceService : ResourceService;
+
+  constructor(changeDetectorRef: ChangeDetectorRef, resourceService: ResourceServiceImpl) {
     super();
+    this.resourceService = resourceService;
   }
 
   ngOnInit(): void {
@@ -83,9 +86,15 @@ export class PopupComponent extends BaseComponent implements OnInit {
     if (!this.autoSubmitEnabled) {
       return;
     }
-    let data : string = event.clipboardData.getData("text/plain");
-    this.resourceIdComponent.resourceId = data;
-    this.findResource(data);
+    let data : string | null | undefined = event.clipboardData?.getData("text/plain");
+    if (data) {
+      const eventTarget : HTMLElement = event.target as HTMLElement;
+      // because otherwise resource id is doubled when pasted directly to the input field
+      if (eventTarget.id !== "resourceId") {
+        this.resourceIdComponent.resourceId = data;
+      }
+      this.findResource(data);
+    }
   }
 
 
@@ -104,15 +113,10 @@ export class PopupComponent extends BaseComponent implements OnInit {
     if (resourceId === undefined) {
       return;
     }
+
     this.cancelResourceIdError();
-    //TODO operácie s messaging API presunúť do services
-    const message : FindDocumentMessage = new class implements FindDocumentMessage {
-      resourceId = resourceId as string;
-    }
-    BaseUtil
-      .sendMessage(new FindDocumentQuery(message))
+    this.resourceService.openInNewTab(resourceId)
       .then(resolve => {
-        console.log(resolve);
         this.cancelResourceIdError();
         if (this.clearAfterFired) {
           this.erase();
@@ -122,20 +126,6 @@ export class PopupComponent extends BaseComponent implements OnInit {
       .catch((error) => {
         this.showResourceIdError(error)
       });
-    // this.queryService.open(
-    //   resourceId !== undefined && resourceId.trim().length > 0
-    //     ? resourceId
-    //     : this.resourceIdComponent.resourceId
-    // )
-    // .then(() => {
-    //   this.cancelResourceIdError();
-    //   if (this.clearAfterFired) {
-    //     this.erase();
-    //   }
-    // })
-    // .catch((error) => {
-    //   this.showResourceIdError(error)
-    // });
   }
 
   private showResourceIdError(message : string) : void {
