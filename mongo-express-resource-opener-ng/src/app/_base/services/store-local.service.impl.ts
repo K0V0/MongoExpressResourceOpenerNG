@@ -5,6 +5,7 @@ import {BaseUtil} from "../utils/base.util";
 import {
   GetSettingsFromLocalStoreOrDefaultsQuery
 } from "../interfaces/messaging/get-settings-from-local-store-or-defaults.query";
+import {PutSettingsToLocalStorageQuery} from "../interfaces/messaging/put-settings-to-local-storage.query";
 
 @Injectable({
   providedIn : 'root'
@@ -16,14 +17,8 @@ export class StoreLocalServiceImpl extends StoreServiceImpl implements StoreLoca
   }
 
   save(key: string, content: any): Promise<any> {
-    //TODO migrate to messaging API
-    return new Promise((resolve, reject) => {
-      if (content !== undefined) {
-        resolve(localStorage.setItem(key, JSON.stringify(content)));
-      } else {
-        reject("No data passed into local storage");
-      }
-    });
+    super.save(key, content);
+    return BaseUtil.sendMessage(new PutSettingsToLocalStorageQuery(this.putMessage))
   }
 
 }

@@ -7,7 +7,7 @@ import {ChangeDetectorRef, Component, OnInit, ViewChild} from "@angular/core";
 import {EventsUtil} from 'src/app/_base/utils/events.util';
 import {BaseComponent} from "../_base/components/_base/base.component";
 import {Setting} from '../_base/decorators/setting/setting.decorator';
-import {EnviromentUtil, SettingsNames} from '../_base/utils/enviroment.util';
+import {SettingsNames} from '../_base/utils/enviroment.util';
 import {ErrorInlineComponent} from './../_base/components/shared/error-inline/error-inline.shared.component';
 import {ResourceIdComponent} from './components/resource-id/resource-id.component';
 import {BaseUtil} from "../_base/utils/base.util";
@@ -29,20 +29,17 @@ export class PopupComponent extends BaseComponent implements OnInit {
   private readonly SETTINGS_URL : string = "index.html#/options";
 
   @Setting({
-    storeKey: SettingsNames.AUTO_SUBMIT_RESOURCE_ID,
-    defaultValue: EnviromentUtil.getDefaultSetting(SettingsNames.AUTO_SUBMIT_RESOURCE_ID)
+    storeKey: SettingsNames.AUTO_SUBMIT_RESOURCE_ID
   })
   public autoSubmitEnabled !: boolean;
 
   @Setting({
-    storeKey: SettingsNames.ERASE_AFTER_FIRED_SUCESSFULLY,
-    defaultValue: EnviromentUtil.getDefaultSetting(SettingsNames.ERASE_AFTER_FIRED_SUCESSFULLY)
+    storeKey: SettingsNames.ERASE_AFTER_FIRED_SUCESSFULLY
   })
   public clearAfterFired !: boolean;
 
   @Setting({
-    storeKey: SettingsNames.CHECK_ON_ALL_ENVIROMENTS,
-    defaultValue: EnviromentUtil.getDefaultSetting(SettingsNames.CHECK_ON_ALL_ENVIROMENTS)
+    storeKey: SettingsNames.CHECK_ON_ALL_ENVIROMENTS
   })
   public isEnviromentSeletDisabled !: boolean;
 
@@ -61,7 +58,6 @@ export class PopupComponent extends BaseComponent implements OnInit {
 
   ngOnInit(): void {
     this.trackSelectEnviromentAvailability();
-    //this.trackResourceIdFieldChanges();
   }
 
 
@@ -141,12 +137,5 @@ export class PopupComponent extends BaseComponent implements OnInit {
       this.isEnviromentSeletDisabled = result;
     });
   }
-
-  //FIXME
-  // private trackResourceIdFieldChanges() : void {
-  //   EventsUtil.getResourceIdChangedEmmiter().subscribe(() => {
-  //     this.cancelResourceIdError();
-  //   });
-  // }
 
 }
