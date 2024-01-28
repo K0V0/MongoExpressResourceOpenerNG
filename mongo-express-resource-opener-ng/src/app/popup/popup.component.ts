@@ -79,7 +79,7 @@ export class PopupComponent extends BaseComponent implements OnInit {
   }
 
   // paste anywhere into popup window action
-  public paste(event : any) : void {
+  public paste(event : ClipboardEvent) : void {
     if (!this.autoSubmitEnabled) {
       return;
     }
