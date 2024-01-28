@@ -1,4 +1,4 @@
-import {EnviromentUtil, SettingsNames} from 'src/app/_base/utils/enviroment.util';
+import {SettingsNames} from 'src/app/_base/utils/enviroment.util';
 import {Component} from "@angular/core";
 
 // custom imports
@@ -13,8 +13,7 @@ import {BaseComponent} from "../base.component";
 export abstract class AutoSubmitResourceIdBaseComponent extends BaseComponent {
 
   @Setting({
-    storeKey: SettingsNames.AUTO_SUBMIT_RESOURCE_ID,
-    defaultValue: EnviromentUtil.getDefaultSetting(SettingsNames.AUTO_SUBMIT_RESOURCE_ID)
+    storeKey: SettingsNames.AUTO_SUBMIT_RESOURCE_ID
   })
   public isEnabled !: boolean;
 }

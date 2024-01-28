@@ -59,7 +59,7 @@ export class SettingDecorator {
             .load(settingKey)
             .then((resolve : any) => {
                 // undefined should be edge case
-                return resolve;
+                return resolve[settingKey];
             })
             .catch((error : any) => {
                 // communication error or not found in store should be that case
@@ -70,7 +70,7 @@ export class SettingDecorator {
                 let fieldValue : any;
                 if (result !== undefined && result !== null) {
                     // value was found in settings store
-                    fieldValue  = SettingDecorator.getOrConvertedValue(result, params, 'storeConversion');
+                    fieldValue = SettingDecorator.getOrConvertedValue(result, params, 'storeConversion');
                 } else if (SettingDecorator.hasParam(params, 'defaultValue')) {
                     // value was not found in settings store but default one exists
                     fieldValue = BaseUtil.deepClone(params['defaultValue']);

@@ -10,10 +10,9 @@ import {
 } from 'src/app/_base/components/_base/data-sets/data-sets.interfaces';
 import {Setting} from 'src/app/_base/decorators/setting/setting.decorator';
 import {BaseUtil} from './../../../_base/utils/base.util';
-import {EnviromentUtil, SettingsNames} from './../../../_base/utils/enviroment.util';
+import {SettingsNames} from './../../../_base/utils/enviroment.util';
 import {EventsUtil} from './../../../_base/utils/events.util';
 import {DataSetsSettingDecoratorConverter} from './data-sets.setting.decorator.converter';
-
 
 
 @Component({
@@ -23,17 +22,27 @@ import {DataSetsSettingDecoratorConverter} from './data-sets.setting.decorator.c
         './../../options.component.scss'
     ]
 })
-export class DataSetsComponent extends BaseComponent implements OnInit{
+export class DataSetsComponent extends BaseComponent implements OnInit {
 
   private static readonly FIRE_TRESHOLD_MILISECONDS : number = 1000;
 
   private static readonly CONVERTER = new DataSetsSettingDecoratorConverter();
 
-  public static readonly DEFAULT_VALUE : DataSetsStoreType
-    = EnviromentUtil.getDefaultSetting(SettingsNames.ENVIROMENTS);
+  //TODO temp fix pri odstranovani default values z prezentacnej vrstvy
+  private static DEFAULT_ENV : DataSetsStoreType = [{
+    id: 0,
+    name: "Základné prostredie",
+    datasets: [
+      "http://example.com/data"
+    ],
+    useLogin: false,
+    usernameHash: null,
+    passHash: null,
+    useLoginDefault: false
+  }];
+
 
   @Setting({
-    defaultValue: EnviromentUtil.getDefaultSetting(SettingsNames.SECURE_KEY),
     storeKey: SettingsNames.SECURE_KEY,
     onlyDownload: true,
     afterExec: (result : string) => {
@@ -45,14 +54,12 @@ export class DataSetsComponent extends BaseComponent implements OnInit{
   public secureKey !: string;
 
   @Setting({
-    defaultValue: DataSetsComponent.DEFAULT_VALUE,
     storeKey: SettingsNames.ENVIROMENTS,
     converter: DataSetsComponent.CONVERTER
   })
   public enviroments !: DataSetsNgModelType;
 
   @Setting({
-    defaultValue: DataSetsComponent.DEFAULT_VALUE,
     storeKey: SettingsNames.ENVIROMENTS,
     converter: DataSetsComponent.CONVERTER,
     onlyDownload: true // will not work either for objects
@@ -70,7 +77,6 @@ export class DataSetsComponent extends BaseComponent implements OnInit{
 
 
   public change() : void {
-    console.log("envs changed");
     this.autosaveEnvs();
   }
 
@@ -123,7 +129,7 @@ export class DataSetsComponent extends BaseComponent implements OnInit{
       ?.map((env) => env.id)
       .reduce((prev, curr) => prev > curr ? prev : curr) ?? 0) + 1;
     let newEnv : DataSetsNgModelRecordFormat = BaseUtil
-      .deepClone(DataSetsComponent.CONVERTER.storeConversion(DataSetsComponent.DEFAULT_VALUE))
+      .deepClone(DataSetsComponent.CONVERTER.storeConversion(DataSetsComponent.DEFAULT_ENV))
       ?.map((x) => ({
           id: newId,
           name: x.name + "_" + newId ,

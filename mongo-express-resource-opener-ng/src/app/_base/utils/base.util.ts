@@ -1,5 +1,7 @@
-import {Message} from "../interfaces/messaging.interface";
+import {MessagingAbstract} from "../interfaces/messaging.abstract";
+import {MessageResponse} from "../interfaces/messaging.interface";
 
+//TODO make comehow visible for both angular and JS part of app
 export class BaseUtil {
 
     public static deepClone<TYP>(originalObject : TYP) : TYP {
@@ -80,9 +82,9 @@ export class BaseUtil {
         return obj;
     }
 
-    public static sendMessage(message : Message, options = {}) : Promise<Response> {
+    public static sendMessage<TYP>(message : MessagingAbstract<TYP>, options = {}) : Promise<MessageResponse> {
         return new Promise((resolve, reject) => {
-            chrome.runtime.sendMessage(message, options, (response : Response) => {
+            chrome.runtime.sendMessage(message.getMessage(), options, (response : MessageResponse) => {
                 if (chrome.runtime.lastError) {
                     console.error("Error after sedning message to message API: " + chrome.runtime.lastError);
                     reject(chrome.runtime.lastError);

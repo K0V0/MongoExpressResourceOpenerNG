@@ -7,11 +7,14 @@ import {ChangeDetectorRef, Component, OnInit, ViewChild} from "@angular/core";
 import {EventsUtil} from 'src/app/_base/utils/events.util';
 import {BaseComponent} from "../_base/components/_base/base.component";
 import {Setting} from '../_base/decorators/setting/setting.decorator';
-import {QueryService} from '../_base/services/query.service';
-import {QueryServiceImpl} from '../_base/services/query.service.impl';
-import {EnviromentUtil, SettingsNames} from '../_base/utils/enviroment.util';
+import {SettingsNames} from '../_base/utils/enviroment.util';
 import {ErrorInlineComponent} from './../_base/components/shared/error-inline/error-inline.shared.component';
 import {ResourceIdComponent} from './components/resource-id/resource-id.component';
+import {BaseUtil} from "../_base/utils/base.util";
+import {OpenInNewTabQuery} from "../_base/interfaces/messaging/open-in-new-tab.query";
+import {ResourceService} from "../_base/services/resource.service";
+import {ResourceServiceImpl} from "../_base/services/resource.service.impl";
+import {MessageResponseStatus} from "../_base/interfaces/messaging.interface";
 
 
 // component of extension popup
@@ -27,20 +30,17 @@ export class PopupComponent extends BaseComponent implements OnInit {
   private readonly SETTINGS_URL : string = "index.html#/options";
 
   @Setting({
-    storeKey: SettingsNames.AUTO_SUBMIT_RESOURCE_ID,
-    defaultValue: EnviromentUtil.getDefaultSetting(SettingsNames.AUTO_SUBMIT_RESOURCE_ID)
+    storeKey: SettingsNames.AUTO_SUBMIT_RESOURCE_ID
   })
   public autoSubmitEnabled !: boolean;
 
   @Setting({
-    storeKey: SettingsNames.ERASE_AFTER_FIRED_SUCESSFULLY,
-    defaultValue: EnviromentUtil.getDefaultSetting(SettingsNames.ERASE_AFTER_FIRED_SUCESSFULLY)
+    storeKey: SettingsNames.ERASE_AFTER_FIRED_SUCESSFULLY
   })
   public clearAfterFired !: boolean;
 
   @Setting({
-    storeKey: SettingsNames.CHECK_ON_ALL_ENVIROMENTS,
-    defaultValue: EnviromentUtil.getDefaultSetting(SettingsNames.CHECK_ON_ALL_ENVIROMENTS)
+    storeKey: SettingsNames.CHECK_ON_ALL_ENVIROMENTS
   })
   public isEnviromentSeletDisabled !: boolean;
 
@@ -50,16 +50,15 @@ export class PopupComponent extends BaseComponent implements OnInit {
   @ViewChild('resourceError')
   private resourceError !: ErrorInlineComponent;
 
-  private queryService : QueryService;
+  private resourceService : ResourceService;
 
-  constructor(queryServiceImpl : QueryServiceImpl, changeDetectorRef: ChangeDetectorRef) {
+  constructor(changeDetectorRef: ChangeDetectorRef, resourceService: ResourceServiceImpl) {
     super();
-    this.queryService = queryServiceImpl;
+    this.resourceService = resourceService;
   }
 
   ngOnInit(): void {
     this.trackSelectEnviromentAvailability();
-    //this.trackResourceIdFieldChanges();
   }
 
 
@@ -105,21 +104,29 @@ export class PopupComponent extends BaseComponent implements OnInit {
   }
 
   private findResource(resourceId ?: string | undefined) : void {
+    if (resourceId === undefined) {
+      resourceId = this.resourceIdComponent.resourceId;
+    }
+    if (resourceId === undefined) {
+      return;
+    }
+
     this.cancelResourceIdError();
-    this.queryService.open(
-      resourceId !== undefined && resourceId.trim().length > 0
-        ? resourceId
-        : this.resourceIdComponent.resourceId
-    )
-    .then(() => {
-      this.cancelResourceIdError();
-      if (this.clearAfterFired) {
-        this.erase();
-      }
-    })
-    .catch((error) => {
-      this.showResourceIdError(error)
-    });
+    this.resourceService.openInNewTab(resourceId)
+      .then(resolve => {
+        if (resolve.status === MessageResponseStatus.FAIL) {
+          this.showResourceIdError(resolve.data);
+        } else {
+          this.cancelResourceIdError();
+          if (this.clearAfterFired) {
+            this.erase();
+          }
+          BaseUtil.sendMessage(new OpenInNewTabQuery(resolve.data));
+        }
+      })
+      .catch((error) => {
+        this.showResourceIdError(error)
+      });
   }
 
   private showResourceIdError(message : string) : void {
@@ -135,12 +142,5 @@ export class PopupComponent extends BaseComponent implements OnInit {
       this.isEnviromentSeletDisabled = result;
     });
   }
-
-  //FIXME
-  // private trackResourceIdFieldChanges() : void {
-  //   EventsUtil.getResourceIdChangedEmmiter().subscribe(() => {
-  //     this.cancelResourceIdError();
-  //   });
-  // }
 
 }

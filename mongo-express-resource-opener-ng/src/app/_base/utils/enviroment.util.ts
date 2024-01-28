@@ -3,7 +3,6 @@
 import {StoreAllService} from "../services/store-all.service";
 import {StoreSyncServiceImplDev} from "../services/store-sync.service.impl.dev";
 import {StoreSyncServiceImplProd} from "../services/store-sync.service.impl.prod";
-import {BaseUtil} from "./base.util";
 import {StoreLocalServiceImpl} from "../services/store-local.service.impl";
 import {StoreAllServiceImpl} from "../services/store-all.service.impl";
 import {StoreService} from "../services/store.service";
@@ -41,13 +40,10 @@ export class EnviromentUtil {
 
     public static getStoreService() : StoreAllService {
       if (this.storeServiceInstance === undefined) {
-        this.storeServiceInstance = new StoreAllServiceImpl(this.getStoreLocalService(), this.getStoreSyncService());
+       // this.storeServiceInstance = new StoreAllServiceImpl(this.getStoreLocalService(), this.getStoreSyncService());
+        this.storeServiceInstance = new StoreAllServiceImpl();
       }
       return this.storeServiceInstance;
-    }
-
-    public static getDefaultSetting(setting : SettingsNames) : any {
-        return DefaultValues[setting];
     }
 
 }
@@ -61,6 +57,8 @@ export enum RuntimeEnviroment {
 }
 
 
+//TODO make somehow visible for both angular and JS part of app
+// unionize somehow with background wokrer JS only part
 export enum SettingsNames {
     AUTO_SUBMIT_RESOURCE_ID = 'autoSubmitResourceId',
     CHECK_ON_ALL_ENVIROMENTS = 'checkOnAllEnviroments',
@@ -70,33 +68,7 @@ export enum SettingsNames {
     ENVIROMENTS = 'enviroments',
     RESOURCE_ID = 'resourceId',
     SECURE_KEY = 'secureKey',
-    STORE_MONGO_LOGIN_CREDENTIALS = 'storeMongoLoginCredentials'
+    STORE_MONGO_LOGIN_CREDENTIALS = 'storeMongoLoginCredentials',
+    DOCUMENT_ID_OBJECTS = "documentIdObjects",
+    OPEN_REFERENCES_ONECLICK = "openReferencesOneclick"
 }
-
-//TODO unite with interfaces
-export const DefaultValues: any = {
-  [SettingsNames.AUTO_SUBMIT_RESOURCE_ID]: false,
-  [SettingsNames.CHECK_ON_ALL_ENVIROMENTS]: false,
-  [SettingsNames.AVAILABLE_ENVIROMENTS]: [{
-    id: 0,
-    name: "Základné prostredie",
-    useLogin: false,
-    usernameHash: null,
-    passHash: null,
-    useLoginDefault: false
-  }],
-  [SettingsNames.CURRENT_ENVIROMENT]: 0,
-  [SettingsNames.ENVIROMENTS]: [{
-    id: 0,
-    name: "Základné prostredie",
-    datasets: [
-      "http://example.com/data"
-    ]
-  }],
-  [SettingsNames.RESOURCE_ID]: "",
-  [SettingsNames.ERASE_AFTER_FIRED_SUCESSFULLY]: false,
-  [SettingsNames.SECURE_KEY]: "MaIFi20NKLhfrRpI",
-  [SettingsNames.STORE_MONGO_LOGIN_CREDENTIALS]: false
-};
-
-BaseUtil.deepFreeze(DefaultValues);

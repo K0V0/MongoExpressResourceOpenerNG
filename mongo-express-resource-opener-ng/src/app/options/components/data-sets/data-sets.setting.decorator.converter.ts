@@ -7,7 +7,7 @@ import {CryptogrUtil} from "../../../_base/utils/cryptogr.util";
 export  class DataSetsSettingDecoratorConverter
         extends SettingDecoratorConverterBase<DataSetsNgModelType, DataSetsStoreType>
 {
-
+    private static readonly SEPARATOR : string = "\n";
     private secureKey : string = "";
 
     public setSecureKey(secureKey : string) : void {
@@ -18,7 +18,7 @@ export  class DataSetsSettingDecoratorConverter
         return content?.map((x) => ({
             id: x.id,
             name: x.name,
-            datasets: x.datasets?.join('\n'),
+            datasets: x.datasets?.join(DataSetsSettingDecoratorConverter.SEPARATOR),
             useLogin: x.useLogin,
             useLoginDefault: x.useLoginDefault,
             username: CryptogrUtil.decrypt(x.usernameHash, this.secureKey),
@@ -30,7 +30,9 @@ export  class DataSetsSettingDecoratorConverter
         return content?.map((x) => ({
             id: x.id,
             name: x.name,
-            datasets: x.datasets?.trim().split('\n').map((x) => x.trim()).filter((x) => x.length > 0),
+            datasets: x.datasets?.trim().split(DataSetsSettingDecoratorConverter.SEPARATOR)
+              .map((x) => x.trim())
+              .filter((x) => x.length > 0),
             useLogin: x.useLogin,
             useLoginDefault: x.useLoginDefault,
             usernameHash: CryptogrUtil.encrypt(x.username, this.secureKey),
