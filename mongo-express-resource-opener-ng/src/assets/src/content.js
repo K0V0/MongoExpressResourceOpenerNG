@@ -15,7 +15,6 @@ Content.prototype = {
           SETTINGS_NAMES.DOCUMENT_ID_OBJECTS,
           SETTINGS_NAMES.OPEN_REFERENCES_ONECLICK
         ]).then(settings => {
-          console.log(settings);
           this.SETTINGS = settings;
           this.getElements();
           this.registerListeners();
@@ -40,7 +39,6 @@ Content.prototype = {
                     const resourceId = event.target.innerHTML.replace(/[^0-9A-Fa-f]/g, "");
                     context.sendToSyncStorage(resourceId);
                     if (context.SETTINGS[SETTINGS_NAMES.OPEN_REFERENCES_ONECLICK]) {
-                      console.log("onclick");
                       context.SERVICE.openInNewTab(resourceId);
                     }
             }

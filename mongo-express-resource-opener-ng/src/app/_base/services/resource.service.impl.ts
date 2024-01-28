@@ -1,5 +1,5 @@
 import {ResourceService} from "./resource.service";
-import {FindDocumentMessage} from "../interfaces/messaging.interface";
+import {FindDocumentMessage, MessageResponse} from "../interfaces/messaging.interface";
 import {BaseUtil} from "../utils/base.util";
 import {FindDocumentQuery} from "../interfaces/messaging/find-document.query";
 import {Injectable} from "@angular/core";
@@ -8,7 +8,7 @@ import {Injectable} from "@angular/core";
   providedIn: 'root', // or specify a module where it's provided
 })
 export class ResourceServiceImpl implements ResourceService {
-  openInNewTab(resourceId: string): Promise<any> {
+  openInNewTab(resourceId: string): Promise<MessageResponse> {
 
     const message : FindDocumentMessage = new class implements FindDocumentMessage {
       resourceId = resourceId as string;

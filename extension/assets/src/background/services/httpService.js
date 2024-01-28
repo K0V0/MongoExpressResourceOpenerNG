@@ -19,8 +19,6 @@ HttpService.prototype._fetch = function (query, responseCallback) {
             });
         })
         .catch(function(error) {
-            console.log('Connection error');
-            console.log(error);
             responseCallback(error);
         });
 }

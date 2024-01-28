@@ -14,6 +14,7 @@ import {BaseUtil} from "../_base/utils/base.util";
 import {OpenInNewTabQuery} from "../_base/interfaces/messaging/open-in-new-tab.query";
 import {ResourceService} from "../_base/services/resource.service";
 import {ResourceServiceImpl} from "../_base/services/resource.service.impl";
+import {MessageResponseStatus} from "../_base/interfaces/messaging.interface";
 
 
 // component of extension popup
@@ -113,11 +114,15 @@ export class PopupComponent extends BaseComponent implements OnInit {
     this.cancelResourceIdError();
     this.resourceService.openInNewTab(resourceId)
       .then(resolve => {
-        this.cancelResourceIdError();
-        if (this.clearAfterFired) {
-          this.erase();
+        if (resolve.status === MessageResponseStatus.FAIL) {
+          this.showResourceIdError(resolve.data);
+        } else {
+          this.cancelResourceIdError();
+          if (this.clearAfterFired) {
+            this.erase();
+          }
+          BaseUtil.sendMessage(new OpenInNewTabQuery(resolve.data));
         }
-        BaseUtil.sendMessage(new OpenInNewTabQuery(resolve.data));
       })
       .catch((error) => {
         this.showResourceIdError(error)

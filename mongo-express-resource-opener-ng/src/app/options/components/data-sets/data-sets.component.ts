@@ -77,7 +77,6 @@ export class DataSetsComponent extends BaseComponent implements OnInit {
 
 
   public change() : void {
-    console.log("envs changed");
     this.autosaveEnvs();
   }
 

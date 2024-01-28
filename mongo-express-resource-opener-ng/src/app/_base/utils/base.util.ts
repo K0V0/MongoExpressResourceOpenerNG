@@ -1,4 +1,5 @@
 import {MessagingAbstract} from "../interfaces/messaging.abstract";
+import {MessageResponse} from "../interfaces/messaging.interface";
 
 //TODO make comehow visible for both angular and JS part of app
 export class BaseUtil {
@@ -81,11 +82,9 @@ export class BaseUtil {
         return obj;
     }
 
-    //TODO typova bezpecnost
-    public static sendMessage<TYP>(message : MessagingAbstract<TYP>, options = {}) : Promise<any> {
+    public static sendMessage<TYP>(message : MessagingAbstract<TYP>, options = {}) : Promise<MessageResponse> {
         return new Promise((resolve, reject) => {
-          console.log(message.getMessage());
-            chrome.runtime.sendMessage(message.getMessage(), options, (response : any) => {
+            chrome.runtime.sendMessage(message.getMessage(), options, (response : MessageResponse) => {
                 if (chrome.runtime.lastError) {
                     console.error("Error after sedning message to message API: " + chrome.runtime.lastError);
                     reject(chrome.runtime.lastError);
