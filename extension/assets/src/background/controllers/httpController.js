@@ -36,5 +36,5 @@ HttpController.prototype.fetchHttpRequest = function (query, responseCallback) {
  *  @param responseCallback - not applied yet
  */
 HttpController.prototype.openDocumentInNewTab = function(query, responseCallback) {
-    HTTP_SERVICE._openDocument(query, responseCallback);
+    HTTP_SERVICE._openDocument(query.url, responseCallback);
 }

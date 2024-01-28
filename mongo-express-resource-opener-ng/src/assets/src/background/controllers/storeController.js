@@ -14,7 +14,7 @@ StoreController.prototype.STORE_SERVICE = new StoreService();
  *  - do not use defaults
  */
 StoreController.prototype.getDataFromStores = (data, responseCallback) =>
-  StoreController.prototype.STORE_SERVICE._getFromAllStores(data, false, false, responseCallback);
+  StoreController.prototype.STORE_SERVICE._getFromAllStores(data.key, false, false, responseCallback);
 
 /**
  *  - get available data from local store and prioritize them
@@ -22,13 +22,13 @@ StoreController.prototype.getDataFromStores = (data, responseCallback) =>
  *  - iv everything fails, try to set defaults
  */
 StoreController.prototype.getDataFromStoresWithDefaults = (data, responseCallback) =>
-  StoreController.prototype.STORE_SERVICE._getFromAllStores(data, false, true, responseCallback);
+  StoreController.prototype.STORE_SERVICE._getFromAllStores(data.key, false, true, responseCallback);
 
 StoreController.prototype.getDataFromLocalStoreWithDefault = (data, responseCallback) =>
-  StoreController.prototype.STORE_SERVICE._getFromLocalStore(data, responseCallback, false, true);
+  StoreController.prototype.STORE_SERVICE._getFromLocalStore(data.key, responseCallback, false, true);
 
 StoreController.prototype.getDataFromSyncStoreWithDefault = (data, responseCallback) =>
-  StoreController.prototype.STORE_SERVICE._getFromSyncStore(data, responseCallback, false, true);
+  StoreController.prototype.STORE_SERVICE._getFromSyncStore(data.key, responseCallback, false, true);
 
 StoreController.prototype.putDataToLocalStore = (data, responseCallback) =>
   StoreController.prototype.STORE_SERVICE._putToLocalStore(data, responseCallback);

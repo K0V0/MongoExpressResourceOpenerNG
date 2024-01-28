@@ -1,6 +1,5 @@
 import {Injectable} from "@angular/core";
 import {StoreLocalService} from "./store-local.service";
-import {StoreServiceImpl} from "./store.service.impl";
 import {BaseUtil} from "../utils/base.util";
 import {
   GetSettingsFromLocalStoreOrDefaultsQuery
@@ -10,15 +9,14 @@ import {PutSettingsToLocalStorageQuery} from "../interfaces/messaging/put-settin
 @Injectable({
   providedIn : 'root'
 })
-export class StoreLocalServiceImpl extends StoreServiceImpl implements StoreLocalService {
+export class StoreLocalServiceImpl implements StoreLocalService {
 
   load(key: string): Promise<any> {
-    return BaseUtil.sendMessage(new GetSettingsFromLocalStoreOrDefaultsQuery(key));
+    return BaseUtil.sendMessage(new GetSettingsFromLocalStoreOrDefaultsQuery().withKey(key));
   }
 
   save(key: string, content: any): Promise<any> {
-    super.save(key, content);
-    return BaseUtil.sendMessage(new PutSettingsToLocalStorageQuery(this.putMessage))
+    return BaseUtil.sendMessage(new PutSettingsToLocalStorageQuery().withKey(key).withValue(content))
   }
 
 }

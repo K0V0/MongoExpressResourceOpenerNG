@@ -23,7 +23,8 @@
       "es2020",
       "dom"
     ],
-    "types": ["reflect-metadata"]
+    "types": ["reflect-metadata"],
+    "allowSyntheticDefaultImports": true
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

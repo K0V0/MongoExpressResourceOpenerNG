@@ -32,6 +32,7 @@ StoreService.prototype._putToSyncStore = function(query, responseCallback) {
 StoreService.prototype._getFromAllStores = function(
   query, withKey = false, withDefault = false, responseCallback
 ) {
+  logger("Get data from ALL stores, query: {}, withKey: {}, withDefault: {}", query, withKey, withDefault);
   this._passCallbackToPromise(
     this._getFromStores(query, withKey, withDefault), responseCallback
   );

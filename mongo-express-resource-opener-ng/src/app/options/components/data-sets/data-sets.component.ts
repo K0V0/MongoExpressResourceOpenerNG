@@ -6,6 +6,7 @@ import {BaseComponent} from "src/app/_base/components/_base/base.component";
 import {
   DataSetsNgModelRecordFormat,
   DataSetsNgModelType,
+  DataSetsStoreRecordFormat,
   DataSetsStoreType
 } from 'src/app/_base/components/_base/data-sets/data-sets.interfaces';
 import {Setting} from 'src/app/_base/decorators/setting/setting.decorator';
@@ -13,6 +14,9 @@ import {BaseUtil} from './../../../_base/utils/base.util';
 import {SettingsNames} from './../../../_base/utils/enviroment.util';
 import {EventsUtil} from './../../../_base/utils/events.util';
 import {DataSetsSettingDecoratorConverter} from './data-sets.setting.decorator.converter';
+import {CryptogrService} from "../../../_base/services/cryptogr.service";
+import {CryptogrServiceImpl} from "../../../_base/services/cryptogr.service.impl";
+import {resolve} from "@angular/compiler-cli";
 
 
 @Component({
@@ -45,7 +49,8 @@ export class DataSetsComponent extends BaseComponent implements OnInit {
   @Setting({
     storeKey: SettingsNames.SECURE_KEY,
     onlyDownload: true,
-    afterExec: (result : string) => {
+    executeAfterAll: (result : string) => {
+      console.log("----------- after exec secure key");
       //FIXME ugly hack that sets secure key into converter for encrypting and decrypting sensitive informations
       // it looks like that it will always run before enviroments parameters are first time queried
       DataSetsComponent.CONVERTER.setSecureKey(result);
@@ -55,7 +60,82 @@ export class DataSetsComponent extends BaseComponent implements OnInit {
 
   @Setting({
     storeKey: SettingsNames.ENVIROMENTS,
-    converter: DataSetsComponent.CONVERTER
+    converter: DataSetsComponent.CONVERTER,
+    // executeAfterAll: (result: any) => {
+    //   console.log("---------------- after exec");
+    //   console.log(result);
+    // },
+    executeBeforeAll: async (...enviroments: DataSetsStoreRecordFormat[]) => {
+      const promises: Promise<any>[] = [];
+
+      for (const enviroment of enviroments) {
+        if (enviroment.passHash) {
+          promises.push(
+            CryptogrServiceImpl
+              .decryptStatic(enviroment.passHash, DataSetsComponent.CONVERTER.getSecureKey())
+              .then(unhashedPass => enviroment.passHash = unhashedPass.data));
+        }
+        if (enviroment.usernameHash) {
+          promises.push(
+            CryptogrServiceImpl
+              .decryptStatic(enviroment.usernameHash, DataSetsComponent.CONVERTER.getSecureKey())
+              .then(unhashedName => enviroment.usernameHash = unhashedName.data));
+        }
+      }
+
+      const resolve = await Promise
+        .allSettled(promises);
+      console.log("------- all settlerd");
+      console.log(enviroments);
+      console.log(resolve);
+      return enviroments;
+    },
+
+    // zostrelí chrome
+    // executeOnGet: (...environments : DataSetsNgModelRecordFormat[]) => {
+    //   console.log("---- executed on get");
+    //   console.log(environments);
+    //
+    //   for (const enviroment of environments) {
+    //     if (enviroment.pass) {
+    //         CryptogrServiceImpl
+    //           .decryptStatic(enviroment.pass, DataSetsComponent.CONVERTER.getSecureKey())
+    //           .then(unhashedPass => enviroment.pass = unhashedPass.data);
+    //     }
+    //     if (enviroment.username) {
+    //         CryptogrServiceImpl
+    //           .decryptStatic(enviroment.username, DataSetsComponent.CONVERTER.getSecureKey())
+    //           .then(unhashedName => enviroment.username = unhashedName.data);
+    //     }
+    //   }
+    // },
+
+    executeBeforeStoreAfterConversion: async (enviroment: DataSetsStoreRecordFormat) => {
+      const promises: Promise<any>[] = [];
+      if (enviroment.passHash) {
+        promises.push(CryptogrServiceImpl
+          .encryptStatic(enviroment.passHash, DataSetsComponent.CONVERTER.getSecureKey())
+          .then(hashedPass => enviroment.passHash = hashedPass.data));
+      }
+      if (enviroment.usernameHash) {
+        promises.push(CryptogrServiceImpl
+          .encryptStatic(enviroment.usernameHash, DataSetsComponent.CONVERTER.getSecureKey())
+          .then(hashedUser => enviroment.usernameHash = hashedUser.data));
+      }
+
+      const resolve = await Promise
+        .allSettled(promises);
+      console.log("---------------- beforeStore after conversion vo vnutri promise");
+      console.log(enviroment);
+      return resolve;
+      console.log("---------------- beforeStore after conversion");
+      console.log(enviroment);
+    },
+
+    // executeBeforeStoreAfterConversion: (value: DataSetsStoreRecordFormat) => {
+    //   console.log("---------------- beforeStore after conversion");
+    //   console.log(value);
+    // }
   })
   public enviroments !: DataSetsNgModelType;
 
@@ -68,7 +148,14 @@ export class DataSetsComponent extends BaseComponent implements OnInit {
 
   private timer : any;
 
+  private cryptogrService : CryptogrService;
 
+
+
+  constructor(cryptogrService: CryptogrServiceImpl) {
+    super();
+    this.cryptogrService = cryptogrService;
+  }
 
   ngOnInit(): void {
     this.toggleLoginUsageBasedOnGlobalOverride();

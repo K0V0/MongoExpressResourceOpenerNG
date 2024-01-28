@@ -1,4 +1,9 @@
 
+importScripts(
+  './background/services/cryptogrService.js'
+);
+
+
 function DocumentsFindService() {
 
 }
@@ -8,19 +13,33 @@ DocumentsFindService.prototype.constructor = DocumentsFindService;
 DocumentsFindService.prototype.STORE_SERVICE = new StoreService();
 DocumentsFindService.prototype.HTTP_SERVICE = new HttpService();
 
+DocumentsFindService.prototype.CRYPTO_SERVICE = new CryptogrService();
+
 
 
 DocumentsFindService.prototype._find = function (resourceId, responseCallback) {
   DocumentsFindService.prototype.STORE_SERVICE._getFromStores(null, false, true)
-    .then(resolve => {
+    .then((resolve, reject) => {
       // loaded ALL settings and pass to next stage
+      logger("Settings loaded from stores: {}", resolve);
+      return this._decryptCredentials(resolve);
+    })
+    .then(resolve => {
+      // decrypted credentials
+      logger("Settings processed and credentials unhashed: {}", resolve);
       return this._fireRequests(resourceId, resolve)
     })
     .then(resolve => {
+      logger("Requests resolved with result: {}", resolve);
       responseCallback(resolve);
     })
     .catch(reject => {
-      responseCallback(getMessageResponseObject(false, reject.data));
+      logger("Requests not resolved, error: {}", reject);
+      let responseError;
+      if (reject !== undefined) {
+        responseError = reject.data;
+      }
+      responseCallback(getMessageResponseObject(false, responseError));
     });
 }
 
@@ -33,8 +52,10 @@ DocumentsFindService.prototype._find = function (resourceId, responseCallback) {
 DocumentsFindService.prototype._fireRequests = function(resourceId, settings) {
   return new Promise((resolve, reject) => {
     const dataSets = this._buildDataSetsToQuery(settings);
+    logger("Data sets to query: {}", dataSets)
     const dataSetsUrls = dataSets.map(dataSet => dataSet.url);
-    const queries =  this._buildDocumentsToQuery(dataSets, resourceId)
+    const queries = this._buildDocumentsToQuery(dataSets, resourceId)
+    logger("Queries to fire: {}", queries);
     const promises = this._queryEndpoints(queries);
 
     const requestSucessStates = [];
@@ -42,9 +63,10 @@ DocumentsFindService.prototype._fireRequests = function(resourceId, settings) {
 
     Promise.allSettled(promises)
       .then(responses => {
+        logger("All queries to data sets endpoints settled")
         responses.forEach(response => {
           const mongoDocumentUrl = this._getUrlIfIsMongoDocument(response, dataSetsUrls);
-          const notAuthenticatedUrl =  this._getUrlIfIsUnauthenticated(response);
+          const notAuthenticatedUrl = this._getUrlIfIsUnauthenticated(response);
 
           if (mongoDocumentUrl) {
             requestSucessStates.push(true);
@@ -73,6 +95,48 @@ DocumentsFindService.prototype._fireRequests = function(resourceId, settings) {
           : resolve(getMessageResponseObject(true, foundDocuments));
       })
   })
+}
+
+DocumentsFindService.prototype._decryptCredentials = function(settings) {
+  const secretKey = this.extractSetting(settings, SETTINGS_NAMES.SECURE_KEY);
+  const appUsesLogins = this.extractSetting(settings, SETTINGS_NAMES.STORE_MONGO_LOGIN_CREDENTIALS);
+  const searchEverywhere = this.extractSetting(settings, SETTINGS_NAMES.CHECK_ON_ALL_ENVIROMENTS);
+  const currentEnviroment = this.extractSetting(settings, SETTINGS_NAMES.CURRENT_ENVIROMENT);
+
+  const enviromentsToUnlock = this
+    .extractSetting(settings, SETTINGS_NAMES.ENVIROMENTS)
+    .filter(enviroment => searchEverywhere ? true : enviroment.id === currentEnviroment)
+    .filter(enviroment => enviroment.useLogin && appUsesLogins);
+
+  if (enviromentsToUnlock.length === 0) {
+    return new Promise((resolve, reject) => {
+      resolve(settings);
+    });
+  }
+
+  const promises = [];
+
+  aesGcmEncrypt("nejaky test", "passs")
+    .then((resolve, reject) => {
+      logger("zasifrovanie hesla {}", resolve);
+      aesGcmDecrypt(resolve, "passs")
+        .then((resolve, reject) => {
+          logger("rozsifrovanie hesla {}", resolve);
+        });
+    });
+
+  // enviromentsToUnlock.forEach(enviroment => {
+  //   promises.push(this.CRYPTO_SERVICE._decrypt(enviroment.usernameHash, secretKey, enviroment, "username"));
+  //   promises.push(this.CRYPTO_SERVICE._decrypt(enviroment.passHash, secretKey, enviroment, "pass"));
+  // });
+
+  // return new Promise((resolve, reject) => {
+  //   Promise
+  //     .allSettled(promises)
+  //     .finally(() => {
+  //       resolve(settings);
+  //     })
+  // });
 }
 
 /**
@@ -105,7 +169,7 @@ DocumentsFindService.prototype._buildDataSetsToQuery = function(settings) {
         .map((datasetUrl) => {
           return {
             authHeader: authHeader,
-            url: (datasetUrl.lastIndexOf("/") === datasetUrl.length) ? datasetUrl : datasetUrl + "/"
+            url: this.addLastForwardSlash(datasetUrl)
           }
         });
     });
@@ -151,8 +215,15 @@ DocumentsFindService.prototype.extractSetting = function(settings, settingType) 
 
 DocumentsFindService.prototype._createBaseAuth64Header = function(hashedUsername, hashedPassword, secretKey) {
   //TODO moved to service
-  let username =  CryptogrUtil.decrypt(hashedUsername, secretKey);
-  let password = CryptogrUtil.decrypt(hashedPassword, secretKey);
+  logger(
+    "Creating base 64 auth header: username hash: {}, password hash: {}, secret key: {}",
+    hashedUsername, hashedPassword, secretKey);
+
+  let username =  this.CRYPTO_SERVICE._decrypt(hashedUsername, secretKey);
+  let password = this.CRYPTO_SERVICE._decrypt(hashedPassword, secretKey);
+
+  logger("Decrypted credentials: username: {}, password: {}", username, password);
+
   if (!username && !password) {
     return null;
   }

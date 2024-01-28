@@ -1,6 +1,6 @@
-import {MessagingAbstract} from "../messaging.abstract";
+import {GetSettingsQuery} from "./base/get-settings.query";
 
-export class GetSettingsFromSyncStoreOrDefaultsQuery extends MessagingAbstract<string>{
+export class GetSettingsFromSyncStoreOrDefaultsQuery extends GetSettingsQuery {
   getMessageId(): number {
     return 61;
   }

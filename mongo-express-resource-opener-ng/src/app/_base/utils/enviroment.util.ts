@@ -63,7 +63,6 @@ export enum SettingsNames {
     AUTO_SUBMIT_RESOURCE_ID = 'autoSubmitResourceId',
     CHECK_ON_ALL_ENVIROMENTS = 'checkOnAllEnviroments',
     ERASE_AFTER_FIRED_SUCESSFULLY = 'erasedAfterFiredSucessfully',
-    AVAILABLE_ENVIROMENTS = 'availableEnviromets',
     CURRENT_ENVIROMENT = 'currentEnviroment',
     ENVIROMENTS = 'enviroments',
     RESOURCE_ID = 'resourceId',

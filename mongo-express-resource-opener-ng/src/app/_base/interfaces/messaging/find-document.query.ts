@@ -6,4 +6,8 @@ export class FindDocumentQuery extends MessagingAbstract<FindDocumentMessage> {
     return 2;
   }
 
+  public withResourceId(resourceId : string) : this {
+    return this.w('resourceId', resourceId);
+  }
+
 }
