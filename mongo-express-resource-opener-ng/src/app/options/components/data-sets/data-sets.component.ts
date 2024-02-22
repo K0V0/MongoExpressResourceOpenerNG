@@ -14,9 +14,7 @@ import {BaseUtil} from './../../../_base/utils/base.util';
 import {SettingsNames} from './../../../_base/utils/enviroment.util';
 import {EventsUtil} from './../../../_base/utils/events.util';
 import {DataSetsSettingDecoratorConverter} from './data-sets.setting.decorator.converter';
-import {CryptogrService} from "../../../_base/services/cryptogr.service";
 import {CryptogrServiceImpl} from "../../../_base/services/cryptogr.service.impl";
-import {resolve} from "@angular/compiler-cli";
 
 
 @Component({
@@ -31,6 +29,8 @@ export class DataSetsComponent extends BaseComponent implements OnInit {
   private static readonly FIRE_TRESHOLD_MILISECONDS : number = 1000;
 
   private static readonly CONVERTER = new DataSetsSettingDecoratorConverter();
+
+  private static secureKeyForCallbacks: string = "";
 
   //TODO temp fix pri odstranovani default values z prezentacnej vrstvy
   private static DEFAULT_ENV : DataSetsStoreType = [{
@@ -47,13 +47,11 @@ export class DataSetsComponent extends BaseComponent implements OnInit {
 
 
   @Setting({
+    localOnly: true,
     storeKey: SettingsNames.SECURE_KEY,
     onlyDownload: true,
     executeAfterAll: (result : string) => {
-      console.log("----------- after exec secure key");
-      //FIXME ugly hack that sets secure key into converter for encrypting and decrypting sensitive informations
-      // it looks like that it will always run before enviroments parameters are first time queried
-      DataSetsComponent.CONVERTER.setSecureKey(result);
+      DataSetsComponent.secureKeyForCallbacks = result;
     }
   })
   public secureKey !: string;
@@ -61,10 +59,8 @@ export class DataSetsComponent extends BaseComponent implements OnInit {
   @Setting({
     storeKey: SettingsNames.ENVIROMENTS,
     converter: DataSetsComponent.CONVERTER,
-    // executeAfterAll: (result: any) => {
-    //   console.log("---------------- after exec");
-    //   console.log(result);
-    // },
+
+    // background worker -> frontend
     executeBeforeAll: async (...enviroments: DataSetsStoreRecordFormat[]) => {
       const promises: Promise<any>[] = [];
 
@@ -72,96 +68,57 @@ export class DataSetsComponent extends BaseComponent implements OnInit {
         if (enviroment.passHash) {
           promises.push(
             CryptogrServiceImpl
-              .decryptStatic(enviroment.passHash, DataSetsComponent.CONVERTER.getSecureKey())
+              .decryptStatic(enviroment.passHash, DataSetsComponent.secureKeyForCallbacks)
               .then(unhashedPass => enviroment.passHash = unhashedPass.data));
         }
         if (enviroment.usernameHash) {
           promises.push(
             CryptogrServiceImpl
-              .decryptStatic(enviroment.usernameHash, DataSetsComponent.CONVERTER.getSecureKey())
+              .decryptStatic(enviroment.usernameHash, DataSetsComponent.secureKeyForCallbacks)
               .then(unhashedName => enviroment.usernameHash = unhashedName.data));
         }
       }
 
-      const resolve = await Promise
-        .allSettled(promises);
-      console.log("------- all settlerd");
-      console.log(enviroments);
-      console.log(resolve);
+      await Promise.allSettled(promises);
       return enviroments;
     },
 
-    // zostrelí chrome
-    // executeOnGet: (...environments : DataSetsNgModelRecordFormat[]) => {
-    //   console.log("---- executed on get");
-    //   console.log(environments);
-    //
-    //   for (const enviroment of environments) {
-    //     if (enviroment.pass) {
-    //         CryptogrServiceImpl
-    //           .decryptStatic(enviroment.pass, DataSetsComponent.CONVERTER.getSecureKey())
-    //           .then(unhashedPass => enviroment.pass = unhashedPass.data);
-    //     }
-    //     if (enviroment.username) {
-    //         CryptogrServiceImpl
-    //           .decryptStatic(enviroment.username, DataSetsComponent.CONVERTER.getSecureKey())
-    //           .then(unhashedName => enviroment.username = unhashedName.data);
-    //     }
-    //   }
-    // },
-
-    executeBeforeStoreAfterConversion: async (enviroment: DataSetsStoreRecordFormat) => {
+    // frontend -> background worker
+    executeBeforeStoreAfterConversion: async (...enviroments: DataSetsStoreRecordFormat[]) => {
       const promises: Promise<any>[] = [];
-      if (enviroment.passHash) {
-        promises.push(CryptogrServiceImpl
-          .encryptStatic(enviroment.passHash, DataSetsComponent.CONVERTER.getSecureKey())
-          .then(hashedPass => enviroment.passHash = hashedPass.data));
-      }
-      if (enviroment.usernameHash) {
-        promises.push(CryptogrServiceImpl
-          .encryptStatic(enviroment.usernameHash, DataSetsComponent.CONVERTER.getSecureKey())
-          .then(hashedUser => enviroment.usernameHash = hashedUser.data));
+
+      for (const enviroment of enviroments) {
+        if (enviroment.passHash) {
+          promises.push(CryptogrServiceImpl
+            .encryptStatic(enviroment.passHash, DataSetsComponent.secureKeyForCallbacks)
+            .then(hashedPass => enviroment.passHash = hashedPass.data));
+        }
+        if (enviroment.usernameHash) {
+          promises.push(CryptogrServiceImpl
+            .encryptStatic(enviroment.usernameHash, DataSetsComponent.secureKeyForCallbacks)
+            .then(hashedUser => enviroment.usernameHash = hashedUser.data));
+        }
       }
 
-      const resolve = await Promise
-        .allSettled(promises);
-      console.log("---------------- beforeStore after conversion vo vnutri promise");
-      console.log(enviroment);
-      return resolve;
-      console.log("---------------- beforeStore after conversion");
-      console.log(enviroment);
+      return await Promise.allSettled(promises);
     },
-
-    // executeBeforeStoreAfterConversion: (value: DataSetsStoreRecordFormat) => {
-    //   console.log("---------------- beforeStore after conversion");
-    //   console.log(value);
-    // }
   })
   public enviroments !: DataSetsNgModelType;
 
   @Setting({
     storeKey: SettingsNames.ENVIROMENTS,
     converter: DataSetsComponent.CONVERTER,
-    onlyDownload: true // will not work either for objects
+    onlyDownload: true // sync will not work for objects either
   })
   private enviromentsBefore !: DataSetsNgModelType;
 
   private timer : any;
 
-  private cryptogrService : CryptogrService;
 
-
-
-  constructor(cryptogrService: CryptogrServiceImpl) {
-    super();
-    this.cryptogrService = cryptogrService;
-  }
 
   ngOnInit(): void {
     this.toggleLoginUsageBasedOnGlobalOverride();
   }
-
-
 
   public change() : void {
     this.autosaveEnvs();

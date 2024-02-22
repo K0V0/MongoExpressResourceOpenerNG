@@ -24,7 +24,14 @@ ContentService.prototype = {
     sendMessage({ id: REQUEST_IDS.DOCUMENT_FIND, data: { resourceId: resourceId } })
       .then((resolve) => {
         // success, send the message to background script to open tab(s)
-        sendMessage({ id: REQUEST_IDS.DOCUMENT_OPEN_NEW_TAB, data: resolve.data });
+        sendMessage({
+          id: REQUEST_IDS.DOCUMENT_OPEN_NEW_TAB,
+          data: {
+            url: resolve.data,
+            traceId: "TO DO",
+            documentEnviromentId: 0 //TODO
+          }
+        });
       })
       .catch((error) => console.log(error));
   }

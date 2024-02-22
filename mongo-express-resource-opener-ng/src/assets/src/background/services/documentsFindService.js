@@ -4,6 +4,7 @@ importScripts(
 );
 
 
+
 function DocumentsFindService() {
 
 }
@@ -114,29 +115,45 @@ DocumentsFindService.prototype._decryptCredentials = function(settings) {
     });
   }
 
+  const promisesCrate = {} ;
   const promises = [];
 
-  aesGcmEncrypt("nejaky test", "passs")
-    .then((resolve, reject) => {
-      logger("zasifrovanie hesla {}", resolve);
-      aesGcmDecrypt(resolve, "passs")
-        .then((resolve, reject) => {
-          logger("rozsifrovanie hesla {}", resolve);
-        });
-    });
+  logger("Enviroments that needs to decrypt credentials: {}", enviromentsToUnlock.map(env => env.id));
 
-  // enviromentsToUnlock.forEach(enviroment => {
-  //   promises.push(this.CRYPTO_SERVICE._decrypt(enviroment.usernameHash, secretKey, enviroment, "username"));
-  //   promises.push(this.CRYPTO_SERVICE._decrypt(enviroment.passHash, secretKey, enviroment, "pass"));
-  // });
+  enviromentsToUnlock.forEach(enviroment => {
+    const id = enviroment.id;
+    promisesCrate[id] = {};
+    promisesCrate[id]['username'] = this.CRYPTO_SERVICE._decrypt(enviroment.usernameHash, secretKey, enviroment, "username");
+    promisesCrate[id]['pass'] = this.CRYPTO_SERVICE._decrypt(enviroment.passHash, secretKey, enviroment, "pass");
+    promises.push(promisesCrate[id]['username']);
+    promises.push(promisesCrate[id]['pass']);
+  });
 
-  // return new Promise((resolve, reject) => {
-  //   Promise
-  //     .allSettled(promises)
-  //     .finally(() => {
-  //       resolve(settings);
-  //     })
-  // });
+  return new Promise((resolve, reject) => {
+    Promise
+      .allSettled(promises)
+      .then(responses => {
+        Object
+          .keys(promisesCrate)
+          .map(enviromentId => parseInt(enviromentId))
+          .forEach(enviromentId => {
+            Promise
+              .all([promisesCrate[enviromentId]['username'], promisesCrate[enviromentId]['pass']])
+              .then(results => {
+                settings[SETTINGS_NAMES.ENVIROMENTS]
+                  .filter(enviroment => enviroment.id === enviromentId)
+                  .forEach(enviroment => {
+                    enviroment['usernameHash'] = results[0];
+                    enviroment['passHash'] = results[1];
+                  });
+              })
+          });
+        })
+      .finally(() => {
+        logger("Settings with decrypted credentials: {}", settings);
+        resolve(settings);
+      })
+  });
 }
 
 /**
@@ -158,12 +175,13 @@ DocumentsFindService.prototype._buildDataSetsToQuery = function(settings) {
 
   // filter relevant enviroments and its data sets to extract relevant urls to data sets
   // attach auth header if given enviroment uses login and login feature is enabled in app
+  // !!! login credentials should be unhashed starting this phase
   return this.extractSetting(settings, SETTINGS_NAMES.ENVIROMENTS)
     .filter((enviroment) =>
       searchEverywhere ? true : enviroment.id === currentEnviroment)
     .flatMap((enviroment) => {
       const authHeader = (enviroment.useLogin && appUsesLogins)
-        ? this._createBaseAuth64Header(enviroment.usernameHash, enviroment.passHash, secretKey)
+        ? this._createBaseAuth64Header(enviroment.usernameHash, enviroment.passHash)
         : null;
       return enviroment.datasets
         .map((datasetUrl) => {
@@ -213,17 +231,8 @@ DocumentsFindService.prototype.extractSetting = function(settings, settingType) 
   return result;
 }
 
-DocumentsFindService.prototype._createBaseAuth64Header = function(hashedUsername, hashedPassword, secretKey) {
-  //TODO moved to service
-  logger(
-    "Creating base 64 auth header: username hash: {}, password hash: {}, secret key: {}",
-    hashedUsername, hashedPassword, secretKey);
-
-  let username =  this.CRYPTO_SERVICE._decrypt(hashedUsername, secretKey);
-  let password = this.CRYPTO_SERVICE._decrypt(hashedPassword, secretKey);
-
-  logger("Decrypted credentials: username: {}, password: {}", username, password);
-
+DocumentsFindService.prototype._createBaseAuth64Header = function(username, password) {
+  logger("Creating base 64 auth header: username: {}, password hash: {}", username, password);
   if (!username && !password) {
     return null;
   }
