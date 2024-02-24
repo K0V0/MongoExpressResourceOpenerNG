@@ -15,7 +15,7 @@ export class FirstloadFixSharedComponent extends BaseComponent implements OnInit
     private changeDetectorRef : ChangeDetectorRef;
 
     @Setting({
-        afterExec: () => EventsUtil.notifySettingsLoaded()
+        executeAfterAll: () => EventsUtil.notifySettingsLoaded()
     })
     public firstLoad : boolean;
 

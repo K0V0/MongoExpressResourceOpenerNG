@@ -30,3 +30,33 @@ function deepFreeze(obj) {
   });
   return obj;
 }
+
+function logger(message,  ...params) {
+  const placeholder = "{}";
+  const error = new Error();
+  const stack = error.stack.split('\n')[2].trim();
+
+  let formattedMessage = message;
+  for (let i = 0; i < params.length; i++) {
+    let param = isObject(params[i])
+      ? JSON.stringify(params[i], null, 2)
+      : params[i];
+
+    formattedMessage = formattedMessage.replace(placeholder, param);
+  }
+
+  console.log(`[${stack}] ${formattedMessage}`);
+}
+
+function getKeyByValue(object, value) {
+  for (const key in object) {
+    if (object.hasOwnProperty(key) && object[key] === value) {
+      return key;
+    }
+  }
+  return null; // Return null if the value is not found
+}
+
+function isObject(variable) {
+  return variable !== null && typeof variable === 'object';
+}

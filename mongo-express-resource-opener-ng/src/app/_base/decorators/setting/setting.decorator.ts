@@ -65,6 +65,15 @@ export class SettingDecorator {
                 // communication error or not found in store should be that case
                 return undefined;
             })
+            .then((result: any) => {
+              if (params['executeBeforeAll']) {
+                // TODO error
+                // console.log("---------- result in decorator");
+                // console.log(result);
+                return settingsDecoratorContext.callbacksRunner('executeBeforeAll', params, result);
+              }
+              return result;
+            })
             .then((result : any) => {
 
                 let fieldValue : any;
@@ -84,38 +93,69 @@ export class SettingDecorator {
                 let currentValue : any = Object(target)[propertyKey];
                 let uploadAllowed : boolean = !(SettingDecorator.hasParam(params, 'onlyDownload') && params['onlyDownload'] === true);
                 Object.defineProperty(target, propertyKey, {
-                    get: function() {
-                        return (currentValue === undefined || currentValue === null) ? fieldValue : currentValue;
-                    },
-                    set: function(value) {
-                        if (currentValue != value) {
-                            currentValue = value;
-                            if (uploadAllowed) {
-                                EventsUtil.getSettingsSavedEmiter().emit(true);
-                                settingsDecoratorContext.getStoreService(params)
-                                    .save(settingKey, SettingDecorator.getOrConvertedValue(value, params, 'modelConversion'))
-                                    .then((result : any) => { EventsUtil.getSettingsSavedEmiter().emit(false); });
-                                    //TODO scenarions for unsucessfull settings save
-                            }
+                  get: function() {
+                    const value = (currentValue === undefined || currentValue === null) ? fieldValue : currentValue;
+                    settingsDecoratorContext.callbacksRunner('executeOnGet', params, value);
+                    return value;
+                  },
+                  set: async function(value) {
+                    if (currentValue != value) {
+                      currentValue = value;
+                      if (uploadAllowed) {
+                        // start of save process
+                        EventsUtil.getSettingsSavedEmiter().emit(true);
+
+                        // will affect currently displayed value
+                        const beforeUpdateBeforeConvertContent = settingsDecoratorContext
+                          .callbacksRunner('executeBeforeStoreBeforeConversion', params, currentValue);
+                        if (beforeUpdateBeforeConvertContent) {
+                          await Promise.resolve(beforeUpdateBeforeConvertContent);
                         }
-                    },
-                    configurable: true
+
+                        // value that is converted if converter is available
+                        let processedValue = SettingDecorator
+                          .getOrConvertedValue(currentValue, params, 'modelConversion');
+
+                        // after conversion, it is new object, so will not affect what's currently displayed
+                        //TODO make obj deep copy in case when no converter is called
+                        const beforeUpdateAfterConvertContent = settingsDecoratorContext
+                          .callbacksRunner('executeBeforeStoreAfterConversion', params, processedValue);
+                        if (beforeUpdateAfterConvertContent) {
+                          await Promise.resolve(beforeUpdateAfterConvertContent);
+                        }
+
+                        settingsDecoratorContext.getStoreService(params)
+                            .save(settingKey, processedValue)
+                            .then((result : any) => {
+                              // save process finished
+                              EventsUtil.getSettingsSavedEmiter().emit(false);
+                            });
+                            //TODO scenarions for unsucessfull settings save
+                      }
+                    }
+                  },
+                  configurable: true
                 })
 
-                // callback function
-                if (params['afterExec']) {
-                  let args : any = (currentValue === undefined || currentValue === null) ? fieldValue : currentValue;
-                  if (!Array.isArray(args)) {
-                    args = [args];
-                  }
-                  params['afterExec']?.apply(this, args);
-                }
+                this.callbacksRunner(
+                  'executeAfterAll', params, (currentValue === undefined || currentValue === null) ? fieldValue : currentValue);
 
             })
             .catch((error : any) => {
                 console.log(error);
             });
 
+    }
+
+    private callbacksRunner<T extends SettingDecoratorParameters>(callbackName: keyof T, params: T, args: any) : any {
+      if (params[callbackName] && typeof params[callbackName] === 'function') {
+        if (!Array.isArray(args)) {
+          args = [args];
+        }
+        console.log("Running callback: " + callbackName.toString() + ", with parameters: " + args);
+        return (params[callbackName] as Function).apply(this, args);
+      }
+      return null;
     }
 
     private getStoreService(params : SettingDecoratorParameters) : StoreAllService {

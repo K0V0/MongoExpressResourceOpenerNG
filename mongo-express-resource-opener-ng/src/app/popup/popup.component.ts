@@ -121,7 +121,7 @@ export class PopupComponent extends BaseComponent implements OnInit {
           if (this.clearAfterFired) {
             this.erase();
           }
-          BaseUtil.sendMessage(new OpenInNewTabQuery(resolve.data));
+          BaseUtil.sendMessage(new OpenInNewTabQuery().withUrls(resolve.data));
         }
       })
       .catch((error) => {

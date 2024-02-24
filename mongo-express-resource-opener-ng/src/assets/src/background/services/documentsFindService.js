@@ -1,4 +1,10 @@
 
+importScripts(
+  './background/services/cryptogrService.js'
+);
+
+
+
 function DocumentsFindService() {
 
 }
@@ -8,19 +14,33 @@ DocumentsFindService.prototype.constructor = DocumentsFindService;
 DocumentsFindService.prototype.STORE_SERVICE = new StoreService();
 DocumentsFindService.prototype.HTTP_SERVICE = new HttpService();
 
+DocumentsFindService.prototype.CRYPTO_SERVICE = new CryptogrService();
+
 
 
 DocumentsFindService.prototype._find = function (resourceId, responseCallback) {
   DocumentsFindService.prototype.STORE_SERVICE._getFromStores(null, false, true)
-    .then(resolve => {
+    .then((resolve, reject) => {
       // loaded ALL settings and pass to next stage
+      logger("Settings loaded from stores: {}", resolve);
+      return this._decryptCredentials(resolve);
+    })
+    .then(resolve => {
+      // decrypted credentials
+      logger("Settings processed and credentials unhashed: {}", resolve);
       return this._fireRequests(resourceId, resolve)
     })
     .then(resolve => {
+      logger("Requests resolved with result: {}", resolve);
       responseCallback(resolve);
     })
     .catch(reject => {
-      responseCallback(getMessageResponseObject(false, reject.data));
+      logger("Requests not resolved, error: {}", reject);
+      let responseError;
+      if (reject !== undefined) {
+        responseError = reject.data;
+      }
+      responseCallback(getMessageResponseObject(false, responseError));
     });
 }
 
@@ -33,8 +53,10 @@ DocumentsFindService.prototype._find = function (resourceId, responseCallback) {
 DocumentsFindService.prototype._fireRequests = function(resourceId, settings) {
   return new Promise((resolve, reject) => {
     const dataSets = this._buildDataSetsToQuery(settings);
+    logger("Data sets to query: {}", dataSets)
     const dataSetsUrls = dataSets.map(dataSet => dataSet.url);
-    const queries =  this._buildDocumentsToQuery(dataSets, resourceId)
+    const queries = this._buildDocumentsToQuery(dataSets, resourceId)
+    logger("Queries to fire: {}", queries);
     const promises = this._queryEndpoints(queries);
 
     const requestSucessStates = [];
@@ -42,9 +64,10 @@ DocumentsFindService.prototype._fireRequests = function(resourceId, settings) {
 
     Promise.allSettled(promises)
       .then(responses => {
+        logger("All queries to data sets endpoints settled")
         responses.forEach(response => {
           const mongoDocumentUrl = this._getUrlIfIsMongoDocument(response, dataSetsUrls);
-          const notAuthenticatedUrl =  this._getUrlIfIsUnauthenticated(response);
+          const notAuthenticatedUrl = this._getUrlIfIsUnauthenticated(response);
 
           if (mongoDocumentUrl) {
             requestSucessStates.push(true);
@@ -75,6 +98,64 @@ DocumentsFindService.prototype._fireRequests = function(resourceId, settings) {
   })
 }
 
+DocumentsFindService.prototype._decryptCredentials = function(settings) {
+  const secretKey = this.extractSetting(settings, SETTINGS_NAMES.SECURE_KEY);
+  const appUsesLogins = this.extractSetting(settings, SETTINGS_NAMES.STORE_MONGO_LOGIN_CREDENTIALS);
+  const searchEverywhere = this.extractSetting(settings, SETTINGS_NAMES.CHECK_ON_ALL_ENVIROMENTS);
+  const currentEnviroment = this.extractSetting(settings, SETTINGS_NAMES.CURRENT_ENVIROMENT);
+
+  const enviromentsToUnlock = this
+    .extractSetting(settings, SETTINGS_NAMES.ENVIROMENTS)
+    .filter(enviroment => searchEverywhere ? true : enviroment.id === currentEnviroment)
+    .filter(enviroment => enviroment.useLogin && appUsesLogins);
+
+  if (enviromentsToUnlock.length === 0) {
+    return new Promise((resolve, reject) => {
+      resolve(settings);
+    });
+  }
+
+  const promisesCrate = {} ;
+  const promises = [];
+
+  logger("Enviroments that needs to decrypt credentials: {}", enviromentsToUnlock.map(env => env.id));
+
+  enviromentsToUnlock.forEach(enviroment => {
+    const id = enviroment.id;
+    promisesCrate[id] = {};
+    promisesCrate[id]['username'] = this.CRYPTO_SERVICE._decrypt(enviroment.usernameHash, secretKey, enviroment, "username");
+    promisesCrate[id]['pass'] = this.CRYPTO_SERVICE._decrypt(enviroment.passHash, secretKey, enviroment, "pass");
+    promises.push(promisesCrate[id]['username']);
+    promises.push(promisesCrate[id]['pass']);
+  });
+
+  return new Promise((resolve, reject) => {
+    Promise
+      .allSettled(promises)
+      .then(responses => {
+        Object
+          .keys(promisesCrate)
+          .map(enviromentId => parseInt(enviromentId))
+          .forEach(enviromentId => {
+            Promise
+              .all([promisesCrate[enviromentId]['username'], promisesCrate[enviromentId]['pass']])
+              .then(results => {
+                settings[SETTINGS_NAMES.ENVIROMENTS]
+                  .filter(enviroment => enviroment.id === enviromentId)
+                  .forEach(enviroment => {
+                    enviroment['usernameHash'] = results[0];
+                    enviroment['passHash'] = results[1];
+                  });
+              })
+          });
+        })
+      .finally(() => {
+        logger("Settings with decrypted credentials: {}", settings);
+        resolve(settings);
+      })
+  });
+}
+
 /**
  *  collects URLs of data sets for all relevant enviroments
  *  attach auth header if target enviroment requires login
@@ -94,18 +175,19 @@ DocumentsFindService.prototype._buildDataSetsToQuery = function(settings) {
 
   // filter relevant enviroments and its data sets to extract relevant urls to data sets
   // attach auth header if given enviroment uses login and login feature is enabled in app
+  // !!! login credentials should be unhashed starting this phase
   return this.extractSetting(settings, SETTINGS_NAMES.ENVIROMENTS)
     .filter((enviroment) =>
       searchEverywhere ? true : enviroment.id === currentEnviroment)
     .flatMap((enviroment) => {
       const authHeader = (enviroment.useLogin && appUsesLogins)
-        ? this._createBaseAuth64Header(enviroment.usernameHash, enviroment.passHash, secretKey)
+        ? this._createBaseAuth64Header(enviroment.usernameHash, enviroment.passHash)
         : null;
       return enviroment.datasets
         .map((datasetUrl) => {
           return {
             authHeader: authHeader,
-            url: (datasetUrl.lastIndexOf("/") === datasetUrl.length) ? datasetUrl : datasetUrl + "/"
+            url: this.addLastForwardSlash(datasetUrl)
           }
         });
     });
@@ -149,10 +231,8 @@ DocumentsFindService.prototype.extractSetting = function(settings, settingType) 
   return result;
 }
 
-DocumentsFindService.prototype._createBaseAuth64Header = function(hashedUsername, hashedPassword, secretKey) {
-  //TODO moved to service
-  let username =  CryptogrUtil.decrypt(hashedUsername, secretKey);
-  let password = CryptogrUtil.decrypt(hashedPassword, secretKey);
+DocumentsFindService.prototype._createBaseAuth64Header = function(username, password) {
+  logger("Creating base 64 auth header: username: {}, password hash: {}", username, password);
   if (!username && !password) {
     return null;
   }

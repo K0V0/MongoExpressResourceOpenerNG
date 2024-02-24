@@ -1,5 +1,5 @@
 import {MessagingAbstract} from "../interfaces/messaging.abstract";
-import {MessageResponse} from "../interfaces/messaging.interface";
+import {MessageBase, MessageResponse} from "../interfaces/messaging.interface";
 
 //TODO make comehow visible for both angular and JS part of app
 export class BaseUtil {
@@ -82,7 +82,7 @@ export class BaseUtil {
         return obj;
     }
 
-    public static sendMessage<TYP>(message : MessagingAbstract<TYP>, options = {}) : Promise<MessageResponse> {
+    public static sendMessage<TYP extends MessageBase>(message : MessagingAbstract<TYP>, options = {}) : Promise<MessageResponse> {
         return new Promise((resolve, reject) => {
             chrome.runtime.sendMessage(message.getMessage(), options, (response : MessageResponse) => {
                 if (chrome.runtime.lastError) {

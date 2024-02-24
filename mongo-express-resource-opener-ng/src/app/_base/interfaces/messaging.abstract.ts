@@ -1,22 +1,33 @@
+import {MessageBase} from "./messaging.interface";
 
-export abstract class MessagingAbstract<DATA_TYPE> {
+export abstract class MessagingAbstract<DATA_TYPE extends MessageBase> {
 
   protected data : DATA_TYPE;
 
-  constructor(data : DATA_TYPE) {
-    this.data = data;
-  }
-
   public abstract getMessageId() : number;
 
-  public setMessageData(data : DATA_TYPE) : void {
-    this.data = data;
+  constructor() {
+    this.data = {} as DATA_TYPE
   }
+
+  w<KEY_TYPE extends keyof DATA_TYPE>(key: KEY_TYPE, value: DATA_TYPE[KEY_TYPE]): this {
+    this.data[key] = value;
+    return this;
+  }
+
+  public getData() : DATA_TYPE {
+    this.data.traceId = "TO DO";
+    return this.data;
+  }
+
+  // public setMessageData(data : DATA_TYPE) : void {
+  //   this.data = data;
+  // }
 
   public getMessage() {
     return {
       id: this.getMessageId(),
-      data: this.data
+      data: this.getData()
     }
   }
 }

@@ -17,6 +17,12 @@ export interface SettingDecoratorParameters {
     // have converted/modified when coming from/to chrome store
     converter ?: SettingDecoratorConverter<any, any>;
     // callback after geting settings from server and resolving all premises
-    afterDownload ?: Function;
-    afterExec ?: Function;
+    executeAfterDownload ?: Function;
+    // this callbacks are executed each time whem value of variable is changed
+    executeBeforeStoreBeforeConversion ?: Function;
+    executeBeforeStoreAfterConversion ?: Function;
+    executeOnGet ?: Function;
+    // this callbacks executes once page (popup) is loaded
+    executeAfterAll ?: Function;
+    executeBeforeAll ?: Function;
 }

@@ -6,6 +6,7 @@ import {BaseComponent} from "src/app/_base/components/_base/base.component";
 import {
   DataSetsNgModelRecordFormat,
   DataSetsNgModelType,
+  DataSetsStoreRecordFormat,
   DataSetsStoreType
 } from 'src/app/_base/components/_base/data-sets/data-sets.interfaces';
 import {Setting} from 'src/app/_base/decorators/setting/setting.decorator';
@@ -13,6 +14,7 @@ import {BaseUtil} from './../../../_base/utils/base.util';
 import {SettingsNames} from './../../../_base/utils/enviroment.util';
 import {EventsUtil} from './../../../_base/utils/events.util';
 import {DataSetsSettingDecoratorConverter} from './data-sets.setting.decorator.converter';
+import {CryptogrServiceImpl} from "../../../_base/services/cryptogr.service.impl";
 
 
 @Component({
@@ -27,6 +29,8 @@ export class DataSetsComponent extends BaseComponent implements OnInit {
   private static readonly FIRE_TRESHOLD_MILISECONDS : number = 1000;
 
   private static readonly CONVERTER = new DataSetsSettingDecoratorConverter();
+
+  private static secureKeyForCallbacks: string = "";
 
   //TODO temp fix pri odstranovani default values z prezentacnej vrstvy
   private static DEFAULT_ENV : DataSetsStoreType = [{
@@ -43,26 +47,68 @@ export class DataSetsComponent extends BaseComponent implements OnInit {
 
 
   @Setting({
+    localOnly: true,
     storeKey: SettingsNames.SECURE_KEY,
     onlyDownload: true,
-    afterExec: (result : string) => {
-      //FIXME ugly hack that sets secure key into converter for encrypting and decrypting sensitive informations
-      // it looks like that it will always run before enviroments parameters are first time queried
-      DataSetsComponent.CONVERTER.setSecureKey(result);
+    executeAfterAll: (result : string) => {
+      DataSetsComponent.secureKeyForCallbacks = result;
     }
   })
   public secureKey !: string;
 
   @Setting({
     storeKey: SettingsNames.ENVIROMENTS,
-    converter: DataSetsComponent.CONVERTER
+    converter: DataSetsComponent.CONVERTER,
+
+    // background worker -> frontend
+    executeBeforeAll: async (...enviroments: DataSetsStoreRecordFormat[]) => {
+      const promises: Promise<any>[] = [];
+
+      for (const enviroment of enviroments) {
+        if (enviroment.passHash) {
+          promises.push(
+            CryptogrServiceImpl
+              .decryptStatic(enviroment.passHash, DataSetsComponent.secureKeyForCallbacks)
+              .then(unhashedPass => enviroment.passHash = unhashedPass.data));
+        }
+        if (enviroment.usernameHash) {
+          promises.push(
+            CryptogrServiceImpl
+              .decryptStatic(enviroment.usernameHash, DataSetsComponent.secureKeyForCallbacks)
+              .then(unhashedName => enviroment.usernameHash = unhashedName.data));
+        }
+      }
+
+      await Promise.allSettled(promises);
+      return enviroments;
+    },
+
+    // frontend -> background worker
+    executeBeforeStoreAfterConversion: async (...enviroments: DataSetsStoreRecordFormat[]) => {
+      const promises: Promise<any>[] = [];
+
+      for (const enviroment of enviroments) {
+        if (enviroment.passHash) {
+          promises.push(CryptogrServiceImpl
+            .encryptStatic(enviroment.passHash, DataSetsComponent.secureKeyForCallbacks)
+            .then(hashedPass => enviroment.passHash = hashedPass.data));
+        }
+        if (enviroment.usernameHash) {
+          promises.push(CryptogrServiceImpl
+            .encryptStatic(enviroment.usernameHash, DataSetsComponent.secureKeyForCallbacks)
+            .then(hashedUser => enviroment.usernameHash = hashedUser.data));
+        }
+      }
+
+      return await Promise.allSettled(promises);
+    },
   })
   public enviroments !: DataSetsNgModelType;
 
   @Setting({
     storeKey: SettingsNames.ENVIROMENTS,
     converter: DataSetsComponent.CONVERTER,
-    onlyDownload: true // will not work either for objects
+    onlyDownload: true // sync will not work for objects either
   })
   private enviromentsBefore !: DataSetsNgModelType;
 
@@ -73,8 +119,6 @@ export class DataSetsComponent extends BaseComponent implements OnInit {
   ngOnInit(): void {
     this.toggleLoginUsageBasedOnGlobalOverride();
   }
-
-
 
   public change() : void {
     this.autosaveEnvs();

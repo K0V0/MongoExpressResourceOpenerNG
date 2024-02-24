@@ -1,6 +1,7 @@
 
 importScripts(
-  './background/services/documentsFindService.js'
+  './background/services/documentsFindService.js',
+  './background/services/cryptogrService.js'
 );
 
 function DocumentsFindController() {}

@@ -2,8 +2,9 @@ import {Component} from "@angular/core";
 import {BaseComponent} from "../../../_base/components/_base/base.component";
 import {Setting} from "../../../_base/decorators/setting/setting.decorator";
 import {SettingsNames} from "../../../_base/utils/enviroment.util";
-import {CryptogrUtil} from "../../../_base/utils/cryptogr.util";
+import {CryptogrServiceImpl} from "../../../_base/services/cryptogr.service.impl";
 import {EventsUtil} from "../../../_base/utils/events.util";
+import {CryptogrService} from "../../../_base/services/cryptogr.service";
 
 @Component({
   selector: 'component-secure-key',
@@ -13,7 +14,6 @@ import {EventsUtil} from "../../../_base/utils/events.util";
   ]
 })
 export class SecureKeyComponent extends BaseComponent {
-
 
   @Setting({
     localOnly: true,
@@ -26,6 +26,14 @@ export class SecureKeyComponent extends BaseComponent {
   })
   public useLoginCredentialsStorage !: boolean
 
+  private cryptogrService : CryptogrService;
+
+
+  constructor(cryptogrService: CryptogrServiceImpl) {
+    super();
+    this.cryptogrService = cryptogrService;
+  }
+
   credentialsUseEnabledChange() : void {
     EventsUtil.notifySettingsUseLoginsChanged(this.useLoginCredentialsStorage);
   }
@@ -35,8 +43,10 @@ export class SecureKeyComponent extends BaseComponent {
   }
 
   generateSecureKey() : void {
+    //TODO catch - maybe notification
     if (!this.secureKey) {
-      this.secureKey = CryptogrUtil.generateRandomString(16);
+      this.cryptogrService.generateRandomString(16)
+        .then(resolve => this.secureKey = resolve.data);
     }
   }
 
